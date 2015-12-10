@@ -1,6 +1,16 @@
 <resources>
     <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="activity_horizontal_margin">16dp</dimen>
-    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="activity_horizontal_margin">70dp</dimen>
+    <dimen name="activity_vertical_margin">30dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="text_title_activity_login_text_size">30sp</dimen>
+    <dimen name="text_title_activity_login_margin_top">30dp</dimen>
+    <dimen name="text_email_activity_login_text_size">20sp</dimen>
+    <dimen name="text_email_activity_login_margin_left">5dp</dimen>
+    <dimen name="text_create_account_activity_login_text_size">25sp</dimen>
+    <dimen name="text_title_activity_register_text_size">30sp</dimen>
+    <dimen name="text_title_activity_register_margin_top">30dp</dimen>
+    <dimen name="text_email_activity_register_text_size">20sp</dimen>
+    <dimen name="text_email_activity_register_margin_left">5dp</dimen>
+    <dimen name="text_create_account_register_login_text_size">25sp</dimen>
 </resources>
