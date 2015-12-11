@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -15,20 +14,21 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-public class RegisterActivity extends AppCompatActivity {
+public class UpdateProfileActivity extends AppCompatActivity {
+    ImageView avatar;
     private static int RESULT_LOAD_IMG = 1;
     String imgDecodableString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
+        setContentView(R.layout.activity_update_profile);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
         toolbar.setLogo(R.mipmap.ic_launcher);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        ImageView avatar = (ImageView) findViewById(R.id.image_upload_avatar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        avatar = (ImageView) findViewById(R.id.image_upload_avatar);
         avatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -52,7 +52,7 @@ public class RegisterActivity extends AppCompatActivity {
                     && null != data) {
                 // Get the Image from data
                 Uri selectedImage = data.getData();
-                String[] filePathColumn = { MediaStore.Images.Media.DATA };
+                String[] filePathColumn = {MediaStore.Images.Media.DATA};
                 // Get the cursor
                 Cursor cursor = getContentResolver().query(selectedImage,
                         filePathColumn, null, null, null);
@@ -77,7 +77,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_register, menu);
+        getMenuInflater().inflate(R.menu.menu_update_profile, menu);
         return true;
     }
 
@@ -86,14 +86,10 @@ public class RegisterActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             // Respond to the action bar's Up/Home button
             case android.R.id.home:
-                NavUtils.navigateUpFromSameTask(this);
+                finish();
                 return true;
             // Respond to the action bar's 'Done' button
-            case R.id.action_done:
-                Intent updateIntent = new Intent(getApplicationContext(), UpdateProfileActivity
-                        .class);
-                startActivity(updateIntent);
-                finish();
+            case R.id.action_update:
                 Toast.makeText(getApplicationContext(), "Will be implemented later", Toast
                         .LENGTH_LONG).show();
                 return true;
