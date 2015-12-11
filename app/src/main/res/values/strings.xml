@@ -15,4 +15,13 @@
     <string name="edit_text_full_name_activity_register">Full name</string>
     <string name="text_avatar_activity_register">Avatar</string>
     <string name="text_required_information_activity_register">* Required information</string>
+    <string name="title_activity_question">QuestionActivity</string>
+    <string name="action_ok">Ok</string>
+    <string name="title_activity_result">ResultActivity</string>
+    <string name="content_main_question_number_text">20/500</string>
+    <string name="content_main_word_text">Pronunciation</string>
+    <string name="content_result_lesson_text">Basic Lesson</string>
+    <string name="content_result_correctnumber_text">67/300</string>
+    <string name="result_word_name_text">Pronunciation</string>
+    <string name="result_language_text">English</string>
 </resources>
