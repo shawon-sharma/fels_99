@@ -24,8 +24,8 @@
         android:id="@+id/text_login"
         android:textColor="@android:color/black"/>
     <ImageView
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="@dimen/icon_width_and_height"
+        android:layout_height="@dimen/icon_width_and_height"
         android:layout_below="@id/text_login"
         android:src="@drawable/email"
         android:id="@+id/image_email"
@@ -49,8 +49,8 @@
         android:hint="@string/text_email_activity_login"
         android:inputType="textEmailAddress"/>
     <ImageView
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="@dimen/icon_width_and_height"
+        android:layout_height="@dimen/icon_width_and_height"
         android:id="@+id/image_password"
         android:layout_below="@id/edit_text_email"
         android:src="@drawable/lock"/>
