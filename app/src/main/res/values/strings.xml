@@ -36,4 +36,19 @@
     <string name="empty_password_activity_login">Password field empty!</string>
     <string name="empty_email_password_activity_login">Email and Password fields are empty!</string>
     <string name="invalid_username_password_message">Invalid email/password combination</string>
+    <string name="title_activity_profile">ProfileActivity</string>
+    <string name="content_profile_words_btn_text">Words</string>
+    <string name="content_profile_lesson_btn_text">Lesson</string>
+    <string name="title_activity_wordlist">WordlistActivity</string>
+    <string-array name="Category_name">
+        <item>ALL</item>
+        <item>Basic</item>
+        <item>Advance</item>
+        <item>Expert</item>
+    </string-array>
+    <string-array name="progress_of_learned">
+        <item>ALL</item>
+        <item>Learned</item>
+        <item>Not learn</item>
+    </string-array>
 </resources>
