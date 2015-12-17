@@ -3,10 +3,11 @@
     android:layout_height="fill_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_weight="1"
+    android:layout_weight="@dimen/content_profile_scrollview_weight"
     android:fillViewport="true"
     >
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/linear1"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -21,10 +22,11 @@
     android:orientation="vertical"
     >
 <LinearLayout
+    android:id="@+id/linear2"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:paddingTop="50dp">
+    android:paddingTop="@dimen/content_profile_linear1_paddingtop">
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -46,7 +48,7 @@
                 android:id="@+id/person"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="shawon sharma"
+                android:text=""
                 android:layout_alignParentRight="true"
                 android:layout_marginLeft="@dimen/person_layout_marginleft"
                 android:layout_marginRight="@dimen/person_layout_marginright"
@@ -67,7 +69,7 @@
                 android:id="@+id/email_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Ahsanul_karim@gmail.com"
+                android:text=""
                 android:layout_alignParentRight="true"
                 android:layout_marginLeft="@dimen/email_textview_layout_marginleft"
                 android:layout_marginRight="@dimen/email_textview_layout_marginright"
@@ -89,7 +91,7 @@
                 android:id="@+id/desc_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Learned 102 words"
+                android:text=""
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="@dimen/desc_textview_layout_marginright"
                 android:layout_marginTop="@dimen/desc_textview_layout_margintop"
