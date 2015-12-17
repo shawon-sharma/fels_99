@@ -111,9 +111,4 @@
         android:textSize="@dimen/text_create_account_activity_login_text_size"
         android:textStyle="bold"
         android:textColor="@android:color/black"/>
-        <Button
-            android:id="@+id/proileupdate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="profile update"/>
 </RelativeLayout>

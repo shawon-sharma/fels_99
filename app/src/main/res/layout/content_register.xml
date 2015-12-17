@@ -99,29 +99,6 @@
         android:layout_below="@id/image_full_name"
         android:hint="@string/edit_text_full_name_activity_register"
         android:inputType="textPersonName"/>
-    <ImageView
-        android:layout_width="@dimen/icon_width_and_height"
-        android:layout_height="@dimen/icon_width_and_height"
-        android:id="@+id/image_avatar"
-        android:layout_below="@id/edit_text_full_name"
-        android:src="@drawable/account"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/text_avatar_activity_register"
-        android:textStyle="bold"
-        android:layout_toRightOf="@id/image_avatar"
-        android:layout_below="@id/edit_text_full_name"
-        android:textSize="@dimen/text_email_activity_login_text_size"
-        android:layout_marginLeft="@dimen/text_email_activity_login_margin_left"
-        android:id="@+id/text_avatar"/>
-    <ImageView
-        android:layout_width="@dimen/upload_avatar_width_and_height"
-        android:layout_height="@dimen/upload_avatar_width_and_height"
-        android:src="@drawable/ic_add_a_photo_black_36dp"
-        android:id="@+id/image_upload_avatar"
-        android:layout_alignParentRight="true"
-        android:layout_below="@id/edit_text_full_name"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -129,6 +106,6 @@
         android:layout_marginTop="@dimen/text_title_activity_login_margin_top"
         android:text="@string/text_required_information_activity_register"
         android:id="@+id/text_required_info"
-        android:layout_below="@id/image_upload_avatar"
+        android:layout_below="@id/edit_text_full_name"
         android:textColor="@android:color/holo_red_dark"/>
 </RelativeLayout>

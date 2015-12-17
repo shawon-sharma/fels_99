@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -21,32 +22,67 @@ import com.framgia.elsytem.model.Profile;
 import com.framgia.elsytem.mypackage.SessionManager;
 import com.framgia.elsytem.mypackage.UserFunctions;
 
+import java.util.HashMap;
+
 public class UpdateProfileActivity extends AppCompatActivity {
     private static final String TAG = "UpdateProfileActivity";
-    ImageView avatar;
     private static int RESULT_LOAD_IMG = 1;
     String imgDecodableString;
     // Session Manager Class
-    //SessionManager session;
+    SessionManager session;
+    HashMap<String, String> user;
+    // User name (make variable public to access from outside)
+    public static final String KEY_NAME = "name";
+    // Email address (make variable public to access from outside)
+    public static final String KEY_EMAIL = "email";
+    // Avatar's image decodable string
+    public static final String KEY_AVATAR = "avatar";
+    // remember me
+    public static final String KEY_REMEMBER_TOKEN = "rememberToken";
+    private String mEmail, mOldPassword, mNewPassword, mPasswordConfirmation, mFullName, mAvatar,
+            mRememberToken;
+    private EditText mEtemail, mEtOldPassword, mEtNewPassword, mEtPasswordConfirmation,
+            mEtFullName;
+    private ImageView mIvAvatar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_profile);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setLogo(R.mipmap.ic_launcher);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        /*session = new SessionManager(getApplicationContext());
-        session.checkLogin();*/
-        avatar = (ImageView) findViewById(R.id.image_upload_avatar);
-        avatar.setOnClickListener(new View.OnClickListener() {
+        setUpActionBar();
+        initializeViews();
+        // Session class instance
+        session = new SessionManager(getApplicationContext());
+        user = session.getUserDetails();
+        mEtemail.setText(user.get(KEY_EMAIL));
+        mEtFullName.setText(user.get(KEY_NAME));
+        if (!user.get(KEY_AVATAR).equals("")) mIvAvatar.setImageBitmap(BitmapFactory.decodeFile(user
+                .get(KEY_AVATAR)));
+        imgDecodableString = user.get(KEY_AVATAR);
+        mRememberToken = user.get(KEY_REMEMBER_TOKEN);
+        mIvAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 loadImageFromGallery(v);
             }
         });
+    }
+
+    private void initializeViews() {
+        mEtemail = (EditText) findViewById(R.id.edit_text_email);
+        mEtOldPassword = (EditText) findViewById(R.id.edit_text_old_password);
+        mEtNewPassword = (EditText) findViewById(R.id.edit_text_new_password);
+        mEtPasswordConfirmation = (EditText) findViewById(R.id.edit_text_retype_password);
+        mEtFullName = (EditText) findViewById(R.id.edit_text_full_name);
+        mIvAvatar = (ImageView) findViewById(R.id.image_upload_avatar);
+    }
+
+    private void setUpActionBar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setLogo(R.mipmap.ic_launcher);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     public void loadImageFromGallery(View view) {
@@ -73,9 +109,8 @@ public class UpdateProfileActivity extends AppCompatActivity {
                 int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                 imgDecodableString = cursor.getString(columnIndex);
                 cursor.close();
-                ImageView imgView = (ImageView) findViewById(R.id.image_upload_avatar);
                 // Set the Image in ImageView after decoding the String
-                imgView.setImageBitmap(BitmapFactory
+                mIvAvatar.setImageBitmap(BitmapFactory
                         .decodeFile(imgDecodableString));
             } else {
                 Toast.makeText(this, "You haven't picked Image",
@@ -98,17 +133,32 @@ public class UpdateProfileActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             // Respond to the action bar's Up/Home button
             case android.R.id.home:
-                new HttpAsyncTaskSignOut().execute("https://manh-nt.herokuapp.com/logout.json");
+                Intent i = new Intent(getApplicationContext(), ProfileActivity.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(i);
+                finish();
                 return true;
             // Respond to the action bar's 'Done' button
             case R.id.action_update:
-                /*Toast.makeText(getApplicationContext(), "Will be implemented later", Toast
-                        .LENGTH_LONG).show();*/
-                new HttpAsyncTaskUpdateProfile().execute("https://manh-nt.herokuapp.com/users/1" +
-                        ".json");
+                mEmail = mEtemail.getText().toString();
+                mOldPassword = mEtOldPassword.getText().toString();
+                mNewPassword = mEtNewPassword.getText().toString();
+                mPasswordConfirmation = mEtPasswordConfirmation.getText().toString();
+                mFullName = mEtFullName.getText().toString();
+                new HttpAsyncTaskUpdateProfile().execute("https://manh-nt.herokuapp.com/users/1.json");
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent i = new Intent(getApplicationContext(), ProfileActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(i);
+        finish();
     }
 
     private class HttpAsyncTaskUpdateProfile extends AsyncTask<String, Void, String> {
@@ -128,7 +178,16 @@ public class UpdateProfileActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(String... urls) {
             Profile profile = new Profile();
+            profile.setName(mFullName);
+            profile.setOld_password(mOldPassword);
+            profile.setNew_password(mNewPassword);
+            profile.setAvatar(imgDecodableString);
+            profile.setRememberToken(mRememberToken);
             UserFunctions userFunction = new UserFunctions();
+            Log.e(TAG, mFullName);
+            Log.e(TAG, mEmail);
+            Log.e(TAG, imgDecodableString);
+            Log.e(TAG, mRememberToken);
             return userFunction.updateProfile(urls[0], profile);
         }
 
@@ -136,39 +195,11 @@ public class UpdateProfileActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             mDialog.dismiss();
-            Log.e(TAG, result);
-            Toast.makeText(getBaseContext(), result, Toast.LENGTH_LONG).show();
-        }
-    }
-
-    private class HttpAsyncTaskSignOut extends AsyncTask<String, Void, String> {
-        private ProgressDialog mDialog;
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            mDialog = new ProgressDialog(UpdateProfileActivity.this);
-            mDialog.setTitle("Contacting Servers");
-            mDialog.setMessage("Signing out ...");
-            mDialog.setIndeterminate(false);
-            mDialog.setCancelable(true);
-            mDialog.show();
-        }
-
-        @Override
-        protected String doInBackground(String... urls) {
-            UserFunctions userFunction = new UserFunctions();
-            return userFunction.signOut(urls[0]);
-        }
-
-        // onPostExecute displays the results of the AsyncTask.
-        @Override
-        protected void onPostExecute(String result) {
-            mDialog.dismiss();
-            if (result.equals("Logout success")) {
-                SessionManager session = new SessionManager(getApplicationContext());
-                session.logoutUser();
-            }
+            // deleting current session
+            session.deleteSessionData();
+            // creating new session with updated data
+            session.createLoginSession(mFullName, mEmail, imgDecodableString, user.get
+                    (KEY_REMEMBER_TOKEN));
             Log.e(TAG, result);
             Toast.makeText(getBaseContext(), result, Toast.LENGTH_LONG).show();
         }

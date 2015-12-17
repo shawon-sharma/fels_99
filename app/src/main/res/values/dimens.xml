@@ -30,7 +30,7 @@
     <dimen name="upload_avatar_width_and_height">200dp</dimen>
     <dimen name="img_layout_height">50dp</dimen>
     <dimen name="img_layout_width">100dp</dimen>
-    <dimen name="person_layout_marginleft">10dp</dimen>
+    <dimen name="person_layout_marginleft">25dp</dimen>
     <dimen name="person_layout_marginright">15dp</dimen>
     <dimen name="person_layout_margintop">26dp</dimen>
 
@@ -49,6 +49,6 @@
     <dimen name="desc_textview_layout_textsize">10sp</dimen>
     <dimen name="profile_list_imageview_size">5dp</dimen>
     <dimen name="content_profile_linear1_paddingtop">50dp</dimen>
-    <dimen name="content_profile_scrollview_weight">1</dimen>
+    <dimen name="content_profile_scrollview_weight">1dp</dimen>
 
 </resources>

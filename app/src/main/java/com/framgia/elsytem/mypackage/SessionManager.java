@@ -35,6 +35,12 @@ public class SessionManager {// Shared Preferences
     // Email address (make variable public to access from outside)
     public static final String KEY_EMAIL = "email";
 
+    // Avatar's image decodable string
+    public static final String KEY_AVATAR = "avatar";
+
+    // remember me
+    public static final String KEY_REMEMBER_TOKEN = "rememberToken";
+
     // Constructor
     public SessionManager(Context context) {
         this._context = context;
@@ -45,7 +51,8 @@ public class SessionManager {// Shared Preferences
     /**
      * Create login session
      */
-    public void createLoginSession(String name, String email) {
+    public void createLoginSession(String name, String email, String avatar, String
+            rememberToken) {
         // Storing login value as TRUE
         editor.putBoolean(IS_LOGIN, true);
 
@@ -54,6 +61,12 @@ public class SessionManager {// Shared Preferences
 
         // Storing email in pref
         editor.putString(KEY_EMAIL, email);
+
+        // Storing avatar in pref
+        editor.putString(KEY_AVATAR, avatar);
+
+        // Storing remember me
+        editor.putString(KEY_REMEMBER_TOKEN, rememberToken);
 
         // commit changes
         editor.commit();
@@ -71,10 +84,8 @@ public class SessionManager {// Shared Preferences
             Intent i = new Intent(_context, LoginActivity.class);
             // Closing all the Activities
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
             // Add new Flag to start new Activity
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
             // Staring Login Activity
             _context.startActivity(i);
         }
@@ -91,6 +102,12 @@ public class SessionManager {// Shared Preferences
         // user email id
         user.put(KEY_EMAIL, pref.getString(KEY_EMAIL, null));
 
+        // user avatar
+        user.put(KEY_AVATAR, pref.getString(KEY_AVATAR, null));
+
+        // user remember me
+        user.put(KEY_REMEMBER_TOKEN, pref.getString(KEY_REMEMBER_TOKEN, null));
+
         // return user
         return user;
     }
@@ -102,7 +119,7 @@ public class SessionManager {// Shared Preferences
         // Clearing all data from Shared Preferences
         editor.clear();
         editor.commit();
-        // After logout redirect user to Login Activity
+        // After logout redirect user to Loing Activity
         Intent i = new Intent(_context, LoginActivity.class);
         // Closing all the Activities
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -113,10 +130,26 @@ public class SessionManager {// Shared Preferences
     }
 
     /**
+     * Delete session
+     */
+    public void deleteSessionData() {
+        editor.clear();
+        editor.commit();
+    }
+
+    /**
      * Quick check for login
      **/
     // Get Login State
     public boolean isLoggedIn() {
         return pref.getBoolean(IS_LOGIN, false);
+    }
+
+    /**
+     * Quick check for login and remember me
+     **/
+    // Get Login State
+    public boolean isLoggedInAndRemember() {
+        return pref.getBoolean(IS_LOGIN, false) && !getUserDetails().get(KEY_REMEMBER_TOKEN).isEmpty();
     }
 }

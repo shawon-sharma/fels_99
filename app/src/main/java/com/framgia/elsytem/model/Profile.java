@@ -4,7 +4,29 @@ package com.framgia.elsytem.model;
  * Created by avishek on 12/15/15.
  */
 public class Profile {
-    String email, old_password, new_password, password_confirmation;
+    String name;
+    String email;
+    String old_password;
+    String new_password;
+    String password_confirmation;
+    String avatar;
+    String rememberToken;
+
+    public String getRememberToken() {
+        return rememberToken;
+    }
+
+    public void setRememberToken(String rememberToken) {
+        this.rememberToken = rememberToken;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getEmail() {
         return email;
@@ -36,5 +58,13 @@ public class Profile {
 
     public void setPassword_confirmation(String password_confirmation) {
         this.password_confirmation = password_confirmation;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 }

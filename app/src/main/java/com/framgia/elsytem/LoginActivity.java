@@ -18,9 +18,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.framgia.elsytem.model.User;
+import com.framgia.elsytem.jsonResponse.UserResponse;
 import com.framgia.elsytem.mypackage.AlertDialogManager;
 import com.framgia.elsytem.mypackage.SessionManager;
 import com.framgia.elsytem.mypackage.UserFunctions;
+import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,6 +38,7 @@ public class LoginActivity extends AppCompatActivity {
     AlertDialogManager alert = new AlertDialogManager();
     SessionManager session;
     User user;
+    TextView register;
 
 
     Button profile;
@@ -49,19 +52,15 @@ public class LoginActivity extends AppCompatActivity {
         toolbar.setLogo(R.mipmap.ic_launcher);
         session = new SessionManager(getApplicationContext());
         // check in session if user is logged in. If so, go to profile activity
-        if (session.isLoggedIn()) {
+        if (session.isLoggedInAndRemember()) {
             //go to ProfileActivity
             // going to UpdateProfileActivity for testing purpose
-            Intent i = new Intent(getApplicationContext(), UpdateProfileActivity.class);
+            Intent i = new Intent(getApplicationContext(), ProfileActivity.class);
             startActivity(i);
             finish();
         } else {
-            TextView register = (TextView) findViewById(R.id.text_create_account);
-            email = (EditText) findViewById(R.id.edit_text_email);
-            password = (EditText) findViewById(R.id.edit_text_password);
-            validation = (TextView) findViewById(R.id.text_validation);
-            buttonLogin = (Button) findViewById(R.id.button_login);
-            checkBoxRememberMe = (CheckBox) findViewById(R.id.check_remember);
+            initializeViews();
+            session.deleteSessionData();
             alert = new AlertDialogManager();
             register.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -86,19 +85,28 @@ public class LoginActivity extends AppCompatActivity {
                         new HttpAsyncTaskSignIn().execute("https://manh-nt.herokuapp.com/login.json");
                     } else if (mEmail.equals("")) {
                         Toast.makeText(getApplicationContext(), getString(R.string
-                                        .empty_email_activity_login), Toast.LENGTH_SHORT).show();
+                                .empty_email_activity_login), Toast.LENGTH_SHORT).show();
                     } else if (mPassword.equals("")) {
                         Toast.makeText(getApplicationContext(), getString(R.string
                                 .empty_password_activity_login), Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(getApplicationContext(), getString(R.string
-                                        .empty_email_password_activity_login), Toast
+                                .empty_email_password_activity_login), Toast
                                 .LENGTH_SHORT).show();
                     }
 
                 }
             });
         }
+    }
+
+    private void initializeViews() {
+        register = (TextView) findViewById(R.id.text_create_account);
+        email = (EditText) findViewById(R.id.edit_text_email);
+        password = (EditText) findViewById(R.id.edit_text_password);
+        validation = (TextView) findViewById(R.id.text_validation);
+        buttonLogin = (Button) findViewById(R.id.button_login);
+        checkBoxRememberMe = (CheckBox) findViewById(R.id.check_remember);
     }
 
     public boolean isConnected() {
@@ -146,24 +154,28 @@ public class LoginActivity extends AppCompatActivity {
                     validation.setVisibility(View.VISIBLE);
                     Log.e(TAG + " message: ", msg);
                 } else {
+                    //getting gson data
+                    UserResponse userResponse;
+                    Gson gson = new Gson();
+                    userResponse = gson.fromJson(result, UserResponse.class);
+                    String name = userResponse.getUser().getName();
+                    String email = userResponse.getUser().getEmail();
+                    String avatar = userResponse.getUser().getAvatar();
+                    String rememberToken = userResponse.getUser().getRemember_token();
                     //creating session
-                    if (mRememberMe == 1) {
-                        String name = new JSONObject(new JSONObject(result).getString("user")).getString
-                                ("name");
-                        String email = new JSONObject(new JSONObject(result).getString("user")).getString
-                                ("email");
-                        if (!name.isEmpty() && !email.isEmpty())
-                            session.createLoginSession(name, email);
-                        Log.e(TAG + " Name: ", name);
-                        Log.e(TAG + " Email: ", email);
-                    }
+                    if (!name.isEmpty() && !email.isEmpty())
+                        session.createLoginSession(name, email, avatar, rememberToken);
+                    Log.e(TAG + " Name: ", name);
+                    Log.e(TAG + " Email: ", email);
+                    Log.e(TAG + " Avatar: ", avatar);
+                    Log.e(TAG + " Remembr: ", rememberToken);
                     //now finish this activity and go to next activity
                     //for testing purpose, I'm going to UpdateProfileActivity
-                    Intent i = new Intent(getApplicationContext(), UpdateProfileActivity.class);
+                    Intent i = new Intent(getApplicationContext(), ProfileActivity.class);
                     startActivity(i);
                     finish();
                 }
-            } catch (JSONException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             Log.e(TAG + " Message: ", result);
