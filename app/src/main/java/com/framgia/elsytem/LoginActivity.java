@@ -37,6 +37,9 @@ public class LoginActivity extends AppCompatActivity {
     SessionManager session;
     User user;
 
+
+    Button profile;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +68,7 @@ public class LoginActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     Intent i = new Intent(getApplicationContext(), RegisterActivity.class);
                     startActivity(i);
+
                 }
             });
             buttonLogin.setOnClickListener(new View.OnClickListener() {
@@ -91,6 +95,7 @@ public class LoginActivity extends AppCompatActivity {
                                         .empty_email_password_activity_login), Toast
                                 .LENGTH_SHORT).show();
                     }
+
                 }
             });
         }
