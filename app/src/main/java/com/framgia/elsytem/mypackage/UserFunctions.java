@@ -39,7 +39,7 @@ public class UserFunctions {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("email", user.getEmail());
             jsonObject.put("password", user.getPassword());
-            jsonObject.put("remember_me", isRememberMeChecked);
+            //jsonObject.put("remember_me", isRememberMeChecked);
             // 2. build parentJsonObject and put the previous object into this one
             JSONObject parentJsonObject = new JSONObject();
             parentJsonObject.put("session", jsonObject);
@@ -114,19 +114,28 @@ public class UserFunctions {
     }
 
     public String updateProfile(String url, Profile profile) {
-
         String result = "";
+        String json = "";
         try {
-            String json;
-            // 1. build jsonObject
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("id", 3);
-            json = jsonObject.toString();
+            jsonObject.put("name", profile.getName());
+            jsonObject.put("password", profile.getOld_password());
+            jsonObject.put("password_confirmation", profile.getNew_password());
+            jsonObject.put("avatar", profile.getAvatar());
+            jsonObject.put("remember_token", profile.getRememberToken());
+            JSONObject jsonObjectUser = new JSONObject();
+            jsonObjectUser.put("user", jsonObject);
+            json = jsonObjectUser.toString();
+            Log.e("Update: ", json);
             RequestBody requestBody = RequestBody.create(JSON, json);
-            Request request = new Request.Builder().url(url).post(requestBody).build();
+            Request request = new Request.Builder().url(url).patch(requestBody).build();
             Response response = okHttpClient.newCall(request).execute();
-            result = response.body().string();
+            String jsonData = response.body().string();
+            //result = new JSONObject(jsonData).getString("message");
+            result = jsonData;
+            Log.e("JSON Object: ", json);
         } catch (Exception e) {
+            Log.d("InputStream", e.getLocalizedMessage());
         }
         return result;
     }
