@@ -46,11 +46,57 @@
         android:layout_below="@+id/play"
         android:layout_marginTop="@dimen/content_question_view_margin_top"
         android:background="@color/colorAccent" />
-    <ListView
-        android:id="@+id/choice_list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+    <Button
+        android:id="@+id/choice_1"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/choice_text_height"
         android:layout_below="@+id/divider_2"
-        android:layout_marginTop="@dimen/content_question_text_margin_top">
-    </ListView>
+        android:text="@string/choice_text_1"
+        android:layout_marginTop="@dimen/choice_text_start_margin_Top"
+        android:layout_marginLeft="@dimen/choice_text_margin_left"
+        android:layout_marginRight="@dimen/choice_text_margin_right"
+        android:padding="@dimen/choice_text_padding"
+        android:background="@drawable/rec_shape"
+        android:gravity="center"
+        android:clickable="true"/>
+    <Button
+        android:id="@+id/choice_2"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/choice_text_height"
+        android:layout_below="@+id/choice_1"
+        android:text="@string/choice_text_2"
+        android:layout_marginLeft="@dimen/choice_text_margin_left"
+        android:layout_marginRight="@dimen/choice_text_margin_right"
+        android:layout_marginTop="@dimen/choice_text_margin_Top"
+        android:padding="@dimen/choice_text_padding"
+        android:background="@drawable/rec_shape"
+        android:gravity="center"
+        android:clickable="true"/>
+    <Button
+        android:id="@+id/choice_3"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/choice_text_height"
+        android:layout_below="@+id/choice_2"
+        android:text="@string/choice_text_3"
+        android:layout_marginLeft="@dimen/choice_text_margin_left"
+        android:layout_marginRight="@dimen/choice_text_margin_right"
+        android:layout_marginTop="@dimen/choice_text_margin_Top"
+        android:padding="@dimen/choice_text_padding"
+        android:background="@drawable/rec_shape"
+        android:gravity="center"
+        android:clickable="true"/>
+    <Button
+        android:id="@+id/choice_4"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/choice_text_height"
+        android:layout_below="@+id/choice_3"
+        android:text="@string/choice_text_4"
+        android:layout_marginLeft="@dimen/choice_text_margin_left"
+        android:layout_marginRight="@dimen/choice_text_margin_right"
+        android:layout_marginTop="@dimen/choice_text_margin_Top"
+        android:padding="@dimen/choice_text_padding"
+        android:background="@drawable/rec_shape"
+        android:gravity="center"
+        android:clickable="true"/>
 </RelativeLayout>
+

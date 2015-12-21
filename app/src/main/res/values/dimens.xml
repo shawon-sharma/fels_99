@@ -33,15 +33,12 @@
     <dimen name="person_layout_marginleft">25dp</dimen>
     <dimen name="person_layout_marginright">15dp</dimen>
     <dimen name="person_layout_margintop">26dp</dimen>
-
     <dimen name="em_layout_height">30dp</dimen>
     <dimen name="em_layout_width">100dp</dimen>
     <dimen name="email_textview_layout_marginleft">10dp</dimen>
     <dimen name="email_textview_layout_marginright">15dp</dimen>
     <dimen name="email_textview_layout_margintop">10dp</dimen>
     <dimen name="email_textview_layout_textsize">10sp</dimen>
-
-
     <dimen name="desc_layout_height">30dp</dimen>
     <dimen name="desc_layout_width">100dp</dimen>
     <dimen name="desc_textview_layout_marginright">15dp</dimen>
@@ -50,5 +47,9 @@
     <dimen name="profile_list_imageview_size">5dp</dimen>
     <dimen name="content_profile_linear1_paddingtop">50dp</dimen>
     <dimen name="content_profile_scrollview_weight">1dp</dimen>
+    <dimen name="choice_text_margin_left">60dp</dimen>
+    <dimen name="choice_text_margin_right">60dp</dimen>
+    <dimen name="choice_text_margin_Top">10dp</dimen>
+    <dimen name="choice_text_start_margin_Top">50dp</dimen>
 
 </resources>
