@@ -55,4 +55,12 @@
     <string name="activity_main_alert_dialog_title">Log Out</string>
     <string name="activity_main_alert_dialog_yes">Yes</string>
     <string name="activity_main_alert_dialog_no">No</string>
+    <string name="choice_text_1">choice 1</string>
+    <string name="choice_text_2">choice 2</string>
+    <string name="choice_text_3">choice 3</string>
+    <string name="choice_text_4">choice 4</string>
+    <string name="question_title">Basic Lesson</string>
+    <string name="question_alert_message">Do you want to continue with this answer???</string>
+    <string name="question_alert_positive">YES</string>
+    <string name="question_alert_negative">NO</string>
 </resources>
