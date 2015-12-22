@@ -197,9 +197,6 @@ public class LoginActivity extends AppCompatActivity {
                     //creating session
                     if (!name.isEmpty() && !email.isEmpty())
                         session.createLoginSession(name, email, avatar, rememberToken, mRememberMe);
-                    Log.e("N: ", name + " / E: " + email + " / A: " + avatar + " / RT: " +
-                            rememberToken +
-                            "/RM: " + mRememberMe);
                     //now finish this activity and go to ProfileActivity
                     Intent i = new Intent(getApplicationContext(), ProfileActivity.class);
                     startActivity(i);
