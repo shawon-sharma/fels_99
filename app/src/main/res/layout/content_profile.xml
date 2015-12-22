@@ -24,8 +24,8 @@
 
         <ImageView
             android:id="@+id/avatar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/upload_avatar_width_and_height"
+            android:layout_height="@dimen/upload_avatar_width_and_height"
             android:src="@drawable/ic_person_outline_black_36dp"
             android:layout_marginTop="@dimen/text_title_activity_login_margin_top"/>
 
