@@ -28,6 +28,8 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -51,6 +53,8 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
     int word_number = 0;
     Button[] buttons = new Button[4];
     int chosen_answer = 0;
+    String json_answer=null;
+    int lesson_id=1;
     ArrayList<Lesson.LessonEntity.WordsEntity> wordsEntityArrayList;
     ArrayList<Lesson.LessonEntity.WordsEntity.AnswersEntity> answersEntityArrayList = new ArrayList<Lesson.LessonEntity.WordsEntity.AnswersEntity>();
     @Override
@@ -119,6 +123,14 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
                         mdDatabaseHelper.createresult(wordsEntityArrayList.get(word_number).getContent(), language, answersEntityArrayList.get(chosen_answer).isIs_correct());
+                        int result_id = wordsEntityArrayList.get(word_number).getResult_id();
+                        int answer_id = answersEntityArrayList.get(chosen_answer).getId();
+                        try {
+                            json_answer = updatelesson(result_id,answer_id);
+                            new HttpAsyncUpdate().execute("https://manh-nt.herokuapp.com/lessons/"+lesson_id +".json");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                         word_number++;
                         txttword.setText(wordsEntityArrayList.get(word_number).getContent());
                         answersEntityArrayList = null;
@@ -185,9 +197,46 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
             Log.e("TTS", "Initilization Failed!");
         }
     }
+    public String updatelesson(int result_id, int answer_id) throws JSONException {
+        JSONObject parent = new JSONObject();
+        JSONObject lesson = new JSONObject();
+        lesson.put("learned", "true");
+        JSONArray jsonArray = new JSONArray();
+        JSONObject results = new JSONObject();
+        results.put("id",result_id);
+        results.put("answer_id", answer_id);
+        jsonArray.put(results);
+        lesson.put("results_attributes", jsonArray);
+        parent.put("lesson", lesson);
+        return lesson.toString();
+    }
+    private class HttpAsyncUpdate extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... urls) {
+            String json = json_answer;
+            RequestBody requestBody = RequestBody.create(JSON, json);
+            Request request = new Request.Builder().url(urls[0]).patch(requestBody).build();
+            Response response = null;
+            try {
+                response = okHttpClient.newCall(request).execute();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            String responseData = null;
+            try {
+                responseData = response.body().string();
+                Log.e("response ", responseData);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return responseData;
+        }
 
-
-
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+        }
+    }
     private class HttpAsyncLesson extends AsyncTask<String, Void,WordReturn> {
         @Override
         protected WordReturn doInBackground(String... urls) {
@@ -205,6 +254,7 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
                 Lesson.LessonEntity lessonEntity;
                 lesson = gson.fromJson(responseData, Lesson.class);
                 lessonEntity = lesson.getLesson();
+                lesson_id = lessonEntity.getId();
                 wordsEntityArrayList = (ArrayList<Lesson.LessonEntity.WordsEntity>) lessonEntity.getWords();
                 answersEntityArrayList = (ArrayList<Lesson.LessonEntity.WordsEntity.AnswersEntity>) wordsEntityArrayList.get(word_number).getAnswers();
                 String contain=wordsEntityArrayList.get(word_number).getContent();
