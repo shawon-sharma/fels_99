@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -38,6 +39,7 @@ public class ProfileActivity extends AppCompatActivity {
     TextView name, email;
     SessionManager session;
     Constants constant;
+    Button lesson;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +51,13 @@ public class ProfileActivity extends AppCompatActivity {
         SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
         formattedDate[0] = df.format(c.getTime());
         ViewAdapter v = new ViewAdapter(this, formattedDate);
+        lesson=(Button)findViewById(R.id.lesson_btn);
+        lesson.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplication(),QuestionActivity.class));
+            }
+        });
         listViewProfile.setAdapter(v);
         editProfile.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -77,4 +77,5 @@
     <string name="question_alert_message">Do you want to continue with this answer???</string>
     <string name="question_alert_positive">YES</string>
     <string name="question_alert_negative">NO</string>
+    <string name="question_language">English</string>
 </resources>
