@@ -84,7 +84,6 @@ public class UserFunctions {
             String jsonData = response.body().string();
             // 4. get the message from response
             result = new JSONObject(jsonData).getString("message");
-            Log.e("JSON Object: ", json);
         } catch (Exception e) {
             Log.e(constant.TAG_USER_FUNCTIONS + " I/OStream", e.getLocalizedMessage());
         }
@@ -117,18 +116,17 @@ public class UserFunctions {
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("name", profile.getName());
-            jsonObject.put("password", profile.getOld_password());
-            jsonObject.put("password_confirmation", profile.getNew_password());
+            jsonObject.put("password", profile.getNew_password());
+            jsonObject.put("password_confirmation", profile.getPassword_confirmation());
             jsonObject.put("avatar", profile.getAvatar());
-            //jsonObject.put("remember_token", profile.getRememberToken());
             JSONObject jsonObjectUser = new JSONObject();
+            jsonObjectUser.put("auth_token", profile.getAuthToken());
             jsonObjectUser.put("user", jsonObject);
             json = jsonObjectUser.toString();
             RequestBody requestBody = RequestBody.create(JSON, json);
             Request request = new Request.Builder().url(url).patch(requestBody).build();
             Response response = okHttpClient.newCall(request).execute();
             String jsonData = response.body().string();
-            //result = new JSONObject(jsonData).getString("message");
             result = jsonData;
         } catch (Exception e) {
             Log.e(constant.TAG_USER_FUNCTIONS + " I/OStream", e.getLocalizedMessage());

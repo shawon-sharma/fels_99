@@ -4,13 +4,14 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,6 +27,9 @@ import com.framgia.elsytem.mypackage.Constants;
 import com.framgia.elsytem.mypackage.SessionManager;
 import com.framgia.elsytem.mypackage.UserFunctions;
 
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -40,6 +44,8 @@ public class ProfileActivity extends AppCompatActivity {
     SessionManager session;
     Constants constant;
     Button lesson;
+    Bitmap bitmap;
+    ProgressDialog pDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,8 +77,57 @@ public class ProfileActivity extends AppCompatActivity {
         user = session.getUserDetails();
         name.setText(user.get(constant.KEY_NAME));
         email.setText(user.get(constant.KEY_EMAIL));
-        if (!TextUtils.isEmpty(user.get(constant.KEY_AVATAR))) avatar.setImageBitmap
-                (BitmapFactory.decodeFile(user.get(constant.KEY_AVATAR)));
+        if (!user.get(constant.KEY_AVATAR).isEmpty()) {
+            if (isUrl(user.get(constant.KEY_AVATAR))) {
+                new LoadImage().execute(user.get(constant.KEY_AVATAR));
+            } else avatar.setImageBitmap(BitmapFactory.decodeFile(user.get(constant.KEY_AVATAR)));
+        }
+    }
+
+    /**
+     * Checks if avatar is a url
+     */
+    public boolean isUrl(String avatar) {
+        URL url = null;
+        try {
+            url = new URL(avatar);
+        } catch (MalformedURLException e) {
+            Log.v(TAG, e.toString());
+        }
+        return url != null;
+    }
+
+    /**
+     * AsyncTask class for Loading Image from a url
+     */
+    private class LoadImage extends AsyncTask<String, String, Bitmap> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(ProfileActivity.this);
+            pDialog.setMessage(getString(R.string.please_wait));
+            pDialog.show();
+        }
+
+        protected Bitmap doInBackground(String... args) {
+            try {
+                bitmap = BitmapFactory.decodeStream((InputStream) new URL(args[0]).getContent());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return bitmap;
+        }
+
+        protected void onPostExecute(Bitmap image) {
+            if (image != null) {
+                avatar.setImageBitmap(image);
+                pDialog.dismiss();
+            } else {
+                pDialog.dismiss();
+                Toast.makeText(getApplicationContext(), getString(R.string
+                        .toast_message_load_image_error), Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     private void initializeViews() {

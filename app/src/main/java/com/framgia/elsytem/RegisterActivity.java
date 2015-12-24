@@ -76,7 +76,7 @@ public class RegisterActivity extends AppCompatActivity {
                     Toast.makeText(getBaseContext(), "Provide the required information!", Toast
                             .LENGTH_LONG).show();
                     // call AsyncTask to perform network operation on separate thread
-                else new HttpAsyncTask().execute("https://manh-nt.herokuapp.com/users.json");
+                else new HttpAsyncTask().execute(getString(R.string.url_sign_up));
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -126,7 +126,7 @@ public class RegisterActivity extends AppCompatActivity {
         protected void onPostExecute(String result) {
             mDialog.dismiss();
             Toast.makeText(getBaseContext(), result, Toast.LENGTH_LONG).show();
-            if (result.equals("Sign up success")) {
+            if (result.equals(getString(R.string.sign_up_response))) {
                 finish();
             }
         }
