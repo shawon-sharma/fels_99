@@ -84,4 +84,5 @@
     <string name="question_alert_positive">YES</string>
     <string name="question_alert_negative">NO</string>
     <string name="question_language">English</string>
+    <string name="question_done">You are done with all the question,click done to see result</string>
 </resources>
