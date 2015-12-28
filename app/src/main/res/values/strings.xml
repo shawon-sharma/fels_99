@@ -84,5 +84,8 @@
     <string name="question_alert_positive">YES</string>
     <string name="question_alert_negative">NO</string>
     <string name="question_language">English</string>
-    <string name="question_done">You are done with all the question,click done to see result</string>
+    <string name="title_activity_categories">CategoriesActivity</string>
+    <string name="action_back">Back</string>
+    <string name="categoriesactivity_settitle">Loading Categories</string>
+    <string name="title_activity_learned">LearnedActivity</string>
 </resources>

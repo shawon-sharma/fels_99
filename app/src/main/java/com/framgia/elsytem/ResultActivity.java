@@ -7,7 +7,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.framgia.elsytem.model.Result;
 
@@ -18,7 +17,6 @@ public class ResultActivity extends AppCompatActivity {
     ListView resultlist;
     ArrayList<Result> arrayList;
     ArrayAdapter<Result> resAdapter;
-    TextView correct;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,11 +24,8 @@ public class ResultActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         resultlist=(ListView)findViewById(R.id.result_list);
-        correct=(TextView)findViewById(R.id.correctnumber);
         databaseHelper=new DatabaseHelper(this);
         arrayList=databaseHelper.getresult();
-        long number_correct=databaseHelper.getCorrectAnswers();
-        correct.setText(number_correct+"/"+arrayList.size());
         resAdapter=new ResultAdapter(getApplication(),arrayList);
         resultlist.setAdapter(resAdapter);
     }
@@ -52,5 +47,4 @@ public class ResultActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
 }

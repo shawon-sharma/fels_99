@@ -3,7 +3,6 @@ package com.framgia.elsytem;
 import com.framgia.elsytem.model.Lesson;
 
 import java.util.ArrayList;
-
 /**
  * Created by ahsan on 12/23/15.
  */

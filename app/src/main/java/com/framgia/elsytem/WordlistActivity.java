@@ -158,7 +158,4 @@ public String getwords() throws JSONException {
 
     return  result;
 }
-
-
-
 }
