@@ -18,12 +18,14 @@
         android:layout_height="wrap_content"
         android:text="@string/result_word_name_text"
         android:layout_marginLeft="15dp"
-        android:layout_alignBaseline="@+id/sign"/>
+        android:layout_alignBaseline="@+id/sign"
+        android:textColor="@color/primary_text"/>
     <TextView
         android:id="@+id/language"
         android:text="@string/result_language_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="@dimen/result_text_marginRight"/>
+        android:layout_marginRight="@dimen/result_text_marginRight"
+        android:textColor="@color/primary_text"/>
 </RelativeLayout>
