@@ -61,6 +61,7 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
     HashMap<String, String> user;
     String token;
     int lesson_id=1;
+    TextView questions;
     private com.framgia.elsytem.mypackage.Constants mConstant;
     ArrayList<Lesson.LessonEntity.WordsEntity> wordsEntityArrayList;
     ArrayList<Lesson.LessonEntity.WordsEntity.AnswersEntity> answersEntityArrayList = new ArrayList<Lesson.LessonEntity.WordsEntity.AnswersEntity>();
@@ -74,6 +75,7 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setTitle(R.string.question_title);
         mdDatabaseHelper = new DatabaseHelper(this);
+        questions=(TextView)findViewById(R.id.question_number);
         sessionManager = new SessionManager(this);
         user = sessionManager.getUserDetails();
         token = user.get(mConstant.KEY_AUTH_TOKEN);
@@ -145,6 +147,7 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
                         word_number++;
                         if (word_number < wordsEntityArrayList.size()) {
                             txttword.setText(wordsEntityArrayList.get(word_number).getContent());
+                            questions.setText(word_number+"/"+wordsEntityArrayList.size());
                             answersEntityArrayList = null;
                             answersEntityArrayList = (ArrayList<Lesson.LessonEntity.WordsEntity.AnswersEntity>) wordsEntityArrayList.get(word_number).getAnswers();
                             if (answersEntityArrayList.size() > 0) {
@@ -306,6 +309,7 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
         protected void onPostExecute(WordReturn wordReturn) {
             mDialog.dismiss();
             txttword.setText(wordReturn.contain);
+            questions.setText(word_number+"/"+wordsEntityArrayList.size());
             ArrayList<Lesson.LessonEntity.WordsEntity.AnswersEntity>answers=wordReturn.answersEntities;
             for (int j = 0; j <answers.size(); j++) {
                 buttons[j].setText(answers.get(j).getContent());

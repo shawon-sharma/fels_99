@@ -97,6 +97,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         return arrayList;
     }
+
+    public long getCorrectAnswers(){
+        SQLiteDatabase database=this.getReadableDatabase();
+        long correct=0;
+        ArrayList<Result> arrayList=new ArrayList<Result>();
+        String query="Select * from "+TABLE_RESULT+" where "+FIELD_STATE+" = " +"1";
+        Cursor cursor = database.rawQuery(query, null);
+        if(cursor!=null & cursor.getCount()>0){
+             correct=cursor.getCount();
+        }
+        return correct;
+    }
+
     /**
      * closing database
      */
