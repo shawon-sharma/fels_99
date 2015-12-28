@@ -10,14 +10,14 @@ public class Profile {
     String new_password;
     String password_confirmation;
     String avatar;
-    String rememberToken;
+    String authToken;
 
-    public String getRememberToken() {
-        return rememberToken;
+    public String getAuthToken() {
+        return authToken;
     }
 
-    public void setRememberToken(String rememberToken) {
-        this.rememberToken = rememberToken;
+    public void setAuthToken(String authToken) {
+        this.authToken = authToken;
     }
 
     public String getName() {

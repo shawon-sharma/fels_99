@@ -13,7 +13,6 @@ import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -80,20 +79,22 @@ public class LoginActivity extends AppCompatActivity {
                     if (!isConnected())
                         mShowDialog(LoginActivity.this, getString(R.string
                                         .connection_error_title_activity_login),
-                                getString(R.string.connection_error_message_activity_login), false);
+                                getString(R.string.connection_error_message_activity_login),
+                                false);
                     if (!mEmail.isEmpty() && !mPassword.isEmpty()) {
                         new HttpAsyncTaskSignIn().execute(getString(R.string
                                 .url_login));
                     } else if (mEmail.isEmpty()) {
                         Toast.makeText(getApplicationContext(), getString(R.string
-                                .empty_email_activity_login), Toast.LENGTH_SHORT).show();
+                                .empty_email_activity_login), Toast
+                                .LENGTH_SHORT).show();
                     } else if (mPassword.isEmpty()) {
                         Toast.makeText(getApplicationContext(), getString(R.string
-                                .empty_password_activity_login), Toast.LENGTH_SHORT).show();
+                                .empty_password_activity_login), Toast
+                                .LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(getApplicationContext(), getString(R.string
-                                .empty_email_password_activity_login), Toast
-                                .LENGTH_SHORT).show();
+                                .empty_email_password_activity_login), Toast.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -189,14 +190,15 @@ public class LoginActivity extends AppCompatActivity {
                     UserResponse userResponse;
                     Gson gson = new Gson();
                     userResponse = gson.fromJson(result, UserResponse.class);
+                    int id = userResponse.getUser().getId();
                     String name = userResponse.getUser().getName();
                     String email = userResponse.getUser().getEmail();
                     String avatar = userResponse.getUser().getAvatar();
-                    //String rememberToken = userResponse.getUser().getRemember_token();
-                    String rememberToken = "";
+                    String authToken = userResponse.getUser().getAuth_token();
                     //creating session
                     if (!name.isEmpty() && !email.isEmpty())
-                        session.createLoginSession(name, email, avatar, rememberToken, mRememberMe);
+                        session.createLoginSession(id, name, email, avatar, authToken,
+                                mRememberMe);
                     //now finish this activity and go to ProfileActivity
                     Intent i = new Intent(getApplicationContext(), ProfileActivity.class);
                     startActivity(i);

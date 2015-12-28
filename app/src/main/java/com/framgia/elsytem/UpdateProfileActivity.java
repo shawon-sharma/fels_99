@@ -3,6 +3,7 @@ package com.framgia.elsytem;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -10,6 +11,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,11 +19,16 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.framgia.elsytem.jsonResponse.UserResponse;
 import com.framgia.elsytem.model.Profile;
 import com.framgia.elsytem.mypackage.Constants;
 import com.framgia.elsytem.mypackage.SessionManager;
 import com.framgia.elsytem.mypackage.UserFunctions;
+import com.google.gson.Gson;
 
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 
 public class UpdateProfileActivity extends AppCompatActivity {
@@ -31,12 +38,14 @@ public class UpdateProfileActivity extends AppCompatActivity {
     // Session Manager Class
     SessionManager session;
     HashMap<String, String> user;
-    private String mEmail, mOldPassword, mNewPassword, mPasswordConfirmation, mFullName, mAvatar,
-            mRememberToken;
+    private String mId, mEmail, mOldPassword, mNewPassword, mPasswordConfirmation, mFullName,
+            mAvatar, mAuthToken;
     private EditText mEtemail, mEtOldPassword, mEtNewPassword, mEtPasswordConfirmation,
             mEtFullName;
     private ImageView mIvAvatar;
     private Constants mConstant;
+    Bitmap bitmap;
+    ProgressDialog pDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,17 +58,65 @@ public class UpdateProfileActivity extends AppCompatActivity {
         user = session.getUserDetails();
         mEtemail.setText(user.get(mConstant.KEY_EMAIL));
         mEtFullName.setText(user.get(mConstant.KEY_NAME));
-        if (!user.get(mConstant.KEY_AVATAR).isEmpty())
-            mIvAvatar.setImageBitmap(BitmapFactory.decodeFile
-                    (user.get(mConstant.KEY_AVATAR)));
         imgDecodableString = user.get(mConstant.KEY_AVATAR);
-        mRememberToken = user.get(mConstant.KEY_REMEMBER_TOKEN);
+        if (!imgDecodableString.isEmpty()) {
+            if (isUrl(imgDecodableString)) {
+                new LoadImage().execute(imgDecodableString);
+            } else mIvAvatar.setImageBitmap(BitmapFactory.decodeFile(imgDecodableString));
+        }
+        mAuthToken = user.get(mConstant.KEY_AUTH_TOKEN);
         mIvAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 loadImageFromGallery(v);
             }
         });
+    }
+
+    /**
+     * Checks if avatar is a url
+     */
+    public boolean isUrl(String avatar) {
+        URL url = null;
+        try {
+            url = new URL(avatar);
+        } catch (MalformedURLException e) {
+            Log.v(TAG, e.toString());
+        }
+        return url != null;
+    }
+
+    /**
+     * AsyncTask class for Loading Image from a url
+     */
+    private class LoadImage extends AsyncTask<String, String, Bitmap> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(UpdateProfileActivity.this);
+            pDialog.setMessage(getString(R.string.please_wait));
+            pDialog.show();
+        }
+
+        protected Bitmap doInBackground(String... args) {
+            try {
+                bitmap = BitmapFactory.decodeStream((InputStream) new URL(args[0]).getContent());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return bitmap;
+        }
+
+        protected void onPostExecute(Bitmap image) {
+            if (image != null) {
+                mIvAvatar.setImageBitmap(image);
+                pDialog.dismiss();
+            } else {
+                pDialog.dismiss();
+                Toast.makeText(getApplicationContext(), getString(R.string
+                        .toast_message_load_image_error), Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     private void initializeViews() {
@@ -135,12 +192,14 @@ public class UpdateProfileActivity extends AppCompatActivity {
                 return true;
             // Respond to the action bar's 'Done' button
             case R.id.action_update:
+                mId = session.getUserDetails().get(mConstant.KEY_ID);
                 mEmail = mEtemail.getText().toString();
                 mOldPassword = mEtOldPassword.getText().toString();
                 mNewPassword = mEtNewPassword.getText().toString();
                 mPasswordConfirmation = mEtPasswordConfirmation.getText().toString();
                 mFullName = mEtFullName.getText().toString();
-                new HttpAsyncTaskUpdateProfile().execute(getString(R.string.url_update_profile));
+                new HttpAsyncTaskUpdateProfile().execute(getString(R.string.url_update_profile)
+                        + mId + ".json");
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -173,10 +232,11 @@ public class UpdateProfileActivity extends AppCompatActivity {
         protected String doInBackground(String... urls) {
             Profile profile = new Profile();
             profile.setName(mFullName);
-            profile.setOld_password(mOldPassword);
+            profile.setEmail(mEmail);
             profile.setNew_password(mNewPassword);
+            profile.setPassword_confirmation(mPasswordConfirmation);
             profile.setAvatar(imgDecodableString);
-            profile.setRememberToken(mRememberToken);
+            profile.setAuthToken(mAuthToken);
             UserFunctions userFunction = new UserFunctions();
             return userFunction.updateProfile(urls[0], profile);
         }
@@ -185,13 +245,23 @@ public class UpdateProfileActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             mDialog.dismiss();
-            // deleting current session
-            session.deleteSessionData();
-            // creating new session with updated data
-            session.createLoginSession(mFullName, mEmail, imgDecodableString, user.get
-                    (mConstant.KEY_REMEMBER_TOKEN), Integer.parseInt(user.get(mConstant
-                    .KEY_REMEMBER_ME)));
-            Toast.makeText(getBaseContext(), result, Toast.LENGTH_LONG).show();
+            UserResponse userResponse;
+            Gson gson = new Gson();
+            userResponse = gson.fromJson(result, UserResponse.class);
+            int id = 0;
+            try {
+                id = userResponse.getUser().getId();
+            } catch (Exception e) {
+            }
+            if (id == Integer.parseInt(user.get(mConstant.KEY_ID))) {
+                // deleting current session
+                session.deleteSessionData();
+                // creating new session with updated data
+                session.createLoginSession(Integer.parseInt(mId), mFullName, mEmail,
+                        imgDecodableString, user.get(mConstant.KEY_AUTH_TOKEN), Integer.parseInt
+                                (user.get(mConstant.KEY_REMEMBER_ME)));
+                Toast.makeText(getBaseContext(), getString(R.string.toast_message_update_successful), Toast.LENGTH_LONG).show();
+            } else Toast.makeText(getBaseContext(), result, Toast.LENGTH_LONG).show();
         }
     }
 }
