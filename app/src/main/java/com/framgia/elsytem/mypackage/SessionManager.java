@@ -36,10 +36,12 @@ public class SessionManager {// Shared Preferences
     /**
      * Create login session
      */
-    public void createLoginSession(String name, String email, String avatar, String
+    public void createLoginSession(int id, String name, String email, String avatar, String
             rememberToken, int rememberMe) {
         // Storing login value as TRUE
         editor.putBoolean(IS_LOGIN, true);
+        // storing user id in pref
+        editor.putString(mConstants.KEY_ID, Integer.toString(id));
         // Storing name in pref
         editor.putString(mConstants.KEY_NAME, name);
         // Storing email in pref
@@ -47,7 +49,7 @@ public class SessionManager {// Shared Preferences
         // Storing avatar in pref
         editor.putString(mConstants.KEY_AVATAR, avatar);
         // Storing remember token
-        editor.putString(mConstants.KEY_REMEMBER_TOKEN, rememberToken);
+        editor.putString(mConstants.KEY_AUTH_TOKEN, rememberToken);
         // Storing remember me
         editor.putString(mConstants.KEY_REMEMBER_ME, Integer.toString(rememberMe));
         // commit changes
@@ -71,6 +73,8 @@ public class SessionManager {// Shared Preferences
      */
     public HashMap<String, String> getUserDetails() {
         HashMap<String, String> user = new HashMap<String, String>();
+        // user id
+        user.put(mConstants.KEY_ID, pref.getString(mConstants.KEY_ID, null));
         // user name
         user.put(mConstants.KEY_NAME, pref.getString(mConstants.KEY_NAME, null));
         // user email id
@@ -78,7 +82,7 @@ public class SessionManager {// Shared Preferences
         // user avatar
         user.put(mConstants.KEY_AVATAR, pref.getString(mConstants.KEY_AVATAR, null));
         // user remember token
-        user.put(mConstants.KEY_REMEMBER_TOKEN, pref.getString(mConstants.KEY_REMEMBER_TOKEN, null));
+        user.put(mConstants.KEY_AUTH_TOKEN, pref.getString(mConstants.KEY_AUTH_TOKEN, null));
         // user remember me
         user.put(mConstants.KEY_REMEMBER_ME, pref.getString(mConstants.KEY_REMEMBER_ME, null));
         // return user

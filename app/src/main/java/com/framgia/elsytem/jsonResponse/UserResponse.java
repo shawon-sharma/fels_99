@@ -8,14 +8,15 @@ import java.util.List;
 public class UserResponse {
 
     /**
-     * id : 106
-     * name : Abu Khalid
-     * email : khalid@gmail.com
-     * admin : false
-     * created_at : 2015-12-15T06:02:47.388Z
-     * updated_at : 2015-12-18T10:18:42.106Z
-     * avatar :
-     * activities : [{"id":39,"content":"Sign up","created_at":"2015-12-15T06:02:47.594Z"},{"id":43,"content":"Login","created_at":"2015-12-15T06:23:21.723Z"},{"id":174,"content":"Login","created_at":"2015-12-17T05:08:21.362Z"},{"id":175,"content":"Login","created_at":"2015-12-17T05:14:50.476Z"},{"id":200,"content":"Login","created_at":"2015-12-17T10:21:20.553Z"},{"id":201,"content":"Login","created_at":"2015-12-17T10:29:43.516Z"},{"id":208,"content":"Login","created_at":"2015-12-17T11:09:45.336Z"},{"id":209,"content":"Login","created_at":"2015-12-17T11:14:05.295Z"},{"id":210,"content":"Login","created_at":"2015-12-17T11:15:10.753Z"},{"id":211,"content":"Login","created_at":"2015-12-17T11:39:37.738Z"},{"id":213,"content":"Login","created_at":"2015-12-17T12:02:56.451Z"},{"id":214,"content":"Login","created_at":"2015-12-17T12:05:09.822Z"},{"id":215,"content":"Login","created_at":"2015-12-17T12:07:25.468Z"},{"id":225,"content":"Login","created_at":"2015-12-17T12:40:28.973Z"},{"id":239,"content":"Login","created_at":"2015-12-18T10:18:42.119Z"}]
+     * id : 1
+     * name : Nguyen Tien Manh
+     * email : example@railstutorial.org
+     * avatar : https://manh-nt.herokuapp.com/uploads/user/avatar/1/Screenshot_from_2015-12-14_14_47_00.png
+     * admin : true
+     * auth_token : E6nAVPWqAsMH0hvTquTipg
+     * created_at : 2015-12-11T03:30:31.000Z
+     * updated_at : 2015-12-11T04:09:51.000Z
+     * activities : [{"id":1,"content":"Logout","created_at":"2015-12-11T03:37:06.000Z"},{"id":2,"content":"Login","created_at":"2015-12-11T03:37:08.000Z"}]
      */
 
     private UserEntity user;
@@ -32,14 +33,15 @@ public class UserResponse {
         private int id;
         private String name;
         private String email;
+        private String avatar;
         private boolean admin;
+        private String auth_token;
         private String created_at;
         private String updated_at;
-        private String avatar;
         /**
-         * id : 39
-         * content : Sign up
-         * created_at : 2015-12-15T06:02:47.594Z
+         * id : 1
+         * content : Logout
+         * created_at : 2015-12-11T03:37:06.000Z
          */
 
         private List<ActivitiesEntity> activities;
@@ -56,8 +58,16 @@ public class UserResponse {
             this.email = email;
         }
 
+        public void setAvatar(String avatar) {
+            this.avatar = avatar;
+        }
+
         public void setAdmin(boolean admin) {
             this.admin = admin;
+        }
+
+        public void setAuth_token(String auth_token) {
+            this.auth_token = auth_token;
         }
 
         public void setCreated_at(String created_at) {
@@ -66,10 +76,6 @@ public class UserResponse {
 
         public void setUpdated_at(String updated_at) {
             this.updated_at = updated_at;
-        }
-
-        public void setAvatar(String avatar) {
-            this.avatar = avatar;
         }
 
         public void setActivities(List<ActivitiesEntity> activities) {
@@ -88,8 +94,16 @@ public class UserResponse {
             return email;
         }
 
+        public String getAvatar() {
+            return avatar;
+        }
+
         public boolean isAdmin() {
             return admin;
+        }
+
+        public String getAuth_token() {
+            return auth_token;
         }
 
         public String getCreated_at() {
@@ -98,10 +112,6 @@ public class UserResponse {
 
         public String getUpdated_at() {
             return updated_at;
-        }
-
-        public String getAvatar() {
-            return avatar;
         }
 
         public List<ActivitiesEntity> getActivities() {
