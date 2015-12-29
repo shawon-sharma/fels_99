@@ -54,9 +54,14 @@ public class LoginActivity extends AppCompatActivity {
         // check in session if user is logged in. If so, go to profile activity
         if (session.isLoggedInAndRemember()) {
             //go to ProfileActivity
-            Intent i = new Intent(getApplicationContext(), ProfileActivity.class);
+            /*Intent i = new Intent(getApplicationContext(), ProfileActivity.class);
+            startActivity(i);
+            finish();*/
+            //must remove
+            Intent i = new Intent(getApplicationContext(), LearnedActivity.class);
             startActivity(i);
             finish();
+
         } else {
             initializeViews();
             session.deleteSessionData();

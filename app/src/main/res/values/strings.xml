@@ -88,4 +88,5 @@
     <string name="action_back">Back</string>
     <string name="categoriesactivity_settitle">Loading Categories</string>
     <string name="title_activity_learned">LearnedActivity</string>
+    <string name="question_done">You are done with all the question,click done to see result</string>
 </resources>
