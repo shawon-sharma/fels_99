@@ -58,7 +58,7 @@
         <activity
             android:name=".LearnedActivity"
             android:label="@string/title_activity_learned"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>
