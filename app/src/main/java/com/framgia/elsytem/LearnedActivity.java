@@ -16,11 +16,7 @@ import com.google.gson.Gson;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -57,26 +53,13 @@ public class LearnedActivity extends AppCompatActivity {
         new HttpAsyncCategory().execute("https://manh-nt.herokuapp.com/words.json?category_id=5&option=all_word");
     }
 
-    public String createjson(String token) throws JSONException {
-        JSONObject object = new JSONObject();
-
-        object.put("category_id",5);
-        object.put("option","all_word");
-        object.put("page", pageno);
-        object.put("auth_token", token);
-        Log.e("token ", token + " / " + object.toString());
-        return object.toString();
-    }
-
     private class HttpAsyncCategory extends AsyncTask<String, Void, ArrayList<WordResponse.WordsEntity>> {
         private ProgressDialog mDialog;
 
         @Override
         protected ArrayList<WordResponse.WordsEntity> doInBackground(String... urls) {
             try {
-                String json = null;
-                json = createjson(token);
-                RequestBody requestBody = RequestBody.create(JSON, json);
+
                 Request request = new Request.Builder().url(urls[0]).get().build();
                 Response response = null;
                 String responseData = null;
@@ -89,8 +72,6 @@ public class LearnedActivity extends AppCompatActivity {
                 WordResponse wa = gson.fromJson(responseData, WordResponse.class);
                 wordName = (ArrayList<WordResponse.WordsEntity>)wa.getWords();
             } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
                 e.printStackTrace();
             }
             return wordName;
