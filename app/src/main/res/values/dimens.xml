@@ -56,5 +56,5 @@
     <dimen name="categoryrowborder_stroke_width">5dp</dimen>
     <dimen name="categoryrowborder_padding">5dp</dimen>
     <dimen name="categoryrowborder_corner_radius">8dp</dimen>
-    <dimen name="result_wordname_layoutmarginleft">15dp</dimen>
+    <dimen name="result_word_name_layout_margin_left">15dp</dimen>
 </resources>

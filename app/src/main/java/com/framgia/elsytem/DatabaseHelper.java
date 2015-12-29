@@ -33,7 +33,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     private static final String CREATE_TABLE_RESULT = "CREATE TABLE " + TABLE_RESULT
             + "(" + FIELD_ID + " INTEGER PRIMARY KEY, " + FIELD_WORD + " " +
-            "text "+FIELD_LANGUAGE+" "+"text "+FIELD_STATE+" integer )";
+            "text, "+FIELD_LANGUAGE+" "+"text, "+FIELD_STATE+" integer )";
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -97,6 +97,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         return arrayList;
     }
+
+    public long getCorrectAnswers(){
+        SQLiteDatabase database=this.getReadableDatabase();
+        long correct=0;
+        ArrayList<Result> arrayList=new ArrayList<Result>();
+        String query="Select * from "+TABLE_RESULT+" where "+FIELD_STATE+" = " +"1";
+        Cursor cursor = database.rawQuery(query, null);
+        if(cursor!=null & cursor.getCount()>0){
+             correct=cursor.getCount();
+        }
+        return correct;
+    }
+
     /**
      * closing database
      */
