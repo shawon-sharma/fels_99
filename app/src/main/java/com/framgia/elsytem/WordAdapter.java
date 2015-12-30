@@ -7,8 +7,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.framgia.elsytem.jsonResponse.WordResponse;
-
 import java.util.ArrayList;
 
 /**
@@ -17,12 +15,14 @@ import java.util.ArrayList;
 public class WordAdapter extends BaseAdapter {
     private Context mContext;
     private LayoutInflater inflater;
-    private ArrayList<WordResponse.WordsEntity> al;
+    private ArrayList<WordReturnByCategory> al;
 
-    public WordAdapter(Context mContext, ArrayList<WordResponse.WordsEntity> al) {
+    public WordAdapter(Context mContext, ArrayList<WordReturnByCategory> al) {
+        //  super(mContext, R.layout.word, al);
         this.mContext = mContext;
         this.al = al;
     }
+
     @Override
     public int getCount() {
         return al.size();
@@ -40,13 +40,14 @@ public class WordAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        WordResponse.WordsEntity item= (WordResponse.WordsEntity) getItem(position);
-        LayoutInflater inflater= (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View row=inflater.inflate(R.layout.word,parent,false);
-        TextView title=(TextView)row.findViewById(R.id.wordid);
-        TextView name=(TextView)row.findViewById(R.id.textword);
-        title.setText(String.valueOf(item.getId()));
-        name.setText(item.getContent());
+
+        WordReturnByCategory item = (WordReturnByCategory) getItem(position);
+        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View row = inflater.inflate(R.layout.word, parent, false);
+        TextView title = (TextView) row.findViewById(R.id.wordid);
+        TextView name = (TextView) row.findViewById(R.id.textword);
+        title.setText(String.valueOf(item.getWordid()));
+        name.setText(item.getWordname());
         return row;
     }
 }

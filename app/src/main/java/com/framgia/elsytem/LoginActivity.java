@@ -24,6 +24,7 @@ import com.framgia.elsytem.jsonResponse.UserResponse;
 import com.framgia.elsytem.model.User;
 import com.framgia.elsytem.mypackage.AlertDialogManager;
 import com.framgia.elsytem.mypackage.SessionManager;
+import com.framgia.elsytem.mypackage.Url;
 import com.framgia.elsytem.mypackage.UserFunctions;
 import com.google.gson.Gson;
 
@@ -87,8 +88,7 @@ public class LoginActivity extends AppCompatActivity {
                                 getString(R.string.connection_error_message_activity_login),
                                 false);
                     if (!mEmail.isEmpty() && !mPassword.isEmpty()) {
-                        new HttpAsyncTaskSignIn().execute(getString(R.string
-                                .url_login));
+                        new HttpAsyncTaskSignIn().execute(Url.url_sign_in);
                     } else if (mEmail.isEmpty()) {
                         Toast.makeText(getApplicationContext(), getString(R.string
                                 .empty_email_activity_login), Toast
@@ -207,7 +207,7 @@ public class LoginActivity extends AppCompatActivity {
                         session.createLoginSession(id, name, email, avatar, authToken,
                                 mRememberMe);
                     //now finish this activity and go to ProfileActivity
-                    Intent i = new Intent(getApplicationContext(), LearnedActivity.class);
+                    Intent i = new Intent(getApplicationContext(), CategoriesActivity.class);
                     startActivity(i);
                     finish();
                 }

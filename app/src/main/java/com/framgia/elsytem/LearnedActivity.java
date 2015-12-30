@@ -10,12 +10,10 @@ import android.util.Log;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.framgia.elsytem.jsonResponse.CategoryResponse;
 import com.framgia.elsytem.jsonResponse.WordResponse;
 import com.framgia.elsytem.mypackage.SessionManager;
 import com.framgia.elsytem.mypackage.URL;
 import com.google.gson.Gson;
-import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
@@ -30,55 +28,55 @@ import java.util.Map;
 
 public class LearnedActivity extends AppCompatActivity {
     ListView list;
-    CategoryResponse categoryResponse;
-    CategoryAdapter categoryAdapter;
     String url = "";
-    final int pageno = 1;
     String category_id = "14";
     String option = "all_word";
-    static String page = "1";
+    String page = "1";
     Request request;
     Response response = null;
     String responseData = null;
     WordResponse wa;
+    String newURL = "";
+    int totalpage = 0;
     Gson gson;
     TextView category;
     private com.framgia.elsytem.mypackage.Constants mConstant;
-    public static final MediaType JSON = MediaType.parse("application/json;charset=utf-8");
     OkHttpClient okHttpClient;
     String token;
     SessionManager sessionManager;
     HashMap<String, String> user;
     ArrayList<WordResponse.WordsEntity> wordName = new ArrayList<>();
-    String cat;
+    ArrayList<WordResponse.WordsEntity> wordId = new ArrayList<>();
+    ArrayList<WordReturnByCategory> item = new ArrayList<>();
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_categories);
+        setContentView(R.layout.activity_learned);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         sessionManager = new SessionManager(this);
         user = sessionManager.getUserDetails();
         token = user.get(mConstant.KEY_AUTH_TOKEN);
-        category = (TextView) findViewById(R.id.textHeader);
         list = (ListView) findViewById(R.id.learned);
         okHttpClient = new OkHttpClient();
         URL ur = new URL();
-        url = ur.getUrl().toString();
+        url = ur.getWordfetchurl().toString();
+        try {
+            String newURL = shawon(page);
+            new HttpAsyncCategory().execute(newURL);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
+    public String shawon(String page) throws Exception {
         LinkedHashMap<String, String> para = new LinkedHashMap<>();
         para.put("category_id", category_id);
         para.put("option", option);
         para.put("page", page);
         para.put("auth_token", token);
-        String newURL = null;
-        try {
-            newURL = makeUrlWithParams(url, para);
-            new HttpAsyncCategory().execute(newURL);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        newURL = makeUrlWithParams(url, para);
+        return newURL;
     }
 
     public static String makeUrlWithParams(String url, LinkedHashMap<String, String> params)
@@ -112,38 +110,71 @@ public class LearnedActivity extends AppCompatActivity {
         return new_url;
     }
 
-    private class HttpAsyncCategory extends AsyncTask<String, Void, ArrayList<WordResponse
-            .WordsEntity>> {
+    private class HttpAsyncCategory extends AsyncTask<String, Void, Integer> {
         private ProgressDialog mDialog;
 
         @Override
-        protected ArrayList<WordResponse.WordsEntity> doInBackground(String... urls) {
+        protected Integer doInBackground(String... urls) {
             try {
                 request = new Request.Builder().url(urls[0]).get().build();
-
                 Log.e("token ", token);
                 response = okHttpClient.newCall(request).execute();
                 responseData = response.body().string();
                 Log.e("response ", responseData);
                 gson = new Gson();
-                 wa = gson.fromJson(responseData, WordResponse.class);
-                wordName = (ArrayList<WordResponse.WordsEntity>) wa.getWords();
-                int totalpage=wa.getTotal_pages();
-                if(totalpage>1)
-                {
-                    for(int i=2;i<=totalpage;i++)
-                    {
-                        page=String.valueOf(i);
-                        request = new Request.Builder().url(urls[0]).get().build();
-                        response = okHttpClient.newCall(request).execute();
-                        responseData = response.body().string();
-                        gson = new Gson();
-                        wa = gson.fromJson(responseData, WordResponse.class);
-                        wordName = (ArrayList<WordResponse.WordsEntity>) wa.getWords();
-                    }
-                }
-
+                wa = gson.fromJson(responseData, WordResponse.class);
+                totalpage = wa.getTotal_pages();
             } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return totalpage;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            mDialog = new ProgressDialog(LearnedActivity.this);
+            mDialog.setTitle("Learned word loading");
+            mDialog.setMessage("please wait");
+            mDialog.setIndeterminate(false);
+            mDialog.setCancelable(true);
+            mDialog.show();
+        }
+
+        @Override
+        protected void onPostExecute(Integer i) {
+            mDialog.dismiss();
+            while (i >= 1) {
+                String newURL = null;
+                try {
+                    newURL = shawon(String.valueOf(i));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                new HttpAsyncWord().execute(newURL);
+                i--;
+            }
+        }
+    }
+
+    private class HttpAsyncWord extends AsyncTask<String, Void, ArrayList<WordResponse.WordsEntity>> {
+        private ProgressDialog mDialog;
+
+        @Override
+        protected ArrayList<WordResponse.WordsEntity> doInBackground(String... urls) {
+
+            try {
+                request = new Request.Builder().url(urls[0]).get().build();
+                response = okHttpClient.newCall(request).execute();
+                responseData = response.body().string();
+                gson = new Gson();
+                wa = gson.fromJson(responseData, WordResponse.class);
+                wordName = (ArrayList<WordResponse.WordsEntity>) wa.getWords();
+                for (int j = 0; j < wordName.size(); j++) {
+                    Log.e("value", "" + wordName.get(j).getContent());
+                }
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return wordName;
@@ -162,9 +193,15 @@ public class LearnedActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(ArrayList<WordResponse.WordsEntity> wordName) {
             mDialog.dismiss();
-            WordAdapter cad = new WordAdapter(getApplication(), wordName);
-            list = (ListView) findViewById(R.id.listCategory);
+            for (int i = 0; i < wordName.size(); i++) {
+                String key = wordName.get(i).getContent();
+                Log.e("content ", key);
+                Integer value = wordName.get(i).getId();
+                item.add(new WordReturnByCategory(key, value));
+            }
+            WordAdapter cad = new WordAdapter(getApplication(), item);
             list.setAdapter(cad);
+            cad.notifyDataSetChanged();
         }
     }
 }
