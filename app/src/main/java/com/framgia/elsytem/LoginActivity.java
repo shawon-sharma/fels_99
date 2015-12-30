@@ -128,7 +128,8 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
             }
         });
-        alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.action_turn_on_cellular_data), new DialogInterface.OnClickListener() {
+        alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string
+                .action_turn_on_cellular_data), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 startActivity(new Intent(Settings.ACTION_SETTINGS));
@@ -148,7 +149,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public boolean isConnected() {
-        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Activity.CONNECTIVITY_SERVICE);
+        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Activity
+                .CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isConnected();
     }
@@ -205,7 +207,7 @@ public class LoginActivity extends AppCompatActivity {
                         session.createLoginSession(id, name, email, avatar, authToken,
                                 mRememberMe);
                     //now finish this activity and go to ProfileActivity
-                    Intent i = new Intent(getApplicationContext(), CategoriesActivity.class);
+                    Intent i = new Intent(getApplicationContext(), LearnedActivity.class);
                     startActivity(i);
                     finish();
                 }

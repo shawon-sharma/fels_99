@@ -5,9 +5,11 @@
     <TextView
         android:id="@+id/wordid"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:textColor="@color/primary_text"/>
     <TextView
         android:id="@+id/textword"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:textColor="@color/primary_text"/>
 </LinearLayout>
