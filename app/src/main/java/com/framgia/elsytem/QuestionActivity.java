@@ -1,4 +1,5 @@
 package com.framgia.elsytem;
+
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -39,6 +40,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
+
 public class QuestionActivity extends AppCompatActivity implements TextToSpeech.OnInitListener, View.OnClickListener {
     TextToSpeech mTextToSpeech;
     TextView word;
@@ -60,10 +62,9 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
     SessionManager sessionManager;
     HashMap<String, String> user;
     String token;
-    int lesson_id=1;
-    int category_id=1;
+    int lesson_id = 1;
+    int category_id = 1;
     TextView questions;
-    private com.framgia.elsytem.mypackage.Constants mConstant;
     ArrayList<Lesson.LessonEntity.WordsEntity> wordsEntityArrayList;
     ArrayList<Lesson.LessonEntity.WordsEntity.AnswersEntity> answersEntityArrayList = new ArrayList<Lesson.LessonEntity.WordsEntity.AnswersEntity>();
 
@@ -80,7 +81,7 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
         questions = (TextView) findViewById(R.id.question_number);
         sessionManager = new SessionManager(this);
         user = sessionManager.getUserDetails();
-        token = user.get(mConstant.KEY_AUTH_TOKEN);
+        token = user.get(Constants.KEY_AUTH_TOKEN);
         option_1 = (Button) findViewById(R.id.choice_1);
         option_1.setOnClickListener(this);
         buttons[0] = option_1;
@@ -105,17 +106,19 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
         Constants.PREF_STATE = getApplicationContext().getSharedPreferences("MyPref",
                 MODE_PRIVATE);
         word_number = Constants.PREF_STATE.getInt(String.valueOf(Constants.STATE), 0);
-        Intent intent=getIntent();
-        category_id=intent.getIntExtra(String.valueOf(Constants.CATEGORY_ID),1);
-        String c_id=Integer.toString(category_id);
-            String urlasync= Url.url.concat(c_id).concat(Url.url_last);
-            new HttpAsyncLesson().execute(urlasync);
+        Intent intent = getIntent();
+        category_id = intent.getIntExtra(String.valueOf(Constants.CATEGORY_ID), 1);
+        String c_id = Integer.toString(category_id);
+        String urlasync = Url.url.concat(c_id).concat(Url.url_last);
+        new HttpAsyncLesson().execute(urlasync);
     }
+
     @Override
     protected void onStart() {
         super.onStart();
         mTextToSpeech = new TextToSpeech(this, this);
     }
+
     @Override
     protected void onStop() {
         super.onStop();
@@ -155,8 +158,8 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
                         int answer_id = answersEntityArrayList.get(chosen_answer).getId();
                         boolean state = answersEntityArrayList.get(chosen_answer).isIs_correct();
                         try {
-                            update=updatelesson(result_id,answer_id,state);
-                            String url_update= Url.update_first.concat(Integer.toString(lesson_id)).concat(Url.update_last);
+                            update = updatelesson(result_id, answer_id, state);
+                            String url_update = Url.update_first.concat(Integer.toString(lesson_id)).concat(Url.update_last);
                             new HttpAsyncUpdate().execute(url_update);
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -190,6 +193,14 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
         aBuilder.show();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Constants.STATUS) {
+            startActivity(new Intent(getApplication(), CategoriesActivity.class));
+        }
+    }
+
     public void speak() {
         String text = txttword.getText().toString();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -204,27 +215,22 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
         getMenuInflater().inflate(R.menu.menu_question, menu);
         return true;
     }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        // Respond to the action bar's Up/Home button
-        if (id == android.R.id.home) {
-            NavUtils.navigateUpFromSameTask(this);
-            return true;
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+            case R.id.action_done:
+                startActivityForResult(new Intent(getApplication(), ResultActivity.class), Constants.STATUS);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        if (id == R.id.action_done)
-            startActivity(new Intent(getApplication(), ResultActivity.class));
-        return super.onOptionsItemSelected(item);
     }
-
     @Override
     public void onInit(int status) {
         if (status == TextToSpeech.SUCCESS) {
@@ -303,6 +309,7 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
             mDialog.setCancelable(true);
             mDialog.show();
         }
+
         @Override
         protected WordReturn doInBackground(String... urls) {
             String json = null;
