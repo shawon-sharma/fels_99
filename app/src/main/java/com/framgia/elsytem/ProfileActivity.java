@@ -44,7 +44,8 @@ public class ProfileActivity extends AppCompatActivity {
     ImageView editProfile, avatar;
     TextView name, email;
     SessionManager session;
-    Button lesson;
+    Constants constant;
+    Button lesson,words;
     Bitmap bitmap;
     ProgressDialog pDialog;
 
@@ -62,7 +63,14 @@ public class ProfileActivity extends AppCompatActivity {
         lesson.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplication(), QuestionActivity.class));
+                startActivity(new Intent(getApplication(),CategoriesActivity.class));
+            }
+        });
+        words=(Button)findViewById(R.id.words_btn);
+        words.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplication(),WordlistActivity.class));
             }
         });
         listViewProfile.setAdapter(v);

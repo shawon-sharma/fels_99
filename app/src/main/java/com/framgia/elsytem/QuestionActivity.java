@@ -53,7 +53,7 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
     TextView txttword;
     Gson gson;
     String language = "Vietnam";
-    int word_number = 0;
+    int word_number =0;
     Button[] buttons = new Button[4];
     int chosen_answer = 0;
     String update = null;
