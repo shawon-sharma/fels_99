@@ -58,7 +58,7 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(i);
             finish();*/
             //must remove
-            Intent i = new Intent(getApplicationContext(), LearnedActivity.class);
+            Intent i = new Intent(getApplicationContext(), CategoriesActivity.class);
             startActivity(i);
             finish();
 
@@ -205,7 +205,7 @@ public class LoginActivity extends AppCompatActivity {
                         session.createLoginSession(id, name, email, avatar, authToken,
                                 mRememberMe);
                     //now finish this activity and go to ProfileActivity
-                    Intent i = new Intent(getApplicationContext(), ProfileActivity.class);
+                    Intent i = new Intent(getApplicationContext(), CategoriesActivity.class);
                     startActivity(i);
                     finish();
                 }

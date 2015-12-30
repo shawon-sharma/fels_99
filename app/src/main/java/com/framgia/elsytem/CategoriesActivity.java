@@ -1,15 +1,19 @@
 package com.framgia.elsytem;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.framgia.elsytem.jsonResponse.CategoryResponse;
+import com.framgia.elsytem.mypackage.Constants;
 import com.framgia.elsytem.mypackage.SessionManager;
 import com.google.gson.Gson;
 import com.squareup.okhttp.MediaType;
@@ -55,6 +59,15 @@ public class CategoriesActivity extends AppCompatActivity {
         list = (ListView) findViewById(R.id.listCategory);
         okHttpClient = new OkHttpClient();
         new HttpAsyncCategory().execute("https://manh-nt.herokuapp.com/categories.json?auth_token=" + token);
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                int category_id = categoriesName.get(position).getId();
+                Intent intent = new Intent(getApplication(), QuestionActivity.class);
+                intent.putExtra(String.valueOf(Constants.CATEGORY_ID), category_id);
+                startActivity(intent);
+            }
+        });
     }
 
     public String createjson(String token) throws JSONException {
@@ -93,6 +106,7 @@ public class CategoriesActivity extends AppCompatActivity {
             }
             return categoriesName;
         }
+
         @Override
         protected void onPreExecute() {
             mDialog = new ProgressDialog(CategoriesActivity.this);
@@ -102,6 +116,7 @@ public class CategoriesActivity extends AppCompatActivity {
             mDialog.setCancelable(true);
             mDialog.show();
         }
+
         @Override
         protected void onPostExecute(ArrayList<CategoryResponse.CategoriesEntity> categoriesName) {
             mDialog.dismiss();

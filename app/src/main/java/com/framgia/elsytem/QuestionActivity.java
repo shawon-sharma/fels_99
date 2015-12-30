@@ -1,5 +1,4 @@
 package com.framgia.elsytem;
-
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -19,25 +18,24 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.framgia.elsytem.model.Lesson;
+import com.framgia.elsytem.mypackage.Constants;
 import com.framgia.elsytem.mypackage.SessionManager;
+import com.framgia.elsytem.mypackage.Url;
 import com.google.gson.Gson;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
-
 public class QuestionActivity extends AppCompatActivity implements TextToSpeech.OnInitListener, View.OnClickListener {
     TextToSpeech mTextToSpeech;
     TextView word;
@@ -60,6 +58,7 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
     HashMap<String, String> user;
     String token;
     int lesson_id=1;
+    int category_id=1;
     TextView questions;
     private com.framgia.elsytem.mypackage.Constants mConstant;
     ArrayList<Lesson.LessonEntity.WordsEntity> wordsEntityArrayList;
@@ -90,7 +89,6 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
         option_4 = (Button) findViewById(R.id.choice_4);
         option_4.setOnClickListener(this);
         buttons[3] = option_4;
-        mTextToSpeech = new TextToSpeech(this, this);
         txttword = (TextView) findViewById(R.id.word);
         okHttpClient = new OkHttpClient();
         play = (ImageButton) findViewById(R.id.play);
@@ -103,7 +101,21 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
         Constants.PREF_STATE = getApplicationContext().getSharedPreferences("MyPref",
                 MODE_PRIVATE);
         word_number = Constants.PREF_STATE.getInt(String.valueOf(Constants.STATE), 0);
-        new HttpAsyncLesson().execute(" https://manh-nt.herokuapp.com/categories/1/lessons.json");
+        Intent intent=getIntent();
+        category_id=intent.getIntExtra(String.valueOf(Constants.CATEGORY_ID),1);
+        String c_id=Integer.toString(category_id);
+            String urlasync= Url.url.concat(c_id).concat(Url.url_last);
+            new HttpAsyncLesson().execute(urlasync);
+    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mTextToSpeech = new TextToSpeech(this, this);
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mTextToSpeech.shutdown();
     }
     @Override
     public void onClick(View v) {
@@ -138,8 +150,8 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
                         boolean state=answersEntityArrayList.get(chosen_answer).isIs_correct();
                         try {
                             update=updatelesson(result_id,answer_id,state);
-                            Log.e("lesson_id ", "" + lesson_id);
-                            new HttpAsyncUpdate().execute("https://manh-nt.herokuapp.com/lessons/"+lesson_id +".json");
+                            String url_update= Url.update_first.concat(Integer.toString(lesson_id)).concat(Url.update_last);
+                            new HttpAsyncUpdate().execute(url_update);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -272,7 +284,6 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
             mDialog.setCancelable(true);
             mDialog.show();
         }
-
         @Override
         protected WordReturn doInBackground(String... urls) {
             String json= null;
