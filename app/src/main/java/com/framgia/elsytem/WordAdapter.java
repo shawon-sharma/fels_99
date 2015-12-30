@@ -23,8 +23,6 @@ public class WordAdapter extends BaseAdapter {
         this.mContext = mContext;
         this.al = al;
     }
-
-
     @Override
     public int getCount() {
         return al.size();
@@ -47,7 +45,7 @@ public class WordAdapter extends BaseAdapter {
         View row=inflater.inflate(R.layout.word,parent,false);
         TextView title=(TextView)row.findViewById(R.id.wordid);
         TextView name=(TextView)row.findViewById(R.id.textword);
-        title.setText(item.getId());
+        title.setText(String.valueOf(item.getId()));
         name.setText(item.getContent());
         return row;
     }
