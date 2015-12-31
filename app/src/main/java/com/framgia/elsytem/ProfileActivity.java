@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -26,7 +25,6 @@ import android.widget.Toast;
 
 import com.framgia.elsytem.mypackage.Constants;
 import com.framgia.elsytem.mypackage.SessionManager;
-import com.framgia.elsytem.mypackage.Url;
 import com.framgia.elsytem.mypackage.UserFunctions;
 
 import java.io.InputStream;
@@ -45,7 +43,7 @@ public class ProfileActivity extends AppCompatActivity {
     TextView name, email;
     SessionManager session;
     Constants constant;
-    Button lesson,words;
+    Button lesson;
     Bitmap bitmap;
     ProgressDialog pDialog;
 
@@ -59,18 +57,11 @@ public class ProfileActivity extends AppCompatActivity {
         SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
         formattedDate[0] = df.format(c.getTime());
         ViewAdapter v = new ViewAdapter(this, formattedDate);
-        lesson = (Button) findViewById(R.id.lesson_btn);
+        lesson=(Button)findViewById(R.id.lesson_btn);
         lesson.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplication(),CategoriesActivity.class));
-            }
-        });
-        words=(Button)findViewById(R.id.words_btn);
-        words.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getApplication(),WordlistActivity.class));
+                startActivity(new Intent(getApplication(),QuestionActivity.class));
             }
         });
         listViewProfile.setAdapter(v);
@@ -78,22 +69,18 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getApplicationContext(), UpdateProfileActivity.class));
+                finish();
             }
         });
         session = new SessionManager(getApplicationContext());
         HashMap<String, String> user;
         user = session.getUserDetails();
-        name.setText(user.get(Constants.KEY_NAME));
-        email.setText(user.get(Constants.KEY_EMAIL));
-        if (!user.get(Constants.KEY_AVATAR).isEmpty()) {
-            if (isUrl(user.get(Constants.KEY_AVATAR))) {
-                new LoadImage().execute(user.get(Constants.KEY_AVATAR));
-            } else {
-                byte[] decodedString = Base64.decode(user.get(Constants.KEY_AVATAR), Base64.DEFAULT);
-                Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0,
-                        decodedString.length);
-                avatar.setImageBitmap(decodedByte);
-            }
+        name.setText(user.get(constant.KEY_NAME));
+        email.setText(user.get(constant.KEY_EMAIL));
+        if (!user.get(constant.KEY_AVATAR).isEmpty()) {
+            if (isUrl(user.get(constant.KEY_AVATAR))) {
+                new LoadImage().execute(user.get(constant.KEY_AVATAR));
+            } else avatar.setImageBitmap(BitmapFactory.decodeFile(user.get(constant.KEY_AVATAR)));
         }
     }
 
@@ -185,7 +172,8 @@ public class ProfileActivity extends AppCompatActivity {
                         .OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        new HttpAsyncTaskSignOut().execute(Url.url_sign_out);
+                        new HttpAsyncTaskSignOut().execute(getResources().getString(R.string
+                                .url_logout));
                     }
                 })
                 .setNegativeButton(getString(R.string.activity_main_alert_dialog_no), null)

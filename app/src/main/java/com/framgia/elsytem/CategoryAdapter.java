@@ -7,8 +7,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.framgia.elsytem.jsonResponse.CategoryResponse;
-
 import java.util.ArrayList;
 
 /**
@@ -17,9 +15,9 @@ import java.util.ArrayList;
 public class CategoryAdapter extends BaseAdapter {
     private Context mContext;
     private LayoutInflater inflater;
-    private ArrayList<CategoryResponse.CategoriesEntity> categoryResponses;
+    private ArrayList<CategoriesReturnFromPages> categoryResponses;
 
-    public CategoryAdapter(Context mContext, ArrayList<CategoryResponse.CategoriesEntity> categoryResponses) {
+    public CategoryAdapter(Context mContext, ArrayList<CategoriesReturnFromPages> categoryResponses) {
         this.mContext = mContext;
         this.categoryResponses = categoryResponses;
     }
@@ -41,13 +39,13 @@ public class CategoryAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        CategoryResponse.CategoriesEntity item= (CategoryResponse.CategoriesEntity) getItem(position);
-        LayoutInflater inflater= (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View row=inflater.inflate(R.layout.categories_list,parent,false);
-        TextView title=(TextView)row.findViewById(R.id.textHeader);
-        TextView body=(TextView)row.findViewById(R.id.textBody);
+        CategoriesReturnFromPages item = (CategoriesReturnFromPages) getItem(position);
+        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View row = inflater.inflate(R.layout.categories_list, parent, false);
+        TextView title = (TextView) row.findViewById(R.id.textHeader);
+        TextView body = (TextView) row.findViewById(R.id.textBody);
         //title.setText(item.getId());
-        title.setText(item.getName());
+        title.setText(item.getCategoriesName());
         return row;
     }
 }

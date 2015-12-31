@@ -4,9 +4,11 @@ package com.framgia.elsytem.mypackage;
  * Created by sharma on 12/29/15.
  */
 public class URL {
-    String url="https://manh-nt.herokuapp.com/words.json?";
-    public String getUrl()
+    String wordFetchURL="https://manh-nt.herokuapp.com/words.json?";
+    String categoryFetchURL="https://manh-nt.herokuapp.com/categories.json?";
+    public String getWordfetchurl()
     {
-        return url;
+        return wordFetchURL;
     }
+    public String getCategoryFetchURL(){return categoryFetchURL;}
 }

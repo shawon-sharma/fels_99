@@ -13,7 +13,6 @@ import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -25,7 +24,6 @@ import com.framgia.elsytem.jsonResponse.UserResponse;
 import com.framgia.elsytem.model.User;
 import com.framgia.elsytem.mypackage.AlertDialogManager;
 import com.framgia.elsytem.mypackage.SessionManager;
-import com.framgia.elsytem.mypackage.Url;
 import com.framgia.elsytem.mypackage.UserFunctions;
 import com.google.gson.Gson;
 
@@ -56,9 +54,14 @@ public class LoginActivity extends AppCompatActivity {
         // check in session if user is logged in. If so, go to profile activity
         if (session.isLoggedInAndRemember()) {
             //go to ProfileActivity
-            Intent i = new Intent(getApplicationContext(), ProfileActivity.class);
+            /*Intent i = new Intent(getApplicationContext(), ProfileActivity.class);
+            startActivity(i);
+            finish();*/
+            //must remove
+            Intent i = new Intent(getApplicationContext(),LearnedActivity.class);
             startActivity(i);
             finish();
+
         } else {
             initializeViews();
             session.deleteSessionData();
@@ -71,54 +74,35 @@ public class LoginActivity extends AppCompatActivity {
 
                 }
             });
-            password.setOnKeyListener(new View.OnKeyListener() {
-                @Override
-                public boolean onKey(View v, int keyCode, KeyEvent event) {
-                    if (event.getAction() == KeyEvent.ACTION_DOWN) {
-                        switch (keyCode) {
-                            case KeyEvent.KEYCODE_DPAD_CENTER:
-                            case KeyEvent.KEYCODE_ENTER:
-                                mSignIn();
-                                return true;
-                            default:
-                                break;
-                        }
-                    }
-                    return false;
-                }
-            });
             buttonLogin.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mSignIn();
+                    mEmail = email.getText().toString();
+                    mPassword = password.getText().toString();
+                    if (checkBoxRememberMe.isChecked()) mRememberMe = 1;
+                    else mRememberMe = 0;
+                    if (!isConnected())
+                        mShowDialog(LoginActivity.this, getString(R.string
+                                        .connection_error_title_activity_login),
+                                getString(R.string.connection_error_message_activity_login),
+                                false);
+                    if (!mEmail.isEmpty() && !mPassword.isEmpty()) {
+                        new HttpAsyncTaskSignIn().execute(getString(R.string
+                                .url_login));
+                    } else if (mEmail.isEmpty()) {
+                        Toast.makeText(getApplicationContext(), getString(R.string
+                                .empty_email_activity_login), Toast
+                                .LENGTH_SHORT).show();
+                    } else if (mPassword.isEmpty()) {
+                        Toast.makeText(getApplicationContext(), getString(R.string
+                                .empty_password_activity_login), Toast
+                                .LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(), getString(R.string
+                                .empty_email_password_activity_login), Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
-        }
-    }
-
-    private void mSignIn() {
-        mEmail = email.getText().toString();
-        mPassword = password.getText().toString();
-        if (checkBoxRememberMe.isChecked()) mRememberMe = 1;
-        else mRememberMe = 0;
-        if (!isConnected())
-            mShowDialog(LoginActivity.this, getString(R.string
-                            .connection_error_title_activity_login),
-                    getString(R.string.connection_error_message_activity_login),
-                    false);
-        if (!mEmail.isEmpty() && !mPassword.isEmpty()) {
-            new HttpAsyncTaskSignIn().execute(Url.url_sign_in);
-        } else if (mEmail.isEmpty()) {
-            Toast.makeText(getApplicationContext(), getString(R.string
-                    .empty_email_activity_login), Toast
-                    .LENGTH_SHORT).show();
-        } else if (mPassword.isEmpty()) {
-            Toast.makeText(getApplicationContext(), getString(R.string
-                    .empty_password_activity_login), Toast
-                    .LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(getApplicationContext(), getString(R.string
-                    .empty_email_password_activity_login), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -223,7 +207,7 @@ public class LoginActivity extends AppCompatActivity {
                         session.createLoginSession(id, name, email, avatar, authToken,
                                 mRememberMe);
                     //now finish this activity and go to ProfileActivity
-                    Intent i = new Intent(getApplicationContext(), ProfileActivity.class);
+                    Intent i = new Intent(getApplicationContext(),LearnedActivity.class);
                     startActivity(i);
                     finish();
                 }
