@@ -78,7 +78,6 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getApplicationContext(), UpdateProfileActivity.class));
-                finish();
             }
         });
         session = new SessionManager(getApplicationContext());

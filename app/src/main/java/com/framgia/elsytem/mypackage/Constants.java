@@ -30,4 +30,5 @@ public class Constants {
     public static int ANSWER_4=3;
     public static int STATE=0;
     public static int CATEGORY_ID=1;
+    public static final int STATUS=200;
 }

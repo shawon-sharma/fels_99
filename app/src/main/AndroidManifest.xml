@@ -50,7 +50,12 @@
             android:name=".ResultActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_result"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".CategoriesActivity">
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value=".CategoriesActivity" />
+        </activity>
         <activity
             android:name=".ProfileActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
