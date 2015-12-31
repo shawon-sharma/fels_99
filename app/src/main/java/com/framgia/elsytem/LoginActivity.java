@@ -56,14 +56,9 @@ public class LoginActivity extends AppCompatActivity {
         // check in session if user is logged in. If so, go to profile activity
         if (session.isLoggedInAndRemember()) {
             //go to ProfileActivity
-            /*Intent i = new Intent(getApplicationContext(), ProfileActivity.class);
-            startActivity(i);
-            finish();*/
-            //must remove
-            Intent i = new Intent(getApplicationContext(), CategoriesActivity.class);
+            Intent i = new Intent(getApplicationContext(), ProfileActivity.class);
             startActivity(i);
             finish();
-
         } else {
             initializeViews();
             session.deleteSessionData();
@@ -228,7 +223,7 @@ public class LoginActivity extends AppCompatActivity {
                         session.createLoginSession(id, name, email, avatar, authToken,
                                 mRememberMe);
                     //now finish this activity and go to ProfileActivity
-                    Intent i = new Intent(getApplicationContext(), LearnedActivity.class);
+                    Intent i = new Intent(getApplicationContext(), ProfileActivity.class);
                     startActivity(i);
                     finish();
                 }
