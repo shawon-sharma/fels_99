@@ -23,6 +23,17 @@ public class Constants {
     public static final String KEY_REMEMBER_ME = "rememberMe";
     // UserFunctions TAG
     public static final String TAG_USER_FUNCTIONS = "UserFunctions";
+
+    public static final String AUTH_TOKEN="auth_token";
+    public static final String PAGE="page";
+    public static final String CCATEGORY_ID ="category_id";
+    public static final String OPTION="option";
+    public static final String LEARNED ="learned";
+    public static final String ID ="id";
+    public static final String ANSWER_ID ="answer_id";
+    public static final String RESULT_ATTRIBUTES ="results_attributes";
+    public static final String LESSON ="lesson";
+
     public static SharedPreferences PREF_STATE = null;
     public static int ANSWER_1=0;
     public static int ANSWER_2=1;
@@ -30,5 +41,4 @@ public class Constants {
     public static int ANSWER_4=3;
     public static int STATE=0;
     public static int CATEGORY_ID=1;
-    public static final int STATUS=200;
 }

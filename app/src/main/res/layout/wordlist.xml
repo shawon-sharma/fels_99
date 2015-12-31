@@ -4,20 +4,20 @@
     android:layout_height="match_parent">
     <TextView
         android:id="@+id/word_textview"
-        android:layout_width="180dp"
+        android:layout_width="@dimen/wordlist_layoutwidth"
+        android:layout_weight="1"
         android:layout_height="wrap_content"
-        android:text=""
-        android:textSize="25sp"
-        android:textColor="#ffffff"
-        android:layout_margin="5dp"
-        android:background="#3B5998"/>
+        android:textSize="@dimen/categorieslist_textbody"
+        android:textColor="@color/icons"
+        android:layout_margin="@dimen/categoryrowborder_padding"
+        android:background="@color/colorAccent"/>
     <TextView
         android:id="@+id/meaning_textview"
-        android:layout_width="180dp"
+        android:layout_width="@dimen/wordlist_layoutwidth"
+        android:layout_weight="1"
         android:layout_height="wrap_content"
-        android:text=""
-        android:textSize="25sp"
-        android:layout_margin="5dp"
-        android:textColor="#ffffff"
-        android:background="#3B5998"/>
+        android:textSize="@dimen/categorieslist_textbody"
+        android:layout_margin="@dimen/categoryrowborder_padding"
+        android:textColor="@color/icons"
+        android:background="@color/colorAccent"/>
 </LinearLayout>

@@ -112,6 +112,7 @@ public class UserFunctions {
 
     public String updateProfile(String url, Profile profile) {
         String result = "";
+        String json = "";
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("name", profile.getName());
@@ -121,8 +122,12 @@ public class UserFunctions {
             JSONObject jsonObjectUser = new JSONObject();
             jsonObjectUser.put("auth_token", profile.getAuthToken());
             jsonObjectUser.put("user", jsonObject);
-            result = okHttpClient.newCall(new Request.Builder().url(url).patch(RequestBody.create
-                    (JSON, jsonObjectUser.toString())).build()).execute().body().string();
+            json = jsonObjectUser.toString();
+            RequestBody requestBody = RequestBody.create(JSON, json);
+            Request request = new Request.Builder().url(url).patch(requestBody).build();
+            Response response = okHttpClient.newCall(request).execute();
+            String jsonData = response.body().string();
+            result = jsonData;
         } catch (Exception e) {
             Log.e(constant.TAG_USER_FUNCTIONS + " I/OStream", e.getLocalizedMessage());
         }

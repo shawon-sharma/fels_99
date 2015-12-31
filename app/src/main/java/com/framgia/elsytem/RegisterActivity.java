@@ -10,16 +10,13 @@ import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.framgia.elsytem.model.User;
 import com.framgia.elsytem.mypackage.AlertDialogManager;
-import com.framgia.elsytem.mypackage.Url;
 import com.framgia.elsytem.mypackage.UserFunctions;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -36,22 +33,6 @@ public class RegisterActivity extends AppCompatActivity {
         setUpActionBar();
         initializeViews();
         mAlert = new AlertDialogManager();
-        mEtFullName.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (event.getAction() == KeyEvent.ACTION_DOWN) {
-                    switch (keyCode) {
-                        case KeyEvent.KEYCODE_DPAD_CENTER:
-                        case KeyEvent.KEYCODE_ENTER:
-                            mRegister();
-                            return true;
-                        default:
-                            break;
-                    }
-                }
-                return false;
-            }
-        });
     }
 
     private void initializeViews() {
@@ -84,25 +65,21 @@ public class RegisterActivity extends AppCompatActivity {
                 return true;
             // Respond to the action bar's 'Done' button
             case R.id.action_done:
-                mRegister();
+                mEmail = mEtEmail.getText().toString();
+                mPassword = mEtPassword.getText().toString();
+                mPasswordConfirmation = mEtPasswordConfirmation.getText().toString();
+                mFullName = mEtFullName.getText().toString();
+                if (!isConnected())
+                    mAlert.showAlertDialog(RegisterActivity.this, getString(R.string.connection_error_title_activity_login),
+                            getString(R.string.connection_error_message_activity_login), false);
+                if (!validate(mFullName, mEmail, mPassword, mPasswordConfirmation))
+                    Toast.makeText(getBaseContext(), "Provide the required information!", Toast
+                            .LENGTH_LONG).show();
+                    // call AsyncTask to perform network operation on separate thread
+                else new HttpAsyncTask().execute(getString(R.string.url_sign_up));
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void mRegister() {
-        mEmail = mEtEmail.getText().toString();
-        mPassword = mEtPassword.getText().toString();
-        mPasswordConfirmation = mEtPasswordConfirmation.getText().toString();
-        mFullName = mEtFullName.getText().toString();
-        if (!isConnected())
-            mAlert.showAlertDialog(RegisterActivity.this, getString(R.string.connection_error_title_activity_login),
-                    getString(R.string.connection_error_message_activity_login), false);
-        if (!validate(mFullName, mEmail, mPassword, mPasswordConfirmation))
-            Toast.makeText(getBaseContext(), "Provide the required information!", Toast
-                    .LENGTH_LONG).show();
-            // call AsyncTask to perform network operation on separate thread
-        else new HttpAsyncTask().execute(Url.url_sign_up);
     }
 
     private boolean validate(String... params) {
