@@ -15,6 +15,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -50,6 +51,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
     private EditText mEtemail, mEtOldPassword, mEtNewPassword, mEtPasswordConfirmation,
             mEtFullName;
     private ImageView mIvAvatar;
+    private Button mButton_avatar;
     File file;
     String imageDataBase64String;
 
@@ -67,6 +69,14 @@ public class UpdateProfileActivity extends AppCompatActivity {
             mLoadAvatar(imageDataBase64String);
         mAuthToken = user.get(Constants.KEY_AUTH_TOKEN);
         mInitializeListeners();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!imageDataBase64String.isEmpty())
+            mButton_avatar.setVisibility(View.VISIBLE);
+        else mButton_avatar.setVisibility(View.INVISIBLE);
     }
 
     private void mInitializeListeners() {
@@ -92,6 +102,23 @@ public class UpdateProfileActivity extends AppCompatActivity {
                 return false;
             }
         });
+        mButton_avatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mRemoveAvatar();
+            }
+        });
+    }
+
+    private void mRemoveAvatar() {
+        imageDataBase64String = "";
+        Picasso.with(this)
+                .load(R.drawable.ic_add_a_photo_black_36dp)
+                .memoryPolicy(MemoryPolicy.NO_CACHE)
+                .resize(100, 100)
+                .centerCrop()
+                .into(mIvAvatar);
+        mButton_avatar.setVisibility(View.INVISIBLE);
     }
 
     private void mGetSessionData() {
@@ -130,6 +157,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
         mEtPasswordConfirmation = (EditText) findViewById(R.id.edit_text_retype_password);
         mEtFullName = (EditText) findViewById(R.id.edit_text_full_name);
         mIvAvatar = (ImageView) findViewById(R.id.image_upload_avatar);
+        mButton_avatar = (Button) findViewById(R.id.button_remove_avatar);
     }
 
     private void setUpActionBar() {
