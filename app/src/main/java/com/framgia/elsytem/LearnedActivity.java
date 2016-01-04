@@ -15,7 +15,7 @@ import com.framgia.elsytem.jsonResponse.CategoryResponse;
 import com.framgia.elsytem.jsonResponse.WordResponse;
 import com.framgia.elsytem.mypackage.Constants;
 import com.framgia.elsytem.mypackage.SessionManager;
-import com.framgia.elsytem.mypackage.URL;
+import com.framgia.elsytem.mypackage.Url;
 import com.google.gson.Gson;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -71,15 +71,15 @@ public class LearnedActivity extends AppCompatActivity {
         token = user.get(mConstant.KEY_AUTH_TOKEN);
         list = (ListView) findViewById(R.id.learned);
         okHttpClient = new OkHttpClient();
-        URL ur = new URL();
-        url = ur.getWordfetchurl().toString();
+        Url ur = new Url();
+        url = Url.wordFetchURL;
         try {
             String newURL = wordURLBody(page);
             new HttpAsyncWord().execute(newURL);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        curl=ur.getCategoryFetchURL().toString();
+        curl=Url.categoryFetchURL;
         try {
             String catnewURL=catURLBody(catpage);
             new HttpAsyncCategory().execute(catnewURL);
