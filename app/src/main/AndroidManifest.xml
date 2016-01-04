@@ -69,10 +69,12 @@
         <activity
             android:name=".CategoriesActivity"
             android:label="@string/title_activity_categories"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".LearnedActivity"
             android:label="@string/title_activity_learned"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>
 

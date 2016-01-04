@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.framgia.elsytem.jsonResponse.CategoryResponse;
 import com.framgia.elsytem.mypackage.Constants;
@@ -48,16 +49,12 @@ public class CategoriesActivity extends AppCompatActivity {
     Response catresponse = null;
     String catresponseData = null;
     ArrayList<String> catal=new ArrayList<>();
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_categories);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         sessionManager = new SessionManager(this);
         user = sessionManager.getUserDetails();
         token = user.get(mConstant.KEY_AUTH_TOKEN);
@@ -76,9 +73,12 @@ public class CategoriesActivity extends AppCompatActivity {
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                int category_id = categoriesName.get(position).getId();
+                int category_id = catitem.get(position).getCategoriesId();
+                String category_name=catitem.get(position).getCategoriesName();
+                Toast.makeText(getApplicationContext(),category_name+" "+position,Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(getApplication(), QuestionActivity.class);
                 intent.putExtra(String.valueOf(Constants.CATEGORY_ID), category_id);
+                intent.putExtra(Constants.CATEGORY_NAME,category_name);
                 startActivity(intent);
             }
         });
@@ -214,10 +214,13 @@ public class CategoriesActivity extends AppCompatActivity {
                catal.add(key);
 
            }
-
             CategoryAdapter cad = new CategoryAdapter(getApplicationContext(),catitem);
             list.setAdapter(cad);
             cad.notifyDataSetChanged();
+            /*mDialog.dismiss();
+            CategoryAdapter cad = new CategoryAdapter(getApplicationContext(), categoriesName);
+            list = (ListView) findViewById(R.id.listCategory);
+            list.setAdapter(cad);*/
         }
     }
 }
