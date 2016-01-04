@@ -16,11 +16,12 @@ public class WordAdapter extends BaseAdapter {
     private Context mContext;
     private LayoutInflater inflater;
     private ArrayList<WordReturnByCategory> al;
+    private int mWidth;
 
-    public WordAdapter(Context mContext, ArrayList<WordReturnByCategory> al) {
-        //  super(mContext, R.layout.word, al);
+    public WordAdapter(Context mContext, ArrayList<WordReturnByCategory> al, int width) {
         this.mContext = mContext;
         this.al = al;
+        this.mWidth = width;
     }
 
     @Override
@@ -40,7 +41,6 @@ public class WordAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
         WordReturnByCategory item = (WordReturnByCategory) getItem(position);
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View row = inflater.inflate(R.layout.word, parent, false);
@@ -48,6 +48,8 @@ public class WordAdapter extends BaseAdapter {
         TextView name = (TextView) row.findViewById(R.id.textword);
         name.setText(item.getSingleWord());
         title.setText(item.getSingleAnswer());
+        name.setWidth(mWidth);
+        title.setWidth(mWidth);
         return row;
     }
 }

@@ -6,6 +6,13 @@ package com.framgia.elsytem;
 public class CategoriesReturnFromPages{
     private String CategoriesName;
     private Integer categoriesId;
+    private String mCategoryImage;
+    public CategoriesReturnFromPages(String categoriesName,Integer categoriesId,String mCategoryImage)
+    {
+        this.CategoriesName=categoriesName;
+        this.categoriesId=categoriesId;
+        this.mCategoryImage=mCategoryImage;
+    }
 
     public CategoriesReturnFromPages(String categoriesName,Integer categoriesId)
     {
@@ -18,5 +25,8 @@ public class CategoriesReturnFromPages{
 
     public Integer getCategoriesId() {
         return categoriesId;
+    }
+    public String getmCategoryImage(){
+        return mCategoryImage;
     }
 }

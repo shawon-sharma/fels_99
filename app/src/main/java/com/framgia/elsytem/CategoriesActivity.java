@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -34,24 +33,26 @@ import java.util.Map;
 public class CategoriesActivity extends AppCompatActivity {
     ListView list;
     String url = "";
-    String catnewURL="";
+    String catNewURL = "";
     Gson gson;
     TextView category;
-    String catpage="1";
+
+    String catPage = "1";
     private com.framgia.elsytem.utils.Constants mConstant;
+
     OkHttpClient okHttpClient;
     String token;
     SessionManager sessionManager;
     HashMap<String, String> user;
     ArrayList<CategoryResponse.CategoriesEntity> categoriesName = new ArrayList<CategoryResponse.CategoriesEntity>();
-    ArrayList<CategoriesReturnFromPages> catitem=new ArrayList<>();
-    int cattotalpage=0;
-    Response catresponse = null;
-    String catresponseData = null;
-    ArrayList<String> catal=new ArrayList<>();
-
+    //ArrayList<CategoriesReturnFromPages> catitem=new ArrayList<>();
+    ArrayList<CategoriesReturnFromPages> catItem = new ArrayList<>();
+    int catTotalPage = 0;
+    Response catResponse = null;
+    String catResponseData = null;
+    ArrayList<String> catAll = new ArrayList<>();
     public static  ArrayList<Done>switch_activity=new ArrayList<>();
-    int s=1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,10 +65,11 @@ public class CategoriesActivity extends AppCompatActivity {
         category = (TextView) findViewById(R.id.textHeader);
         list = (ListView) findViewById(R.id.listCategory);
         okHttpClient = new OkHttpClient();
-        Url ur=new Url();
-        url=Url.categoryFetchURL;
+
+        url = Url.categoryFetchURL;
+
         try {
-            String catnewURL=catURLBody(catpage);
+            String catnewURL = catURLBody(catPage);
             new HttpAsyncCategory().execute(catnewURL);
         } catch (Exception e) {
             e.printStackTrace();
@@ -75,8 +77,8 @@ public class CategoriesActivity extends AppCompatActivity {
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                int category_id = catitem.get(position).getCategoriesId();
-                String category_name = catitem.get(position).getCategoriesName();
+                int category_id = catItem.get(position).getCategoriesId();
+                String category_name = catItem.get(position).getCategoriesName();
                 Intent intent = new Intent(getApplication(), QuestionActivity.class);
                 intent.putExtra(String.valueOf(Constants.CATEGORY_ID), category_id);
                 intent.putExtra(Constants.CATEGORY_NAME, category_name);
@@ -85,12 +87,12 @@ public class CategoriesActivity extends AppCompatActivity {
         });
     }
 
-    public String  catURLBody(String page) throws Exception {
-        LinkedHashMap<String, String> catpara = new LinkedHashMap<>();
-        catpara.put(Constants.AUTH_TOKEN, token);
-        catpara.put(Constants.PAGE, page);
-        catnewURL = makeUrlWithParams(url, catpara);
-        return catnewURL;
+    public String catURLBody(String page) throws Exception {
+        LinkedHashMap<String, String> catPara = new LinkedHashMap<>();
+        catPara.put(Constants.AUTH_TOKEN, token);
+        catPara.put(Constants.PAGE, page);
+        catNewURL = makeUrlWithParams(url, catPara);
+        return catNewURL;
 
     }
 
@@ -106,6 +108,7 @@ public class CategoriesActivity extends AppCompatActivity {
         }
         return newUrl;
     }
+
     private static String concat_url(String url, String k, String p)
             throws UnsupportedEncodingException {
         String new_url = new String(url);
@@ -124,31 +127,28 @@ public class CategoriesActivity extends AppCompatActivity {
         return new_url;
     }
 
-    private class HttpAsyncCategory extends AsyncTask<String, Void,Integer> {
+    private class HttpAsyncCategory extends AsyncTask<String, Void, Integer> {
         private ProgressDialog mDialog;
 
         @Override
         protected Integer doInBackground(String... urls) {
             try {
                 Request request = new Request.Builder().url(urls[0]).get().build();
-                Log.e("token ", token);
-                catresponse = okHttpClient.newCall(request).execute();
-                catresponseData = catresponse.body().string();
-                Log.e("response ", catresponseData);
+                catResponse = okHttpClient.newCall(request).execute();
+                catResponseData = catResponse.body().string();
                 gson = new Gson();
-                CategoryResponse ca = gson.fromJson(catresponseData, CategoryResponse.class);
-                cattotalpage=ca.getTotal_pages();
-                Log.e("totalpage",""+cattotalpage);
+                CategoryResponse ca = gson.fromJson(catResponseData, CategoryResponse.class);
+                catTotalPage = ca.getTotal_pages();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return cattotalpage;
+            return catTotalPage;
         }
         @Override
         protected void onPreExecute() {
             mDialog = new ProgressDialog(CategoriesActivity.this);
             mDialog.setTitle(R.string.categoriesactivity_settitle);
-            mDialog.setMessage("please wait");
+            mDialog.setMessage(getString(R.string.please_wait));
             mDialog.setIndeterminate(false);
             mDialog.setCancelable(true);
             mDialog.show();
@@ -156,13 +156,12 @@ public class CategoriesActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Integer i) {
 
-            while(i>=1)
-            {
-                String catrl=null;
-                try{
-                     catrl=catURLBody(String.valueOf(i));
-                }catch (Exception e)
-                {
+            mDialog.dismiss();
+            while (i >= 1) {
+                String catrl = null;
+                try {
+                    catrl = catURLBody(String.valueOf(i));
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 new HttpAsyncCategoryshow().execute(catrl);
@@ -172,42 +171,40 @@ public class CategoriesActivity extends AppCompatActivity {
         }
     }
 
-    private class HttpAsyncCategoryshow extends AsyncTask<String, Void,ArrayList<CategoryResponse
+    private class HttpAsyncCategoryshow extends AsyncTask<String, Void, ArrayList<CategoryResponse
             .CategoriesEntity>> {
         @Override
         protected ArrayList<CategoryResponse.CategoriesEntity> doInBackground(String... urls) {
             try {
                 Request request = new Request.Builder().url(urls[0]).get().build();
-                catresponse = okHttpClient.newCall(request).execute();
-                catresponseData = catresponse.body().string();
+                catResponse = okHttpClient.newCall(request).execute();
+                catResponseData = catResponse.body().string();
                 gson = new Gson();
-                CategoryResponse ca = gson.fromJson(catresponseData, CategoryResponse.class);
-                categoriesName= (ArrayList<CategoryResponse.CategoriesEntity>) ca
+                CategoryResponse ca = gson.fromJson(catResponseData, CategoryResponse.class);
+                categoriesName = (ArrayList<CategoryResponse.CategoriesEntity>) ca
                         .getCategories();
-                cattotalpage=ca.getTotal_pages();
+                catTotalPage = ca.getTotal_pages();
             } catch (IOException e) {
                 e.printStackTrace();
             }
             return categoriesName;
         }
         @Override
+        protected void onPreExecute() {
+        }
+        @Override
         protected void onPostExecute(ArrayList<CategoryResponse.CategoriesEntity> categoriesName) {
-
-           for(int i=0;i<categoriesName.size();i++)
-           {
-               String key=categoriesName.get(i).getName();
-               Integer value=categoriesName.get(i).getId();
-               catitem.add(new CategoriesReturnFromPages(key,value));
-               catal.add(key);
-
-           }
-            CategoryAdapter cad = new CategoryAdapter(getApplicationContext(),catitem);
+            for (int i = 0; i < categoriesName.size(); i++) {
+                String key = categoriesName.get(i).getName();
+                Integer value = categoriesName.get(i).getId();
+                String image = categoriesName.get(i).getPhoto();
+                catItem.add(new CategoriesReturnFromPages(key, value, image));
+                catAll.add(key);
+            }
+            CategoryAdapter cad = new CategoryAdapter(getApplicationContext(), catItem);
             list.setAdapter(cad);
             cad.notifyDataSetChanged();
         }
     }
 }
-
-
-
 

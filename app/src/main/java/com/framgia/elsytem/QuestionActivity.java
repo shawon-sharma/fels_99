@@ -233,7 +233,6 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
                 else {
                     Constants.ACTIVITY_SWITCH = 2;
                     CategoriesActivity.switch_activity.add(new Done(category_id, Constants.ACTIVITY_SWITCH));
-                    //  startActivity(new Intent(getApplication(), CategoriesActivity.class));
                     Intent intent = new Intent(getApplication(), ResultActivity.class);
                     intent.putExtra(Constants.CATEGORY_NAME, category_name);
                     startActivity(intent);

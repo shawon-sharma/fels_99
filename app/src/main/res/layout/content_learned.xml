@@ -60,14 +60,14 @@
             android:id="@+id/spinnerCategory"
             android:layout_width="@dimen/wordlist_layoutwidth"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-           ></Spinner>
+            android:layout_weight="1"/>
 
         <Spinner
+            android:id="@+id/spinnerOption"
             android:layout_width="@dimen/wordlist_layoutwidth"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:entries="@array/progress_of_learning"></Spinner>
+            android:entries="@array/progress_of_learning"/>
     </LinearLayout>
 
     <ListView

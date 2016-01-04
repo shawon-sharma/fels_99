@@ -138,7 +138,8 @@ public class ProfileActivity extends AppCompatActivity {
         words.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplication(), WordlistActivity.class));
+                // startActivity(new Intent(getApplication(), WordlistActivity.class));
+                startActivity(new Intent(getApplication(), LearnedActivity.class));
             }
         });
         listViewProfile.setAdapter(v);

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -27,6 +28,7 @@ public class WordlistActivity extends AppCompatActivity implements View.OnClickL
     Button word;
     OkHttpClient okHttpClient;
     public static final MediaType JSON=MediaType.parse("applicaiton/json;charset=utf-8");
+    private int mWidth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +40,8 @@ public class WordlistActivity extends AppCompatActivity implements View.OnClickL
         okHttpClient=new OkHttpClient();
         word=(Button)findViewById(R.id.back_btn);
         word.setOnClickListener(this);
+        Display mDisplay = getWindowManager().getDefaultDisplay();
+        mWidth  = mDisplay.getWidth();
     }
 
     public void wordSet()

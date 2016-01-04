@@ -45,4 +45,8 @@ public class Constants {
     // file name of the avatar in the phone storage
     public static final String KEY_AVATAR_FILE_NAME = "_avatar.jpg";
     public static int ACTIVITY_SWITCH=1;
+    public static final String all="all_word";
+    public static final String learned="learned";
+    public static final String not_learned="no_learn";
+
 }
