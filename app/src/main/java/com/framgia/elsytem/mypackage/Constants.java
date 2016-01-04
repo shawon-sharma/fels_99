@@ -41,6 +41,7 @@ public class Constants {
     public static int ANSWER_4=3;
     public static int STATE=0;
     public static int CATEGORY_ID=1;
+    public static final int STATUS=200;
     // file name of the avatar in the phone storage
     public static final String KEY_AVATAR_FILE_NAME = "_avatar.jpg";
 }

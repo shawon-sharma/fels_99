@@ -49,7 +49,7 @@ public class ProfileActivity extends AppCompatActivity {
     TextView name, email;
     SessionManager session;
     Constants constant;
-    Button lesson;
+    Button lesson, words;
     HashMap<String, String> user;
 
     @Override
@@ -127,11 +127,18 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void mInitializeListeners() {
         ViewAdapter v = new ViewAdapter(this, formattedDate);
-        lesson=(Button)findViewById(R.id.lesson_btn);
+        lesson = (Button) findViewById(R.id.lesson_btn);
         lesson.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplication(),QuestionActivity.class));
+                startActivity(new Intent(getApplication(), CategoriesActivity.class));
+            }
+        });
+        words = (Button) findViewById(R.id.words_btn);
+        words.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplication(), WordlistActivity.class));
             }
         });
         listViewProfile.setAdapter(v);
