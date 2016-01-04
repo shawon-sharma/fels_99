@@ -60,13 +60,13 @@
             android:layout_width="@dimen/wordlist_layoutwidth"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:entries="@array/Category_name"></Spinner>
+           ></Spinner>
 
         <Spinner
             android:layout_width="@dimen/wordlist_layoutwidth"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:entries="@array/progress_of_learned"></Spinner>
+            android:entries="@array/progress_of_learning"></Spinner>
     </LinearLayout>
 
     <ListView

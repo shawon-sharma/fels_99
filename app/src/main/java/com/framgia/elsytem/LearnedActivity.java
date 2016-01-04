@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -32,7 +34,7 @@ import java.util.Map;
 public class LearnedActivity extends AppCompatActivity {
     ListView list;
     String url = "";
-    String category_id = "14";
+    String cattegory_id = "1";
     String option = "all_word";
     String page = "1";
     Request request;
@@ -51,57 +53,92 @@ public class LearnedActivity extends AppCompatActivity {
     ArrayList<WordReturnByCategory> item = new ArrayList<>();
     Spinner spinnerCategory;
     ArrayList<CategoryResponse.CategoriesEntity> categoriesName = new ArrayList<CategoryResponse.CategoriesEntity>();
-    ArrayList<CategoriesReturnFromPages> catitem=new ArrayList<>();
-    int cattotalpage=0;
+    ArrayList<CategoriesReturnFromPages> catitem = new ArrayList<>();
+    ArrayList<WordResponse.WordsEntity.AnswersEntity> forAnswer = new ArrayList<>();
+    int cattotalpage = 0;
     Response catresponse = null;
     String catresponseData = null;
-    ArrayList<String> catal=new ArrayList<>();
-    String catpage="1";
-    String catnewURL="";
-    String curl="";
+    ArrayList<String> catal = new ArrayList<>();
+    String catpage = "1";
+    String catnewURL = "";
+    String curl = "";
+    ArrayAdapter<String> dataAdapter;
+    WordReturnByCategory wordReturnByCategory;
+    LinkedHashMap<String, String> catclick;
+    WordAdapter cad;
+    ArrayList<String> answer;
+    ArrayList<String> word2, ans2;
+    ArrayList<WordResponse.WordsEntity.AnswersEntity> wordAns;
+    Url ur;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_learned);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        spinnerCategory= (Spinner) findViewById(R.id.spinnerCategory);
+        word2 = new ArrayList<>();
+        ans2 = new ArrayList<>();
+        answer = new ArrayList<>();
+        catclick = new LinkedHashMap<>();
+        spinnerCategory = (Spinner) findViewById(R.id.spinnerCategory);
         sessionManager = new SessionManager(this);
         user = sessionManager.getUserDetails();
         token = user.get(mConstant.KEY_AUTH_TOKEN);
         list = (ListView) findViewById(R.id.learned);
         okHttpClient = new OkHttpClient();
-        Url ur = new Url();
+        ur = new Url();
         url = Url.wordFetchURL;
         try {
-            String newURL = wordURLBody(page);
+            String newURL = wordURLBody(page, cattegory_id);
             new HttpAsyncWord().execute(newURL);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        curl=Url.categoryFetchURL;
+        curl = Url.categoryFetchURL;
         try {
-            String catnewURL=catURLBody(catpage);
+            String catnewURL = catURLBody(catpage);
             new HttpAsyncCategory().execute(catnewURL);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        ArrayAdapter<String> dataAdapter=new ArrayAdapter<String>(this,android.R.layout
-                .simple_spinner_item,catal);
+        //****************************start spinner
+        dataAdapter = new ArrayAdapter<String>(this, android.R.layout
+                .simple_spinner_item, catal);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerCategory.setAdapter(dataAdapter);
+        spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                item.clear();
+                cad.notifyDataSetChanged();
+                String text = spinnerCategory.getSelectedItem().toString();
+                String value = catclick.get(text);
+                cattegory_id = value;
+                url = ur.categoryFetchURL;
+                try {
+                    String newURL = wordURLBody(page, cattegory_id);
+                    new HttpAsyncWord().execute(newURL);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
-    public String  catURLBody(String page) throws Exception {
+    public String catURLBody(String page) throws Exception {
         LinkedHashMap<String, String> catpara = new LinkedHashMap<>();
         catpara.put(Constants.AUTH_TOKEN, token);
         catpara.put(Constants.PAGE, page);
         catnewURL = makeUrlWithParams(curl, catpara);
         return catnewURL;
-
     }
 
-    private class HttpAsyncCategory extends AsyncTask<String, Void,Integer> {
+    private class HttpAsyncCategory extends AsyncTask<String, Void, Integer> {
         private ProgressDialog mDialog;
 
         @Override
@@ -114,8 +151,8 @@ public class LearnedActivity extends AppCompatActivity {
                 Log.e("response ", catresponseData);
                 gson = new Gson();
                 CategoryResponse ca = gson.fromJson(catresponseData, CategoryResponse.class);
-                cattotalpage=ca.getTotal_pages();
-                Log.e("totalpage",""+cattotalpage);
+                cattotalpage = ca.getTotal_pages();
+                Log.e("totalpage", "" + cattotalpage);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -135,21 +172,21 @@ public class LearnedActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Integer i) {
             mDialog.dismiss();
-            while(i>=1)
-            {
-                String catrl=null;
-                try{
-                    catrl=catURLBody(String.valueOf(i));
-                }catch (Exception e)
-                {
+            while (i >= 1) {
+                String catrl = null;
+                try {
+                    catrl = catURLBody(String.valueOf(i));
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
+
                 new HttpAsyncCategoryshow().execute(catrl);
                 i--;
             }
         }
     }
-    private class HttpAsyncCategoryshow extends AsyncTask<String, Void,ArrayList<CategoryResponse
+
+    private class HttpAsyncCategoryshow extends AsyncTask<String, Void, ArrayList<CategoryResponse
             .CategoriesEntity>> {
         private ProgressDialog mDialog;
 
@@ -161,11 +198,11 @@ public class LearnedActivity extends AppCompatActivity {
                 catresponseData = catresponse.body().string();
                 gson = new Gson();
                 CategoryResponse ca = gson.fromJson(catresponseData, CategoryResponse.class);
-                categoriesName= (ArrayList<CategoryResponse.CategoriesEntity>) ca
+                categoriesName = (ArrayList<CategoryResponse.CategoriesEntity>) ca
                         .getCategories();
-                for(int j=0;j<categoriesName.size();j++)
-                    Log.e("value",""+categoriesName.get(j).getName());
-                cattotalpage=ca.getTotal_pages();
+                for (int j = 0; j < categoriesName.size(); j++)
+                    //Log.e("value", "" + categoriesName.get(j).getName());
+                    cattotalpage = ca.getTotal_pages();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -185,19 +222,21 @@ public class LearnedActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(ArrayList<CategoryResponse.CategoriesEntity> categoriesName) {
             mDialog.dismiss();
-            for(int i=0;i<categoriesName.size();i++)
-            {
-                String key=categoriesName.get(i).getName();
-                Log.e("key", key);
-                Integer value=categoriesName.get(i).getId();
-                catitem.add(new CategoriesReturnFromPages(key,value));
+            for (int i = 0; i < categoriesName.size(); i++) {
+                String key = categoriesName.get(i).getName();
+                // Log.e("key", key);
+                Integer tmpvalue = categoriesName.get(i).getId();
+                String value = String.valueOf(tmpvalue);
+                catitem.add(new CategoriesReturnFromPages(key, tmpvalue));
                 catal.add(key);
+                catclick.put(key, value);
             }
-
+            spinnerCategory.setAdapter(dataAdapter);
+            dataAdapter.notifyDataSetChanged();
         }
     }
 
-    public String wordURLBody(String page) throws Exception {
+    public String wordURLBody(String page, String category_id) throws Exception {
         LinkedHashMap<String, String> para = new LinkedHashMap<>();
         para.put(Constants.CCATEGORY_ID, category_id);
         para.put(Constants.OPTION, option);
@@ -274,7 +313,7 @@ public class LearnedActivity extends AppCompatActivity {
             while (i >= 1) {
                 String newURL = null;
                 try {
-                    newURL = wordURLBody(String.valueOf(i));
+                    newURL = wordURLBody(String.valueOf(i), cattegory_id);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -284,13 +323,11 @@ public class LearnedActivity extends AppCompatActivity {
         }
     }
 
-    private class HttpAsyncWordShow extends AsyncTask<String, Void, ArrayList<WordResponse
-            .WordsEntity>> {
+    private class HttpAsyncWordShow extends AsyncTask<String, Void, WordReturnByCategory> {
         private ProgressDialog mDialog;
 
         @Override
-        protected ArrayList<WordResponse.WordsEntity> doInBackground(String... urls) {
-
+        protected WordReturnByCategory doInBackground(String... urls) {
             try {
                 request = new Request.Builder().url(urls[0]).get().build();
                 response = okHttpClient.newCall(request).execute();
@@ -298,15 +335,27 @@ public class LearnedActivity extends AppCompatActivity {
                 gson = new Gson();
                 wa = gson.fromJson(responseData, WordResponse.class);
                 wordName = (ArrayList<WordResponse.WordsEntity>) wa.getWords();
-                for (int j = 0; j < wordName.size(); j++) {
-                    Log.e("value", "" + wordName.get(j).getContent());
+                for (int k = 0; k < wordName.size(); k++) {
+                    wordAns = (ArrayList<WordResponse
+                            .WordsEntity.AnswersEntity>) wordName.get(k).getAnswers();
+
+                    word2.add(wordName.get(k).getContent());
+                    for (int i = 0; i < wordAns.size(); i++) {
+                        if (wordAns.get(i).isIs_correct()) {
+                            ans2.add(wordAns.get(i).getContent());
+                            // Log.e("WordAns: ", wordAns.get(i).getContent().toString());
+                            break;
+                        } else
+                            continue;
+                    }
+                    wordReturnByCategory = new WordReturnByCategory(word2, ans2);
                 }
             } catch (IOException e1) {
                 e1.printStackTrace();
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return wordName;
+            return wordReturnByCategory;
         }
 
         @Override
@@ -320,15 +369,16 @@ public class LearnedActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(ArrayList<WordResponse.WordsEntity> wordName) {
+        protected void onPostExecute(WordReturnByCategory newWordName) {
             mDialog.dismiss();
-            for (int i = 0; i < wordName.size(); i++) {
-                String key = wordName.get(i).getContent();
-                Log.e("content ", key);
-                Integer value = wordName.get(i).getId();
-                item.add(new WordReturnByCategory(key, value));
+            ArrayList<String> Words = newWordName.getWordList();
+            ArrayList<String> Anss = newWordName.getAnswerList();
+            for (int i = 0; i < Words.size(); i++) {
+                String wordKey = Words.get(i);
+                String ansValue = Anss.get(i);
+                item.add(new WordReturnByCategory(wordKey, ansValue));
             }
-            WordAdapter cad = new WordAdapter(getApplication(), item);
+            cad = new WordAdapter(getApplication(), item);
             list.setAdapter(cad);
             cad.notifyDataSetChanged();
         }

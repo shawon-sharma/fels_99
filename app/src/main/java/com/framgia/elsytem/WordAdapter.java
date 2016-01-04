@@ -46,8 +46,8 @@ public class WordAdapter extends BaseAdapter {
         View row = inflater.inflate(R.layout.word, parent, false);
         TextView title = (TextView) row.findViewById(R.id.wordid);
         TextView name = (TextView) row.findViewById(R.id.textword);
-        name.setText("Vietnamese");
-        title.setText(item.getWordname());
+        name.setText(item.getSingleWord());
+        title.setText(item.getSingleAnswer());
         return row;
     }
 }

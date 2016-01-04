@@ -1,22 +1,40 @@
 package com.framgia.elsytem;
 
+import java.util.ArrayList;
+
 /**
  * Created by sharma on 12/30/15.
  */
 public class WordReturnByCategory {
-    private String wordname;
-    private Integer wordid;
+    private ArrayList<String> word;
+    private ArrayList<String> ans;
+    private String nWord;
+    private String nAns;
 
-    public WordReturnByCategory(String wordname, Integer wordid) {
-        this.wordname = wordname;
-        this.wordid = wordid;
+    public WordReturnByCategory(ArrayList<String> word, ArrayList<String>
+            ans) {
+        this.word = word;
+        this.ans = ans;
     }
 
-    public String getWordname() {
-        return wordname;
+    public WordReturnByCategory(String nWord, String nAns) {
+        this.nWord = nWord;
+        this.nAns = nAns;
     }
 
-    public Integer getWordid() {
-        return wordid;
+    public ArrayList<String> getWordList() {
+        return word;
+    }
+
+    public ArrayList<String> getAnswerList() {
+        return ans;
+    }
+
+    public String getSingleWord() {
+        return nWord;
+    }
+
+    public String getSingleAnswer() {
+        return nAns;
     }
 }

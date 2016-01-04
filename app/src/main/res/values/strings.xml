@@ -70,7 +70,7 @@
         <item>Advance</item>
         <item>Expert</item>
     </string-array>
-    <string-array name="progress_of_learned">
+    <string-array name="progress_of_learning">
         <item>ALL</item>
         <item>Learned</item>
         <item>Not learn</item>

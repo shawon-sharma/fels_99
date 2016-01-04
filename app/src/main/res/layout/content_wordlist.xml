@@ -58,7 +58,7 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:entries="@array/progress_of_learned"></Spinner>
+            android:entries="@array/progress_of_learning"></Spinner>
     </LinearLayout>
     <ScrollView
         android:layout_width="fill_parent"
