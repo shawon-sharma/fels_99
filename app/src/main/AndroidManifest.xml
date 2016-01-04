@@ -51,10 +51,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_result"
             android:theme="@style/AppTheme.NoActionBar"
-            android:parentActivityName=".CategoriesActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".CategoriesActivity" />
+            >
         </activity>
         <activity
             android:name=".ProfileActivity"
@@ -70,7 +67,13 @@
             android:name=".CategoriesActivity"
             android:label="@string/title_activity_categories"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".ProfileActivity" >
+            <!-- The meta-data element is needed for versions lower than 4.1 -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ProfileActivity" />
+        </activity>
         <activity
             android:name=".LearnedActivity"
             android:label="@string/title_activity_learned"

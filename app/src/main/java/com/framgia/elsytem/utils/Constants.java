@@ -1,4 +1,4 @@
-package com.framgia.elsytem.mypackage;
+package com.framgia.elsytem.utils;
 
 import android.content.SharedPreferences;
 
@@ -44,4 +44,5 @@ public class Constants {
     public static final int STATUS=200;
     // file name of the avatar in the phone storage
     public static final String KEY_AVATAR_FILE_NAME = "_avatar.jpg";
+    public static int ACTIVITY_SWITCH=1;
 }

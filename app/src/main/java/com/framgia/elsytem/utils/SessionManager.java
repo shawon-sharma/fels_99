@@ -1,4 +1,4 @@
-package com.framgia.elsytem.mypackage;
+package com.framgia.elsytem.utils;
 
 import android.content.Context;
 import android.content.Intent;

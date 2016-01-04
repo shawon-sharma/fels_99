@@ -4,13 +4,10 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.speech.tts.TextToSpeech;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -22,10 +19,11 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.framgia.elsytem.model.Done;
 import com.framgia.elsytem.model.Lesson;
-import com.framgia.elsytem.mypackage.Constants;
-import com.framgia.elsytem.mypackage.SessionManager;
-import com.framgia.elsytem.mypackage.Url;
+import com.framgia.elsytem.utils.Constants;
+import com.framgia.elsytem.utils.SessionManager;
+import com.framgia.elsytem.utils.Url;
 import com.google.gson.Gson;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
@@ -66,9 +64,9 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
     int category_id = 1;
     TextView questions;
     String category_name;
+    int x=1;
     ArrayList<Lesson.LessonEntity.WordsEntity> wordsEntityArrayList;
     ArrayList<Lesson.LessonEntity.WordsEntity.AnswersEntity> answersEntityArrayList = new ArrayList<Lesson.LessonEntity.WordsEntity.AnswersEntity>();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,6 +103,7 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
         });
         Intent intent = getIntent();
         category_name = intent.getStringExtra(Constants.CATEGORY_NAME);
+        mdDatabaseHelper.deleteResult(category_name);
         getSupportActionBar().setTitle(category_name);
         category_id = intent.getIntExtra(String.valueOf(Constants.CATEGORY_ID), 1);
         String c_id = Integer.toString(category_id);
@@ -152,11 +151,14 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
+                        if(x==1)
+                            mdDatabaseHelper.deleteResult(category_name);
                         long insert = mdDatabaseHelper.createresult(wordsEntityArrayList.get(word_number).getContent(), language, answersEntityArrayList.get(chosen_answer).isIs_correct(), category_name);
                         Log.e("insert", " " + insert);
                         int result_id = wordsEntityArrayList.get(word_number).getResult_id();
                         int answer_id = answersEntityArrayList.get(chosen_answer).getId();
                         boolean state = answersEntityArrayList.get(chosen_answer).isIs_correct();
+                        x++;
                         try {
                             update = updatelesson(result_id, answer_id, state);
                             String url_update = Url.update_first.concat(Integer.toString(lesson_id)).concat(Url.update_last);
@@ -184,6 +186,8 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
+                if(x==1)
+                    mdDatabaseHelper.deleteResult(category_name);
             }
         });
         aBuilder.create();
@@ -220,12 +224,21 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
             case android.R.id.home:
-                NavUtils.navigateUpFromSameTask(this);
+                onBackPressed();
                 return true;
             case R.id.action_done:
-                Intent intent = new Intent(getApplication(), ResultActivity.class);
-                intent.putExtra(Constants.CATEGORY_NAME, category_name);
-                startActivityForResult(intent, Constants.STATUS);
+                long count=mdDatabaseHelper.getAnswerCounts(category_name);
+                if(count==0)
+                    Toast.makeText(getApplication(),R.string.question_no_answer,Toast.LENGTH_LONG).show();
+                else {
+                    Constants.ACTIVITY_SWITCH = 2;
+                    CategoriesActivity.switch_activity.add(new Done(category_id, Constants.ACTIVITY_SWITCH));
+                    //  startActivity(new Intent(getApplication(), CategoriesActivity.class));
+                    Intent intent = new Intent(getApplication(), ResultActivity.class);
+                    intent.putExtra(Constants.CATEGORY_NAME, category_name);
+                    startActivity(intent);
+                    finish();
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -353,5 +366,25 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
                 buttons[j].setText(answers.get(j).getContent());
             }
         }
+    }
+    @Override
+    public void onBackPressed() {
+        final AlertDialog.Builder aBuilder = new AlertDialog.Builder(QuestionActivity.this);
+        aBuilder.setMessage(R.string.question_exit);
+        aBuilder.setPositiveButton(R.string.question_alert_positive, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                finish();
+            }
+        });
+        aBuilder.setNegativeButton(R.string.question_alert_negative, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        aBuilder.create();
+        aBuilder.show();
     }
 }

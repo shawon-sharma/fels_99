@@ -141,7 +141,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return count;
     }
 
-
+    public void deleteResult(String category_name){
+        String countQuery = "DELETE FROM " + TABLE_RESULT +" WHERE "+ FIELD_CATEGORY_NAME + " = '"+category_name+"'";
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL(countQuery);
+    }
     /**
      * closing database
      */

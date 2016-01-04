@@ -12,12 +12,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.framgia.elsytem.jsonResponse.CategoryResponse;
-import com.framgia.elsytem.mypackage.Constants;
-import com.framgia.elsytem.mypackage.SessionManager;
-import com.framgia.elsytem.mypackage.Url;
+import com.framgia.elsytem.model.Done;
+import com.framgia.elsytem.utils.Constants;
+import com.framgia.elsytem.utils.SessionManager;
+import com.framgia.elsytem.utils.Url;
 import com.google.gson.Gson;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -38,7 +38,7 @@ public class CategoriesActivity extends AppCompatActivity {
     Gson gson;
     TextView category;
     String catpage="1";
-    private com.framgia.elsytem.mypackage.Constants mConstant;
+    private com.framgia.elsytem.utils.Constants mConstant;
     OkHttpClient okHttpClient;
     String token;
     SessionManager sessionManager;
@@ -49,6 +49,9 @@ public class CategoriesActivity extends AppCompatActivity {
     Response catresponse = null;
     String catresponseData = null;
     ArrayList<String> catal=new ArrayList<>();
+
+    public static  ArrayList<Done>switch_activity=new ArrayList<>();
+    int s=1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,7 +64,6 @@ public class CategoriesActivity extends AppCompatActivity {
         category = (TextView) findViewById(R.id.textHeader);
         list = (ListView) findViewById(R.id.listCategory);
         okHttpClient = new OkHttpClient();
-
         Url ur=new Url();
         url=Url.categoryFetchURL;
         try {
@@ -74,11 +76,10 @@ public class CategoriesActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 int category_id = catitem.get(position).getCategoriesId();
-                String category_name=catitem.get(position).getCategoriesName();
-                Toast.makeText(getApplicationContext(),category_name+" "+position,Toast.LENGTH_LONG).show();
+                String category_name = catitem.get(position).getCategoriesName();
                 Intent intent = new Intent(getApplication(), QuestionActivity.class);
                 intent.putExtra(String.valueOf(Constants.CATEGORY_ID), category_id);
-                intent.putExtra(Constants.CATEGORY_NAME,category_name);
+                intent.putExtra(Constants.CATEGORY_NAME, category_name);
                 startActivity(intent);
             }
         });
@@ -143,7 +144,6 @@ public class CategoriesActivity extends AppCompatActivity {
             }
             return cattotalpage;
         }
-
         @Override
         protected void onPreExecute() {
             mDialog = new ProgressDialog(CategoriesActivity.this);
@@ -153,10 +153,9 @@ public class CategoriesActivity extends AppCompatActivity {
             mDialog.setCancelable(true);
             mDialog.show();
         }
-
         @Override
         protected void onPostExecute(Integer i) {
-            mDialog.dismiss();
+
             while(i>=1)
             {
                 String catrl=null;
@@ -169,13 +168,12 @@ public class CategoriesActivity extends AppCompatActivity {
                 new HttpAsyncCategoryshow().execute(catrl);
                 i--;
             }
+            mDialog.dismiss();
         }
     }
 
     private class HttpAsyncCategoryshow extends AsyncTask<String, Void,ArrayList<CategoryResponse
             .CategoriesEntity>> {
-        private ProgressDialog mDialog;
-
         @Override
         protected ArrayList<CategoryResponse.CategoriesEntity> doInBackground(String... urls) {
             try {
@@ -192,20 +190,9 @@ public class CategoriesActivity extends AppCompatActivity {
             }
             return categoriesName;
         }
-
-        @Override
-        protected void onPreExecute() {
-            mDialog = new ProgressDialog(CategoriesActivity.this);
-            mDialog.setTitle(R.string.categoriesactivity_settitle);
-            mDialog.setMessage("please wait");
-            mDialog.setIndeterminate(false);
-            mDialog.setCancelable(true);
-            mDialog.show();
-        }
-
         @Override
         protected void onPostExecute(ArrayList<CategoryResponse.CategoriesEntity> categoriesName) {
-            mDialog.dismiss();
+
            for(int i=0;i<categoriesName.size();i++)
            {
                String key=categoriesName.get(i).getName();
@@ -217,13 +204,10 @@ public class CategoriesActivity extends AppCompatActivity {
             CategoryAdapter cad = new CategoryAdapter(getApplicationContext(),catitem);
             list.setAdapter(cad);
             cad.notifyDataSetChanged();
-            /*mDialog.dismiss();
-            CategoryAdapter cad = new CategoryAdapter(getApplicationContext(), categoriesName);
-            list = (ListView) findViewById(R.id.listCategory);
-            list.setAdapter(cad);*/
         }
     }
 }
+
 
 
 

@@ -1,4 +1,4 @@
-package com.framgia.elsytem.mypackage;
+package com.framgia.elsytem.utils;
 
 /**
  * Created by ahsan on 12/29/15.
