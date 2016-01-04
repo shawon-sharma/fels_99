@@ -33,7 +33,7 @@ public class Constants {
     public static final String ANSWER_ID ="answer_id";
     public static final String RESULT_ATTRIBUTES ="results_attributes";
     public static final String LESSON ="lesson";
-
+    public static String CATEGORY_NAME="category_name";
     public static SharedPreferences PREF_STATE = null;
     public static int ANSWER_1=0;
     public static int ANSWER_2=1;

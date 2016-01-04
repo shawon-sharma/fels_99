@@ -9,8 +9,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.framgia.elsytem.model.Result;
+import com.framgia.elsytem.mypackage.Constants;
 
 import java.util.ArrayList;
 
@@ -19,6 +21,8 @@ public class ResultActivity extends AppCompatActivity {
     ListView resultlist;
     ArrayList<Result> arrayList;
     ArrayAdapter<Result> resAdapter;
+    TextView number;
+    TextView lesson;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,12 +33,19 @@ public class ResultActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         resultlist = (ListView) findViewById(R.id.result_list);
+        lesson=(TextView)findViewById(R.id.lesson);
+        Intent intent=getIntent();
+        String category_name=intent.getStringExtra(Constants.CATEGORY_NAME);
+        number=(TextView)findViewById(R.id.correctnumber);
         databaseHelper = new DatabaseHelper(this);
-        arrayList = databaseHelper.getresult();
-        resAdapter = new ResultAdapter(getApplication(), arrayList);
+        long correct=databaseHelper.getCorrectAnswers(category_name);
+        int count=databaseHelper.getAnswerCounts(category_name);
+        number.setText(correct+"/"+count);
+        lesson.setText(category_name);
+        arrayList = databaseHelper.getCategoryResults(category_name);
+        resAdapter = new ResultAdapter(getApplication(),arrayList);
         resultlist.setAdapter(resAdapter);
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

@@ -28,12 +28,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String FIELD_WORD = "word";
     private static final String FIELD_LANGUAGE = "language";
     private static final String FIELD_STATE = "state";
+    private static final String FIELD_CATEGORY_NAME="category_name";
     /**
      * status table create statement
      */
     private static final String CREATE_TABLE_RESULT = "CREATE TABLE " + TABLE_RESULT
             + "(" + FIELD_ID + " INTEGER PRIMARY KEY, " + FIELD_WORD + " " +
-            "text, "+FIELD_LANGUAGE+" "+"text, "+FIELD_STATE+" integer )";
+            "text, "+FIELD_LANGUAGE+" "+"text, "+FIELD_CATEGORY_NAME+" "+"text, "+FIELD_STATE+" integer )";
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -61,13 +62,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /**
      * Creating result
      */
-    public long createresult(String word,String language,boolean state) {
+    public long createresult(String word,String language,boolean state,String category_name) {
         int answer_state=0;
         if(state==true)
             answer_state=1;
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(FIELD_WORD, word);
+        values.put(FIELD_CATEGORY_NAME,category_name);
         values.put(FIELD_LANGUAGE, language);
         values.put(FIELD_STATE,answer_state);
         long insert = db.insert(TABLE_RESULT, null, values);
@@ -98,17 +100,47 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return arrayList;
     }
 
-    public long getCorrectAnswers(){
+    public ArrayList<Result>getCategoryResults(String category_name){
+        SQLiteDatabase database=this.getReadableDatabase();
+        ArrayList<Result> arrayList=new ArrayList<Result>();
+        String selectQuery = "SELECT * FROM " + TABLE_RESULT + " WHERE " + FIELD_CATEGORY_NAME + " = '"+category_name+"'";
+        Cursor cursor = database.rawQuery(selectQuery, null);
+        if(cursor!=null & cursor.getCount()>0){
+            cursor.moveToFirst();
+            for (int i = 0; i < cursor.getCount(); i++) {
+                int id=cursor.getInt(cursor.getColumnIndex(FIELD_ID));
+                String word = cursor.getString(cursor
+                        .getColumnIndex(FIELD_WORD));
+                String language = cursor.getString(cursor
+                        .getColumnIndex(FIELD_LANGUAGE));
+                int state=cursor.getInt(cursor.getColumnIndex(FIELD_STATE));
+                arrayList.add(new Result(id,word,language,state));
+                cursor.moveToNext();
+            }
+        }
+        return arrayList;
+    }
+
+    public long getCorrectAnswers(String category_name){
         SQLiteDatabase database=this.getReadableDatabase();
         long correct=0;
         ArrayList<Result> arrayList=new ArrayList<Result>();
-        String query="Select * from "+TABLE_RESULT+" where "+FIELD_STATE+" = " +"1";
+        String query="Select * from "+TABLE_RESULT+" where "+FIELD_STATE+" = " +"1"+ " and "+FIELD_CATEGORY_NAME + " = '"+category_name+"'";
         Cursor cursor = database.rawQuery(query, null);
         if(cursor!=null & cursor.getCount()>0){
              correct=cursor.getCount();
         }
         return correct;
     }
+    public int getAnswerCounts(String category_name) {
+        String countQuery = "SELECT  * FROM " + TABLE_RESULT +" WHERE "+ FIELD_CATEGORY_NAME + " = '"+category_name+"'";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(countQuery, null);
+        int count = cursor.getCount();
+        cursor.close();
+        return count;
+    }
+
 
     /**
      * closing database

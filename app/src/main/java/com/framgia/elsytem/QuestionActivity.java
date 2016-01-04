@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
@@ -48,7 +49,6 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
     OkHttpClient okHttpClient;
     Lesson lesson;
     DatabaseHelper mdDatabaseHelper;
-    public static SharedPreferences.Editor editor = null;
     public static final MediaType JSON
             = MediaType.parse("application/json; charset=utf-8");
     Button option_1, option_2, option_3, option_4;
@@ -65,6 +65,7 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
     int lesson_id = 1;
     int category_id = 1;
     TextView questions;
+    String category_name;
     ArrayList<Lesson.LessonEntity.WordsEntity> wordsEntityArrayList;
     ArrayList<Lesson.LessonEntity.WordsEntity.AnswersEntity> answersEntityArrayList = new ArrayList<Lesson.LessonEntity.WordsEntity.AnswersEntity>();
 
@@ -76,7 +77,6 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setTitle(R.string.question_title);
         mdDatabaseHelper = new DatabaseHelper(this);
         questions = (TextView) findViewById(R.id.question_number);
         sessionManager = new SessionManager(this);
@@ -103,10 +103,9 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
                 speak();
             }
         });
-        Constants.PREF_STATE = getApplicationContext().getSharedPreferences("MyPref",
-                MODE_PRIVATE);
-        word_number = Constants.PREF_STATE.getInt(String.valueOf(Constants.STATE), 0);
         Intent intent = getIntent();
+        category_name = intent.getStringExtra(Constants.CATEGORY_NAME);
+        getSupportActionBar().setTitle(category_name);
         category_id = intent.getIntExtra(String.valueOf(Constants.CATEGORY_ID), 1);
         String c_id = Integer.toString(category_id);
         String urlasync = Url.url.concat(c_id).concat(Url.url_last);
@@ -153,7 +152,8 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
-                        mdDatabaseHelper.createresult(wordsEntityArrayList.get(word_number).getContent(), language, answersEntityArrayList.get(chosen_answer).isIs_correct());
+                        long insert = mdDatabaseHelper.createresult(wordsEntityArrayList.get(word_number).getContent(), language, answersEntityArrayList.get(chosen_answer).isIs_correct(), category_name);
+                        Log.e("insert", " " + insert);
                         int result_id = wordsEntityArrayList.get(word_number).getResult_id();
                         int answer_id = answersEntityArrayList.get(chosen_answer).getId();
                         boolean state = answersEntityArrayList.get(chosen_answer).isIs_correct();
@@ -167,7 +167,7 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
                         word_number++;
                         if (word_number < wordsEntityArrayList.size()) {
                             txttword.setText(wordsEntityArrayList.get(word_number).getContent());
-                            questions.setText(word_number + "/" + wordsEntityArrayList.size());
+                            questions.setText((word_number + 1) + "/" + wordsEntityArrayList.size());
                             answersEntityArrayList = null;
                             answersEntityArrayList = (ArrayList<Lesson.LessonEntity.WordsEntity.AnswersEntity>) wordsEntityArrayList.get(word_number).getAnswers();
                             if (answersEntityArrayList.size() > 0) {
@@ -175,9 +175,6 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
                                     buttons[j].setText(answersEntityArrayList.get(j).getContent());
                                 }
                             }
-                            editor = Constants.PREF_STATE.edit();
-                            editor.putInt(String.valueOf(Constants.STATE), word_number);
-                            editor.commit();
                         } else {
                             Toast.makeText(getApplication(), R.string.question_done, Toast.LENGTH_LONG).show();
                         }
@@ -215,6 +212,7 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
         getMenuInflater().inflate(R.menu.menu_question, menu);
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -225,12 +223,15 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
             case R.id.action_done:
-                startActivityForResult(new Intent(getApplication(), ResultActivity.class), Constants.STATUS);
+                Intent intent = new Intent(getApplication(), ResultActivity.class);
+                intent.putExtra(Constants.CATEGORY_NAME, category_name);
+                startActivityForResult(intent, Constants.STATUS);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
+
     @Override
     public void onInit(int status) {
         if (status == TextToSpeech.SUCCESS) {
@@ -346,7 +347,7 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
         protected void onPostExecute(WordReturn wordReturn) {
             mDialog.dismiss();
             txttword.setText(wordReturn.contain);
-            questions.setText(word_number + "/" + wordsEntityArrayList.size());
+            questions.setText((word_number + 1) + "/" + wordsEntityArrayList.size());
             ArrayList<Lesson.LessonEntity.WordsEntity.AnswersEntity> answers = wordReturn.answersEntities;
             for (int j = 0; j < answers.size(); j++) {
                 buttons[j].setText(answers.get(j).getContent());
