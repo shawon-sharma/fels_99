@@ -139,14 +139,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
-                android:text="@string/content_profile_words_btn_text"/>
+                android:background="@color/colorAccent"
+                android:text="@string/content_profile_words_btn_text"
+                android:textColor="@drawable/button_selector"/>
 
             <Button
                 android:id="@+id/lesson_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:text="@string/content_profile_lesson_btn_text"/>
+                android:background="@color/colorAccent"
+                android:text="@string/content_profile_lesson_btn_text"
+                android:textColor="@drawable/button_selector"/>
         </RelativeLayout>
     </LinearLayout>
 </ScrollView>
