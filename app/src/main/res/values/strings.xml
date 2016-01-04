@@ -59,8 +59,11 @@
     <string name="toast_message_pick_image_error">Something went wrong.</string>
     <string name="toast_message_load_image_error">Avatar image Does Not exist or Network
         Error</string>
+    <string name="toast_message_nothing_updated">Nothing updated!</string>
     <string name="button_remove_avatar">Remove</string>
     <string name="toast_message_update_successful">Profile updated!</string>
+    <string name="toast_message_password_mismatch">Please make sure your confirmation
+        password matches the new password.</string>
     <string-array name="Category_name">
         <item>ALL</item>
         <item>Basic</item>

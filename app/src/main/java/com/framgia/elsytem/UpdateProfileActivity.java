@@ -312,11 +312,32 @@ public class UpdateProfileActivity extends AppCompatActivity {
                 mNewPassword = mEtNewPassword.getText().toString();
                 mPasswordConfirmation = mEtPasswordConfirmation.getText().toString();
                 mFullName = mEtFullName.getText().toString();
-                new HttpAsyncTaskUpdateProfile().execute(getString(R.string.url_update_profile)
-                        + mId + ".json");
+                if (!mNewPassword.equals(mPasswordConfirmation)) Toast.makeText
+                        (getApplicationContext(), R.string.toast_message_password_mismatch, Toast
+                                .LENGTH_LONG).show();
+                else if (mValidate(mOldPassword, mNewPassword, mPasswordConfirmation, mFullName,
+                        imageDataBase64String)) {
+                    new HttpAsyncTaskUpdateProfile().execute(getString(R.string.url_update_profile)
+                            + mId + ".json");
+                } else {
+                    Toast.makeText(getApplicationContext(), R.string
+                            .toast_message_nothing_updated, Toast.LENGTH_LONG).show();
+                    onBackPressed();
+                }
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private boolean mValidate(String... params) {
+        if (params == null) return false;
+        if (params[0].isEmpty()
+                && params[1].isEmpty()
+                && params[2].isEmpty()
+                && params[3].equals(user.get(Constants.KEY_NAME))
+                && params[4].equals(user.get(Constants.KEY_AVATAR)))
+            return false;
+        return true;
     }
 
     @Override
@@ -375,6 +396,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
                         imageDataBase64String, user.get(Constants.KEY_AUTH_TOKEN), Integer.parseInt
                                 (user.get(Constants.KEY_REMEMBER_ME)));
                 Toast.makeText(getBaseContext(), getString(R.string.toast_message_update_successful), Toast.LENGTH_LONG).show();
+                onBackPressed();
             } else Toast.makeText(getBaseContext(), result, Toast.LENGTH_LONG).show();
         }
     }
