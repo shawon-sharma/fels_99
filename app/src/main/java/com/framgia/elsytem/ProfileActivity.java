@@ -1,7 +1,6 @@
 package com.framgia.elsytem;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -12,21 +11,22 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.framgia.elsytem.adapters.ProfileActivityListAdapter;
+import com.framgia.elsytem.jsonResponse.ShowUserResponse;
+import com.framgia.elsytem.utils.RoundedCornersTransformation;
 import com.framgia.elsytem.utils.Constants;
 import com.framgia.elsytem.utils.SessionManager;
 import com.framgia.elsytem.utils.Url;
 import com.framgia.elsytem.utils.UserFunctions;
+import com.google.gson.Gson;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 
@@ -39,14 +39,14 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 
 public class ProfileActivity extends AppCompatActivity {
     private static final String TAG = "ProfileActivity";
     ListView listViewProfile;
     String[] formattedDate = new String[1];
-    int images[] = {R.drawable.e, R.drawable.b, R.drawable.ic_a};
     ImageView editProfile, avatar;
-    TextView name, email;
+    TextView name, email, learnedWords;
     SessionManager session;
     Constants constant;
     Button lesson, words;
@@ -63,9 +63,62 @@ public class ProfileActivity extends AppCompatActivity {
         formattedDate[0] = df.format(c.getTime());
         mInitializeListeners();
         mGetSessionData();
-        name.setText(user.get(Constants.KEY_NAME));
-        email.setText(user.get(Constants.KEY_EMAIL));
         mLoadAvatar(user.get(Constants.KEY_AVATAR));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mGetUserDetailsFromJson();
+    }
+
+    private void mGetUserDetailsFromJson() {
+        new HttpAsyncTaskShowUser().execute(Url.url_show_user + user.get(Constants.ID) + ".json");
+    }
+
+    private class HttpAsyncTaskShowUser extends AsyncTask<String, Void, String> {
+        private ProgressDialog mDialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mDialog = new ProgressDialog(ProfileActivity.this);
+            mDialog.setTitle(getString(R.string.contacting_servers));
+            mDialog.setMessage(getString(R.string.please_wait));
+            mDialog.setIndeterminate(false);
+            mDialog.setCancelable(true);
+            mDialog.show();
+        }
+
+        @Override
+        protected String doInBackground(String... urls) {
+            return new UserFunctions().showUser(urls[0], user.get(Constants.KEY_AUTH_TOKEN));
+        }
+
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(String result) {
+            mDialog.dismiss();
+            List<ShowUserResponse.UserEntity.ActivitiesEntity> activityList;
+            ShowUserResponse response;
+            Gson gson = new Gson();
+            response = gson.fromJson(result, ShowUserResponse.class);
+            int id = 0;
+            try {
+                id = response.getUser().getId();
+            } catch (Exception e) {
+            }
+            if (id == Integer.parseInt(user.get(Constants.KEY_ID))) {
+                name.setText(response.getUser().getName());
+                email.setText(response.getUser().getEmail());
+                learnedWords.setText(getString(R.string.text_learned) + " " + response.getUser()
+                        .getLearned_words() + " " + getString(R.string.text_words));
+                activityList = response.getUser().getActivities();
+                ProfileActivityListAdapter adapter = new ProfileActivityListAdapter
+                        (getApplicationContext(), activityList);
+                listViewProfile.setAdapter(adapter);
+            } else Toast.makeText(getBaseContext(), result, Toast.LENGTH_LONG).show();
+        }
     }
 
     private void mLoadAvatar(String avatarString) {
@@ -74,8 +127,10 @@ public class ProfileActivity extends AppCompatActivity {
                 Picasso.with(this)
                         .load(avatarString)
                         .memoryPolicy(MemoryPolicy.NO_CACHE)
-                        .resize(100, 100)
+                        .resize(Constants.AVATAR_WIDTH_HEIGHT_AND_RADIUS, Constants.AVATAR_WIDTH_HEIGHT_AND_RADIUS)
                         .centerCrop()
+                        .transform(new RoundedCornersTransformation(Constants
+                                .AVATAR_WIDTH_HEIGHT_AND_RADIUS, Constants.ROUNDED_AVATAR_MARGIN))
                         .placeholder(R.drawable.ic_person_outline_black_36dp)
                         .error(R.drawable.ico_fail)
                         .into(avatar);
@@ -87,8 +142,10 @@ public class ProfileActivity extends AppCompatActivity {
                 Picasso.with(this)
                         .load(uri)
                         .memoryPolicy(MemoryPolicy.NO_CACHE)
-                        .resize(100, 100)
+                        .resize(Constants.AVATAR_WIDTH_HEIGHT_AND_RADIUS, Constants.AVATAR_WIDTH_HEIGHT_AND_RADIUS)
                         .centerCrop()
+                        .transform(new RoundedCornersTransformation(Constants
+                                .AVATAR_WIDTH_HEIGHT_AND_RADIUS, Constants.ROUNDED_AVATAR_MARGIN))
                         .placeholder(R.drawable.ic_person_outline_black_36dp)
                         .error(R.drawable.ico_fail)
                         .into(avatar);
@@ -126,7 +183,6 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void mInitializeListeners() {
-        ViewAdapter v = new ViewAdapter(this, formattedDate);
         lesson = (Button) findViewById(R.id.lesson_btn);
         lesson.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -142,7 +198,6 @@ public class ProfileActivity extends AppCompatActivity {
                 startActivity(new Intent(getApplication(), LearnedActivity.class));
             }
         });
-        listViewProfile.setAdapter(v);
         editProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -176,10 +231,11 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void initializeViews() {
-        listViewProfile = (ListView) findViewById(R.id.listview);
+        listViewProfile = (ListView) findViewById(R.id.list_view);
         editProfile = (ImageView) findViewById(R.id.edit_profile);
         name = (TextView) findViewById(R.id.person);
         email = (TextView) findViewById(R.id.email_textview);
+        learnedWords = (TextView) findViewById(R.id.desc_textview);
         avatar = (ImageView) findViewById(R.id.avatar);
     }
 
@@ -254,26 +310,5 @@ public class ProfileActivity extends AppCompatActivity {
             }
             Toast.makeText(getBaseContext(), result, Toast.LENGTH_LONG).show();
         }
-    }
-}
-
-class ViewAdapter extends ArrayAdapter<String> {
-    Context c;
-    String[] formattedDate;
-
-    ViewAdapter(Context c, String[] formattedDate) {
-        super(c, R.layout.profile_list, R.id.textView2, formattedDate);
-        this.c = c;
-        this.formattedDate = formattedDate;
-    }
-
-    public View getView(int position, View convertView, ViewGroup parent) {
-        LayoutInflater inflate = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View row = inflate.inflate(R.layout.profile_list, parent, false);
-        ImageView i = (ImageView) row.findViewById(R.id.imageView);
-        TextView t1 = (TextView) row.findViewById(R.id.textView);
-        TextView t2 = (TextView) row.findViewById(R.id.textView2);
-        t1.setText(formattedDate[position]);
-        return row;
     }
 }

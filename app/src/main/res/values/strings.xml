@@ -16,12 +16,12 @@
     <string name="edit_text_full_name_activity_register">Full name</string>
     <string name="text_avatar_activity_register">Avatar</string>
     <string name="text_required_information_activity_register">* Required information</string>
-    <string name="title_activity_question">QuestionActivity</string>
+    <string name="title_activity_question">Lesson</string>
     <string name="action_ok">Ok</string>
     <string name="action_cancel">Cancel</string>
     <string name="action_turn_on_wifi">Turn on Wi-Fi</string>
     <string name="action_turn_on_cellular_data">Turn on cellular data</string>
-    <string name="title_activity_result">ResultActivity</string>
+    <string name="title_activity_result">Result</string>
     <string name="content_main_question_number_text">20/500</string>
     <string name="content_main_word_text">Pronunciation</string>
     <string name="content_result_lesson_text">Basic Lesson</string>
@@ -43,6 +43,8 @@
     <string name="content_profile_words_btn_text">Words</string>
     <string name="content_profile_lesson_btn_text">Lesson</string>
     <string name="title_activity_wordlist">Words List</string>
+    <string name="text_learned">Learned</string>
+    <string name="text_words">words</string>
     <string name="contacting_servers">Contacting Servers</string>
     <string name="signing_out">Signing out ...</string>
     <string name="signing_in">Signing in ...</string>
@@ -88,10 +90,10 @@
     <string name="question_alert_positive">YES</string>
     <string name="question_alert_negative">NO</string>
     <string name="question_language">English</string>
-    <string name="title_activity_categories">CategoriesActivity</string>
+    <string name="title_activity_categories">Categories</string>
     <string name="action_back">Back</string>
     <string name="categoriesactivity_settitle">Loading Categories</string>
-    <string name="title_activity_learned">LearnedActivity</string>
+    <string name="title_activity_learned">Words list</string>
     <string name="question_done">You are done with all the question,click done to see result</string>
     <string name="question_exit">Do you want to quit your lesson??</string>
     <string name="question_no_answer">Please answer at least one question</string>

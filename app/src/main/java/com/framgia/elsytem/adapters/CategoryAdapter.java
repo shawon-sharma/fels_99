@@ -1,4 +1,4 @@
-package com.framgia.elsytem;
+package com.framgia.elsytem.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,6 +8,9 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.framgia.elsytem.CategoriesReturnFromPages;
+import com.framgia.elsytem.R;
+import com.framgia.elsytem.utils.Constants;
 import com.framgia.elsytem.utils.RoundedCornersTransformation;
 import com.squareup.picasso.Picasso;
 
@@ -53,7 +56,7 @@ public class CategoryAdapter extends BaseAdapter {
         title.setText(item.getCategoriesName());
         Picasso.with(mContext)
                 .load(categoryResponses.get(position).getmCategoryImage())
-                .resize(100, 100)
+                .resize(Constants.AVATAR_WIDTH_HEIGHT_AND_RADIUS, Constants.AVATAR_WIDTH_HEIGHT_AND_RADIUS)
                 .centerCrop()
                 .transform(new RoundedCornersTransformation(100, 5))
                 .into(image);

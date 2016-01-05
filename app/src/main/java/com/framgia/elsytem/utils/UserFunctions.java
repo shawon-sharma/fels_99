@@ -27,6 +27,27 @@ public class UserFunctions {
     }
 
     /**
+     * Function to show user
+     */
+    public String showUser(String url, String auth_token) {
+        String result = "";
+        String json = "";
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("auth_token", auth_token);
+            String jsonData = okHttpClient.
+                    newCall(new Request.Builder()
+                            .url(url+"?auth_token="+auth_token)
+                            .get()
+                            .build()).execute().body().string();
+            result = jsonData;
+        } catch (Exception e) {
+            Log.e(constant.TAG_USER_FUNCTIONS + " I/OStream", e.getLocalizedMessage());
+        }
+        return result;
+    }
+
+    /**
      * Function to Login
      **/
     public String signIn(String url, User user, int isRememberMeChecked) {

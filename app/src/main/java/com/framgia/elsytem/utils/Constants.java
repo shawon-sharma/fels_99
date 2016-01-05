@@ -23,7 +23,6 @@ public class Constants {
     public static final String KEY_REMEMBER_ME = "rememberMe";
     // UserFunctions TAG
     public static final String TAG_USER_FUNCTIONS = "UserFunctions";
-
     public static final String AUTH_TOKEN="auth_token";
     public static final String PAGE="page";
     public static final String CCATEGORY_ID ="category_id";
@@ -48,5 +47,7 @@ public class Constants {
     public static final String all="all_word";
     public static final String learned="learned";
     public static final String not_learned="no_learn";
-
+    // image dimensions
+    public static final int AVATAR_WIDTH_HEIGHT_AND_RADIUS = 100;
+    public static final int ROUNDED_AVATAR_MARGIN = 0;
 }

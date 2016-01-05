@@ -3,10 +3,12 @@ package com.framgia.elsytem;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Display;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -24,11 +26,12 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 public class WordlistActivity extends AppCompatActivity implements View.OnClickListener {
-    private static final String TAG="Word list Activity";
+    private static final String TAG = "Word list Activity";
     Button word;
     OkHttpClient okHttpClient;
-    public static final MediaType JSON=MediaType.parse("applicaiton/json;charset=utf-8");
+    public static final MediaType JSON = MediaType.parse("applicaiton/json;charset=utf-8");
     private int mWidth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,22 +40,27 @@ public class WordlistActivity extends AppCompatActivity implements View.OnClickL
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        okHttpClient=new OkHttpClient();
-        word=(Button)findViewById(R.id.back_btn);
+        okHttpClient = new OkHttpClient();
+        word = (Button) findViewById(R.id.back_btn);
         word.setOnClickListener(this);
         Display mDisplay = getWindowManager().getDefaultDisplay();
-        mWidth  = mDisplay.getWidth();
+        mWidth = mDisplay.getWidth();
     }
 
-    public void wordSet()
-    {
-
-
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onClick(View v) {
-      new HttpAsyncTask().execute("https://manh-nt.herokuapp.com/relationships.json");
+        new HttpAsyncTask().execute("https://manh-nt.herokuapp.com/relationships.json");
     }
 
     //**************************new class
@@ -86,50 +94,51 @@ public class WordlistActivity extends AppCompatActivity implements View.OnClickL
             Toast.makeText(getBaseContext(), result, Toast.LENGTH_LONG).show();
         }
     }
-//***********************************new class
-private class HttpAsyncTask extends AsyncTask<String, Void, String> {
-    @Override
-    protected String doInBackground(String... urls) {
-        //  return POST(urls[0], person);
 
-        String json = null;
-        try {
-            // json = create(person);
-            // json = createLesson();
-            json=getwords();
-        } catch (JSONException e) {
-            e.printStackTrace();
+    //***********************************new class
+    private class HttpAsyncTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... urls) {
+            //  return POST(urls[0], person);
+
+            String json = null;
+            try {
+                // json = create(person);
+                // json = createLesson();
+                json = getwords();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            RequestBody requestBody = RequestBody.create(JSON, json);
+            Request request = new Request.Builder().url(urls[0]).post(requestBody).build();
+            Response response = null;
+            try {
+                response = okHttpClient.newCall(request).execute();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                return response.body().string();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
         }
-        RequestBody requestBody = RequestBody.create(JSON, json);
-        Request request = new Request.Builder().url(urls[0]).post(requestBody).build();
-        Response response = null;
-        try {
-            response = okHttpClient.newCall(request).execute();
-        } catch (IOException e) {
-            e.printStackTrace();
+
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(String result) {
+            // Toast.makeText(getBaseContext(), "Data Sent!", Toast.LENGTH_LONG).show();
+            Toast.makeText(getBaseContext(), "response " + result, Toast.LENGTH_LONG).show();
+            Log.e("result ", result);
         }
-        try {
-            return response.body().string();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
-    // onPostExecute displays the results of the AsyncTask.
-    @Override
-    protected void onPostExecute(String result) {
-        // Toast.makeText(getBaseContext(), "Data Sent!", Toast.LENGTH_LONG).show();
-        Toast.makeText(getBaseContext(), "response " + result, Toast.LENGTH_LONG).show();
-        Log.e("result ", result);
-    }
-
-}
-//********************************getwords
-public String getwords() throws JSONException {
-    String result;
-       JSONObject parent = new JSONObject();
-        JSONArray words=new JSONArray();
+    //********************************getwords
+    public String getwords() throws JSONException {
+        String result;
+        JSONObject parent = new JSONObject();
+        JSONArray words = new JSONArray();
         JSONObject word = new JSONObject();
         word.put("id", 1);
         word.put("content", "Framgia");
@@ -159,7 +168,6 @@ public String getwords() throws JSONException {
         parent.put("words", words);
         //parent.put("user", jsonObject);
         result = words.toString();
-
-    return  result;
-}
+        return result;
+    }
 }

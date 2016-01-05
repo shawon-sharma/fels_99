@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.framgia.elsytem.jsonResponse.UserResponse;
 import com.framgia.elsytem.model.Profile;
+import com.framgia.elsytem.utils.RoundedCornersTransformation;
 import com.framgia.elsytem.utils.Constants;
 import com.framgia.elsytem.utils.SessionManager;
 import com.framgia.elsytem.utils.Url;
@@ -115,7 +116,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
         Picasso.with(this)
                 .load(R.drawable.ic_add_a_photo_black_36dp)
                 .memoryPolicy(MemoryPolicy.NO_CACHE)
-                .resize(100, 100)
+                .resize(Constants.AVATAR_WIDTH_HEIGHT_AND_RADIUS, Constants.AVATAR_WIDTH_HEIGHT_AND_RADIUS)
                 .centerCrop()
                 .into(mIvAvatar);
         mButton_avatar.setVisibility(View.INVISIBLE);
@@ -225,8 +226,11 @@ public class UpdateProfileActivity extends AppCompatActivity {
                 Picasso.with(this)
                         .load(avatar)
                         .memoryPolicy(MemoryPolicy.NO_CACHE)
-                        .resize(100, 100)
+                        .resize(Constants.AVATAR_WIDTH_HEIGHT_AND_RADIUS, Constants
+                                .AVATAR_WIDTH_HEIGHT_AND_RADIUS)
                         .centerCrop()
+                        .transform(new RoundedCornersTransformation(Constants
+                                .AVATAR_WIDTH_HEIGHT_AND_RADIUS, Constants.ROUNDED_AVATAR_MARGIN))
                         .placeholder(R.drawable.ic_add_a_photo_black_36dp)
                         .error(R.drawable.ico_fail)
                         .into(mIvAvatar);
@@ -238,8 +242,10 @@ public class UpdateProfileActivity extends AppCompatActivity {
                 Picasso.with(this)
                         .load(uri)
                         .memoryPolicy(MemoryPolicy.NO_CACHE)
-                        .resize(100, 100)
+                        .resize(Constants.AVATAR_WIDTH_HEIGHT_AND_RADIUS, Constants.AVATAR_WIDTH_HEIGHT_AND_RADIUS)
                         .centerCrop()
+                        .transform(new RoundedCornersTransformation(Constants
+                                .AVATAR_WIDTH_HEIGHT_AND_RADIUS, Constants.ROUNDED_AVATAR_MARGIN))
                         .placeholder(R.drawable.ic_add_a_photo_black_36dp)
                         .error(R.drawable.ico_fail)
                         .into(mIvAvatar);

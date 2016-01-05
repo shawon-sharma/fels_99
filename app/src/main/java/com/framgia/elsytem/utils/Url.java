@@ -19,6 +19,8 @@ public class Url {
     public static final String url_sign_out = "https://manh-nt.herokuapp.com/logout.json";
     // url for updating profile
     public static final String url_update_profile = "https://manh-nt.herokuapp.com/users/";
+    // url for showing user
+    public static final String url_show_user = "https://manh-nt.herokuapp.com/users/";
     /**
      * Created by sharma on 12/29/15.
      */

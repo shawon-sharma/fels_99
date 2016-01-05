@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.framgia.elsytem.model.Done;
 import com.framgia.elsytem.model.Lesson;
 import com.framgia.elsytem.utils.Constants;
+import com.framgia.elsytem.utils.DatabaseHelper;
 import com.framgia.elsytem.utils.SessionManager;
 import com.framgia.elsytem.utils.Url;
 import com.google.gson.Gson;
