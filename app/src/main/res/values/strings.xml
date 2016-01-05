@@ -93,6 +93,8 @@
     <string name="categoriesactivity_settitle">Loading Categories</string>
     <string name="title_activity_learned">LearnedActivity</string>
     <string name="question_done">You are done with all the question,click done to see result</string>
+    <string name="question_exit">Do you want to quit your lesson??</string>
+    <string name="question_no_answer">Please answer at least one question</string>
     <string name="pdf">PDF</string>
     <string name="wordlist">WORD LIST</string>
     <string name="back">BACK</string>

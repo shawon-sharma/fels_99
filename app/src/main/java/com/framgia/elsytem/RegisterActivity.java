@@ -18,9 +18,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.framgia.elsytem.model.User;
-import com.framgia.elsytem.mypackage.AlertDialogManager;
-import com.framgia.elsytem.mypackage.Url;
-import com.framgia.elsytem.mypackage.UserFunctions;
+import com.framgia.elsytem.utils.AlertDialogManager;
+import com.framgia.elsytem.utils.Url;
+import com.framgia.elsytem.utils.UserFunctions;
 
 public class RegisterActivity extends AppCompatActivity {
     private static final String TAG = "RegisterActivity";

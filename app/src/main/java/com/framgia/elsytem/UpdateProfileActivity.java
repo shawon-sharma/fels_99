@@ -22,10 +22,10 @@ import android.widget.Toast;
 
 import com.framgia.elsytem.jsonResponse.UserResponse;
 import com.framgia.elsytem.model.Profile;
-import com.framgia.elsytem.mypackage.Constants;
-import com.framgia.elsytem.mypackage.SessionManager;
-import com.framgia.elsytem.mypackage.Url;
-import com.framgia.elsytem.mypackage.UserFunctions;
+import com.framgia.elsytem.utils.Constants;
+import com.framgia.elsytem.utils.SessionManager;
+import com.framgia.elsytem.utils.Url;
+import com.framgia.elsytem.utils.UserFunctions;
 import com.google.gson.Gson;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;

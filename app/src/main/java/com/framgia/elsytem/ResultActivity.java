@@ -2,7 +2,6 @@ package com.framgia.elsytem;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -12,7 +11,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.framgia.elsytem.model.Result;
-import com.framgia.elsytem.mypackage.Constants;
+import com.framgia.elsytem.utils.Constants;
 
 import java.util.ArrayList;
 
@@ -23,15 +22,12 @@ public class ResultActivity extends AppCompatActivity {
     ArrayAdapter<Result> resAdapter;
     TextView number;
     TextView lesson;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
         resultlist = (ListView) findViewById(R.id.result_list);
         lesson=(TextView)findViewById(R.id.lesson);
         Intent intent=getIntent();
@@ -52,7 +48,6 @@ public class ResultActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_result, menu);
         return true;
     }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -61,10 +56,7 @@ public class ResultActivity extends AppCompatActivity {
         int id = item.getItemId();
         switch (item.getItemId()) {
             case R.id.action_ok:
-                startActivity(new Intent(getApplication(), ProfileActivity.class));
-                return true;
-            case android.R.id.home:
-                NavUtils.navigateUpFromSameTask(this);
+               onBackPressed();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

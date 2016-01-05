@@ -3,6 +3,7 @@ package com.framgia.elsytem;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -10,20 +11,32 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
 
 import com.framgia.elsytem.jsonResponse.CategoryResponse;
 import com.framgia.elsytem.jsonResponse.WordResponse;
-import com.framgia.elsytem.mypackage.Constants;
-import com.framgia.elsytem.mypackage.SessionManager;
-import com.framgia.elsytem.mypackage.Url;
+import com.framgia.elsytem.utils.Constants;
+import com.framgia.elsytem.utils.Libs;
+import com.framgia.elsytem.utils.SessionManager;
+import com.framgia.elsytem.utils.Url;
 import com.google.gson.Gson;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Chunk;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -44,7 +57,7 @@ public class LearnedActivity extends AppCompatActivity {
     String newURL = "";
     int totalpage = 0;
     Gson gson;
-    private com.framgia.elsytem.mypackage.Constants mConstant;
+    private com.framgia.elsytem.utils.Constants mConstant;
     OkHttpClient okHttpClient;
     String token;
     SessionManager sessionManager;
@@ -70,7 +83,11 @@ public class LearnedActivity extends AppCompatActivity {
     ArrayList<String> word2, ans2;
     ArrayList<WordResponse.WordsEntity.AnswersEntity> wordAns;
     Url ur;
-
+    Button pdf;
+    File pdfFolder;
+    File myFile;
+    private String filepath = "MyInvoices";
+    public String word_list="all word";
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_learned);
@@ -85,6 +102,19 @@ public class LearnedActivity extends AppCompatActivity {
         user = sessionManager.getUserDetails();
         token = user.get(mConstant.KEY_AUTH_TOKEN);
         list = (ListView) findViewById(R.id.learned);
+        pdf=(Button)findViewById(R.id.pdf);
+        pdf.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    createpdf();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (DocumentException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
         okHttpClient = new OkHttpClient();
         ur = new Url();
         url = Url.wordFetchURL;
@@ -129,7 +159,40 @@ public class LearnedActivity extends AppCompatActivity {
             }
         });
     }
-
+    public void createpdf() throws IOException, DocumentException {
+        if (!Libs.isExternalStorageAvailable() || Libs.isExternalStorageReadOnly()) {
+            Log.e("no access", "External Storage not available or you don't have permission to write");
+        } else {
+            File sdCard = Environment.getExternalStorageDirectory();
+            pdfFolder = new File(sdCard.getAbsolutePath() + "/" + filepath + "/");
+            File newFolder = new File(Environment.getExternalStorageDirectory(), "TestFolder");
+            if (!newFolder.exists()) {
+                boolean t = newFolder.mkdir();
+                Log.e("file create ", " " + t);
+            }
+            if (!pdfFolder.exists()) {
+                pdfFolder.mkdir();
+                Log.e("check", "Pdf Directory created" + sdCard.getAbsolutePath() + filepath);
+            }
+            myFile = new File(newFolder,word_list+"_"+System.currentTimeMillis()+".pdf");
+            if (!myFile.exists())
+                myFile.createNewFile();
+            OutputStream output = new FileOutputStream(myFile);
+            Document document = new Document();
+            PdfWriter pdfWriter = PdfWriter.getInstance(document, output);
+            document.open();
+            Font black = new Font(Font.FontFamily.HELVETICA, 12, Font.NORMAL, BaseColor.BLACK);
+            String text = "";
+            for (int i = 0; i <item.size(); i++) {
+                text = text +item.get(i).getSingleWord()+ "\n-------------------------------------------------------------------------\n";
+            }
+            Chunk greenText = new Chunk(text,black);
+            Paragraph paragraph = new Paragraph(greenText);
+            paragraph.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+            document.add(paragraph);
+            document.close();
+        }
+    }
     public String catURLBody(String page) throws Exception {
         LinkedHashMap<String, String> catpara = new LinkedHashMap<>();
         catpara.put(Constants.AUTH_TOKEN, token);
