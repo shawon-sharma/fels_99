@@ -7,11 +7,13 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.framgia.elsytem.adapters.CategoryAdapter;
 import com.framgia.elsytem.jsonResponse.CategoryResponse;
 import com.framgia.elsytem.model.Done;
 import com.framgia.elsytem.utils.Constants;
@@ -51,14 +53,17 @@ public class CategoriesActivity extends AppCompatActivity {
     Response catResponse = null;
     String catResponseData = null;
     ArrayList<String> catAll = new ArrayList<>();
-    public static  ArrayList<Done>switch_activity=new ArrayList<>();
+    public static ArrayList<Done> switch_activity = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_categories);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setLogo(R.mipmap.ic_launcher);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         sessionManager = new SessionManager(this);
         user = sessionManager.getUserDetails();
         token = user.get(mConstant.KEY_AUTH_TOKEN);
@@ -85,6 +90,17 @@ public class CategoriesActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public String catURLBody(String page) throws Exception {
@@ -144,6 +160,7 @@ public class CategoriesActivity extends AppCompatActivity {
             }
             return catTotalPage;
         }
+
         @Override
         protected void onPreExecute() {
             mDialog = new ProgressDialog(CategoriesActivity.this);
@@ -153,6 +170,7 @@ public class CategoriesActivity extends AppCompatActivity {
             mDialog.setCancelable(true);
             mDialog.show();
         }
+
         @Override
         protected void onPostExecute(Integer i) {
 
@@ -189,9 +207,11 @@ public class CategoriesActivity extends AppCompatActivity {
             }
             return categoriesName;
         }
+
         @Override
         protected void onPreExecute() {
         }
+
         @Override
         protected void onPostExecute(ArrayList<CategoryResponse.CategoriesEntity> categoriesName) {
             for (int i = 0; i < categoriesName.size(); i++) {
@@ -207,4 +227,3 @@ public class CategoriesActivity extends AppCompatActivity {
         }
     }
 }
-

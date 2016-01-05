@@ -1,4 +1,4 @@
-package com.framgia.elsytem;
+package com.framgia.elsytem.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -6,6 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+
+import com.framgia.elsytem.R;
+import com.framgia.elsytem.utils.WordReturnByCategory;
 
 import java.util.ArrayList;
 

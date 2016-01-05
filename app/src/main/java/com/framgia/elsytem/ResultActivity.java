@@ -10,8 +10,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.framgia.elsytem.adapters.ResultAdapter;
 import com.framgia.elsytem.model.Result;
 import com.framgia.elsytem.utils.Constants;
+import com.framgia.elsytem.utils.DatabaseHelper;
 
 import java.util.ArrayList;
 

@@ -11,19 +11,22 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Display;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
 
+import com.framgia.elsytem.adapters.WordAdapter;
 import com.framgia.elsytem.jsonResponse.CategoryResponse;
 import com.framgia.elsytem.jsonResponse.WordResponse;
 import com.framgia.elsytem.utils.Constants;
 import com.framgia.elsytem.utils.Libs;
 import com.framgia.elsytem.utils.SessionManager;
 import com.framgia.elsytem.utils.Url;
+import com.framgia.elsytem.utils.WordReturnByCategory;
 import com.google.gson.Gson;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
@@ -78,16 +81,15 @@ public class LearnedActivity extends AppCompatActivity {
     String catnewURL = "";
     String curl = "";
     ArrayAdapter<String> dataAdapter;
-    LinkedHashMap<String,String> catclick;
+    LinkedHashMap<String, String> catclick;
     WordAdapter cad;
     Boolean mIsSpinnerFirstCall;
     ArrayList<WordResponse.WordsEntity.AnswersEntity> wordAns;
     Url ur;
-    Button pdf,btnBack;
     File pdfFolder;
     File myFile;
     private String filepath = "MyInvoices";
-    public String word_list="all word";
+    public String word_list = "all word";
     Spinner spinnerOption;
     private ProgressDialog mDialog;
     private int mWidth;
@@ -96,39 +98,17 @@ public class LearnedActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_learned);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setLogo(R.mipmap.ic_launcher);
         setSupportActionBar(toolbar);
-        catclick=new LinkedHashMap<>();
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        catclick = new LinkedHashMap<>();
         spinnerCategory = (Spinner) findViewById(R.id.spinnerCategory);
-        spinnerOption=(Spinner)findViewById(R.id.spinnerOption);
+        spinnerOption = (Spinner) findViewById(R.id.spinnerOption);
         sessionManager = new SessionManager(this);
         user = sessionManager.getUserDetails();
         token = user.get(mConstant.KEY_AUTH_TOKEN);
         list = (ListView) findViewById(R.id.learned);
-        pdf=(Button)findViewById(R.id.pdf);
-        btnBack= (Button) findViewById(R.id.back_btn);
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
-        pdf.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    createpdf();
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setDataAndType(Uri.fromFile(myFile), getString(R.string.pdf_type));
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                    Intent intent1 = Intent.createChooser(intent,getString(R.string.pdf_open));
-                    startActivity(intent1);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (DocumentException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
         okHttpClient = new OkHttpClient();
         url = Url.wordFetchURL;
         curl = Url.categoryFetchURL;
@@ -141,26 +121,22 @@ public class LearnedActivity extends AppCompatActivity {
         spinnerOption.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                option=spinnerOption.getSelectedItem().toString();
-                if(option.equalsIgnoreCase("all"))
-                {
-                    option=Constants.all;
-                }
-                else if(option.equalsIgnoreCase("learned"))
-                {
-                    option=Constants.learned;
-                }
-                else if(option.equalsIgnoreCase("not learned"))
-                {
-                    option=Constants.not_learned;
+                option = spinnerOption.getSelectedItem().toString();
+                if (option.equalsIgnoreCase("all")) {
+                    option = Constants.all;
+                } else if (option.equalsIgnoreCase("learned")) {
+                    option = Constants.learned;
+                } else if (option.equalsIgnoreCase("not learned")) {
+                    option = Constants.not_learned;
                 }
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
             }
         });
-       mIsSpinnerFirstCall=true;
+        mIsSpinnerFirstCall = true;
         dataAdapter = new ArrayAdapter<>(this, android.R.layout
                 .simple_spinner_item, catal);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -191,9 +167,42 @@ public class LearnedActivity extends AppCompatActivity {
             }
         });
         Display mDisplay = getWindowManager().getDefaultDisplay();
-        mWidth  = mDisplay.getWidth();
-        mWidth/=2;
+        mWidth = mDisplay.getWidth();
+        mWidth /= 2;
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            // Respond to the action bar's 'Done' button
+            case R.id.action_pdf:
+                try {
+                    createpdf();
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setDataAndType(Uri.fromFile(myFile), getString(R.string.pdf_type));
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                    Intent intent1 = Intent.createChooser(intent, getString(R.string.pdf_open));
+                    startActivity(intent1);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (DocumentException e) {
+                    e.printStackTrace();
+                }
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_learned, menu);
+        return true;
+    }
+
     public void createpdf() throws IOException, DocumentException {
         if (!Libs.isExternalStorageAvailable() || Libs.isExternalStorageReadOnly()) {
             Log.e("no access", "External Storage not available or you don't have permission to write");
@@ -209,25 +218,26 @@ public class LearnedActivity extends AppCompatActivity {
                 pdfFolder.mkdir();
                 Log.e("check", "Pdf Directory created" + sdCard.getAbsolutePath() + filepath);
             }
-            myFile = new File(newFolder,word_list+"_"+System.currentTimeMillis()+".pdf");
+            myFile = new File(newFolder, word_list + "_" + System.currentTimeMillis() + ".pdf");
             if (!myFile.exists())
                 myFile.createNewFile();
             OutputStream output = new FileOutputStream(myFile);
-            Document document=new Document();
+            Document document = new Document();
             PdfWriter pdfWriter = PdfWriter.getInstance(document, output);
             document.open();
             Font black = new Font(Font.FontFamily.HELVETICA, 12, Font.NORMAL, BaseColor.BLACK);
             String text = "";
-            for (int i = 0; i <item.size(); i++) {
-                text = text +item.get(i).getSingleWord()+ "\n-------------------------------------------------------------------------\n";
+            for (int i = 0; i < item.size(); i++) {
+                text = text + item.get(i).getSingleWord() + "\n-------------------------------------------------------------------------\n";
             }
-            Chunk greenText = new Chunk(text,black);
+            Chunk greenText = new Chunk(text, black);
             Paragraph paragraph = new Paragraph(greenText);
             paragraph.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             document.add(paragraph);
             document.close();
         }
     }
+
     public String catURLBody(String page) throws Exception {
         LinkedHashMap<String, String> catpara = new LinkedHashMap<>();
         catpara.put(Constants.AUTH_TOKEN, token);
@@ -310,17 +320,17 @@ public class LearnedActivity extends AppCompatActivity {
                 String key = categoriesName.get(i).getName();
                 Log.e("key", key);
                 Integer tmpvalue = categoriesName.get(i).getId();
-                String  value=String.valueOf(tmpvalue);
+                String value = String.valueOf(tmpvalue);
                 catitem.add(new CategoriesReturnFromPages(key, tmpvalue));
                 catal.add(key);
-                catclick.put(key,value);
+                catclick.put(key, value);
             }
             spinnerCategory.setAdapter(dataAdapter);
             dataAdapter.notifyDataSetChanged();
         }
     }
 
-    public String wordURLBody(String page,String category_id,String option) throws Exception {
+    public String wordURLBody(String page, String category_id, String option) throws Exception {
         LinkedHashMap<String, String> para = new LinkedHashMap<>();
         para.put(Constants.CCATEGORY_ID, category_id);
         para.put(Constants.OPTION, option);
@@ -396,7 +406,7 @@ public class LearnedActivity extends AppCompatActivity {
             while (i >= 1) {
                 String newURL = null;
                 try {
-                    newURL = wordURLBody(String.valueOf(i),cattegory_id,option);
+                    newURL = wordURLBody(String.valueOf(i), cattegory_id, option);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -406,11 +416,12 @@ public class LearnedActivity extends AppCompatActivity {
             mDialog.dismiss();
         }
     }
+
     private class HttpAsyncWordShow extends AsyncTask<String, Void, ArrayList<WordResponse
             .WordsEntity>> {
 
         @Override
-        protected  ArrayList<WordResponse
+        protected ArrayList<WordResponse
                 .WordsEntity> doInBackground(String... urls) {
             try {
                 request = new Request.Builder().url(urls[0]).get().build();
@@ -419,7 +430,7 @@ public class LearnedActivity extends AppCompatActivity {
                 gson = new Gson();
                 wa = gson.fromJson(responseData, WordResponse.class);
                 wordName = (ArrayList<WordResponse.WordsEntity>) wa.getWords();
-                for(int i=0;i<wordName.size();i++) {
+                for (int i = 0; i < wordName.size(); i++) {
                 }
             } catch (IOException e1) {
                 e1.printStackTrace();
@@ -438,14 +449,13 @@ public class LearnedActivity extends AppCompatActivity {
             for (int i = 0; i < newWordName.size(); i++) {
                 String key = newWordName.get(i).getContent();
                 Log.e("content ", key);
-                String value=null;
+                String value = null;
                 wordAns = (ArrayList<WordResponse
                         .WordsEntity.AnswersEntity>) wordName.get(i).getAnswers();
                 for (int j = 0; j < wordAns.size(); j++) {
-                    boolean b=wordAns.get(j).isIs_correct();
-                    if(b)
-                    {
-                        value=wordAns.get(j).getContent();
+                    boolean b = wordAns.get(j).isIs_correct();
+                    if (b) {
+                        value = wordAns.get(j).getContent();
                         break;
                     }
                 }

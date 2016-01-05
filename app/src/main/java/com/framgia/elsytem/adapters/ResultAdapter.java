@@ -1,4 +1,4 @@
-package com.framgia.elsytem;
+package com.framgia.elsytem.adapters;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.framgia.elsytem.R;
 import com.framgia.elsytem.model.Result;
 
 import java.util.ArrayList;
