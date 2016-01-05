@@ -459,7 +459,7 @@ public class LearnedActivity extends AppCompatActivity {
                         break;
                     }
                 }
-                item.add(new WordReturnByCategory(key, value));
+                item.add(new WordReturnByCategory(key, getString(R.string.language)));
             }
             cad = new WordAdapter(getApplication(), item, mWidth);
             list.setAdapter(cad);

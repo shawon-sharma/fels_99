@@ -53,7 +53,7 @@
     <dimen name="choice_text_margin_Top">10dp</dimen>
     <dimen name="choice_text_start_margin_Top">50dp</dimen>
     <dimen name="categorieslist_textheader">20sp</dimen>
-    <dimen name="categorieslist_textbody">15sp</dimen>
+    <dimen name="categorieslist_textbody">20sp</dimen>
     <dimen name="categoryrowborder_stroke_width">5dp</dimen>
     <dimen name="categoryrowborder_padding">5dp</dimen>
     <dimen name="categoryrowborder_corner_radius">8dp</dimen>

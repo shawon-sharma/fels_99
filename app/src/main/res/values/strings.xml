@@ -102,4 +102,5 @@
     <string name="back">BACK</string>
     <string name="pdf_type">application/pdf</string>
     <string name="pdf_open">Open With</string>
+    <string name="language">Vietnamese</string>
 </resources>

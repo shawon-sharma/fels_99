@@ -3,22 +3,30 @@ package com.framgia.elsytem;
 /**
  * Created by sharma on 12/30/15.
  */
-public class CategoriesReturnFromPages{
+public class CategoriesReturnFromPages {
     private String CategoriesName;
     private Integer categoriesId;
     private String mCategoryImage;
-    public CategoriesReturnFromPages(String categoriesName,Integer categoriesId,String mCategoryImage)
-    {
-        this.CategoriesName=categoriesName;
-        this.categoriesId=categoriesId;
-        this.mCategoryImage=mCategoryImage;
+
+    public int getmLearnedWords() {
+        return mLearnedWords;
     }
 
-    public CategoriesReturnFromPages(String categoriesName,Integer categoriesId)
-    {
-        this.CategoriesName=categoriesName;
-        this.categoriesId=categoriesId;
+    private int mLearnedWords;
+
+    public CategoriesReturnFromPages(String categoriesName, Integer categoriesId, String
+            mCategoryImage, int mLearnedWords) {
+        this.CategoriesName = categoriesName;
+        this.categoriesId = categoriesId;
+        this.mCategoryImage = mCategoryImage;
+        this.mLearnedWords = mLearnedWords;
     }
+
+    public CategoriesReturnFromPages(String categoriesName, Integer categoriesId) {
+        this.CategoriesName = categoriesName;
+        this.categoriesId = categoriesId;
+    }
+
     public String getCategoriesName() {
         return CategoriesName;
     }
@@ -26,7 +34,8 @@ public class CategoriesReturnFromPages{
     public Integer getCategoriesId() {
         return categoriesId;
     }
-    public String getmCategoryImage(){
+
+    public String getmCategoryImage() {
         return mCategoryImage;
     }
 }
