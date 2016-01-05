@@ -52,13 +52,14 @@ public class CategoryAdapter extends BaseAdapter {
         TextView title = (TextView) row.findViewById(R.id.textHeader);
         TextView body = (TextView) row.findViewById(R.id.textBody);
         ImageView image = (ImageView) row.findViewById(R.id.image_category);
-        //title.setText(item.getId());
         title.setText(item.getCategoriesName());
+        body.setText(Constants.Learned_words + item.getmLearnedWords());
         Picasso.with(mContext)
                 .load(categoryResponses.get(position).getmCategoryImage())
                 .resize(Constants.AVATAR_WIDTH_HEIGHT_AND_RADIUS, Constants.AVATAR_WIDTH_HEIGHT_AND_RADIUS)
                 .centerCrop()
-                .transform(new RoundedCornersTransformation(100, 5))
+                .transform(new RoundedCornersTransformation(Constants
+                        .AVATAR_WIDTH_HEIGHT_AND_RADIUS, Constants.ROUNDED_AVATAR_MARGIN))
                 .into(image);
         return row;
     }

@@ -49,8 +49,8 @@ public class WordAdapter extends BaseAdapter {
         View row = inflater.inflate(R.layout.word, parent, false);
         TextView title = (TextView) row.findViewById(R.id.wordid);
         TextView name = (TextView) row.findViewById(R.id.textword);
-        name.setText(item.getSingleWord());
-        title.setText(item.getSingleAnswer());
+        name.setText(item.getSingleAnswer());
+        title.setText(item.getSingleWord());
         name.setWidth(mWidth);
         title.setWidth(mWidth);
         return row;

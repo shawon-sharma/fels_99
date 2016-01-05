@@ -218,7 +218,8 @@ public class CategoriesActivity extends AppCompatActivity {
                 String key = categoriesName.get(i).getName();
                 Integer value = categoriesName.get(i).getId();
                 String image = categoriesName.get(i).getPhoto();
-                catItem.add(new CategoriesReturnFromPages(key, value, image));
+                int learnedWords = categoriesName.get(i).getLearned_words();
+                catItem.add(new CategoriesReturnFromPages(key, value, image, learnedWords));
                 catAll.add(key);
             }
             CategoryAdapter cad = new CategoryAdapter(getApplicationContext(), catItem);
