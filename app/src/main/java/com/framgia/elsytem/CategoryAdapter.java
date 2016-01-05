@@ -5,7 +5,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.framgia.elsytem.utils.RoundedCornersTransformation;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -44,8 +48,15 @@ public class CategoryAdapter extends BaseAdapter {
         View row = inflater.inflate(R.layout.categories_list, parent, false);
         TextView title = (TextView) row.findViewById(R.id.textHeader);
         TextView body = (TextView) row.findViewById(R.id.textBody);
+        ImageView image = (ImageView) row.findViewById(R.id.image_category);
         //title.setText(item.getId());
         title.setText(item.getCategoriesName());
+        Picasso.with(mContext)
+                .load(categoryResponses.get(position).getmCategoryImage())
+                .resize(100, 100)
+                .centerCrop()
+                .transform(new RoundedCornersTransformation(100, 5))
+                .into(image);
         return row;
     }
 }

@@ -98,4 +98,6 @@
     <string name="pdf">PDF</string>
     <string name="wordlist">WORD LIST</string>
     <string name="back">BACK</string>
+    <string name="pdf_type">application/pdf</string>
+    <string name="pdf_open">Open With</string>
 </resources>
