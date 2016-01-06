@@ -3,25 +3,22 @@
               android:layout_width="fill_parent"
               android:layout_height="match_parent"
               android:orientation="horizontal">
-
     <TextView
         android:id="@+id/wordid"
         android:layout_width="@dimen/wordlist_layoutwidth"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/categoryrowborder_padding"
         android:layout_weight="1"
-        android:gravity="center"
         android:textColor="@color/primary_text"
         android:textSize="@dimen/categorieslist_textbody"
+        android:padding="@dimen/email_textview_layout_marginleft"
         />
-
     <View
         android:layout_width="@dimen/content_profile_scrollview_weight"
         android:layout_height="@dimen/content_question_text_margin_left"
         android:layout_marginTop="@dimen/choice_text_margin_Top"
         android:layout_marginBottom="@dimen/content_question_view_height"
         android:background="@android:color/black"/>
-
     <TextView
         android:id="@+id/textword"
         android:layout_width="@dimen/wordlist_layoutwidth"
@@ -31,5 +28,6 @@
         android:gravity="center"
         android:textColor="@color/primary_text"
         android:textSize="@dimen/categorieslist_textbody"
+        android:padding="@dimen/email_textview_layout_marginleft"
         />
 </LinearLayout>
