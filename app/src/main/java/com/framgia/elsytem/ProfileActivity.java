@@ -49,7 +49,6 @@ public class ProfileActivity extends AppCompatActivity {
     ImageView editProfile, avatar;
     TextView name, email, learnedWords;
     SessionManager session;
-    Constants constant;
     Button lesson, words;
     HashMap<String, String> user;
     ProgressBar progressBar;
@@ -146,7 +145,12 @@ public class ProfileActivity extends AppCompatActivity {
                         .error(R.drawable.ico_fail)
                         .into(avatar);
             }
-        }
+        } else Picasso.with(this)
+                .load(R.drawable.ic_person_outline_black_36dp)
+                .memoryPolicy(MemoryPolicy.NO_CACHE)
+                .resize(Constants.AVATAR_WIDTH_HEIGHT_AND_RADIUS, Constants.AVATAR_WIDTH_HEIGHT_AND_RADIUS)
+                .centerCrop()
+                .into(avatar);
     }
 
     private Uri mGetUri(String filePath) {

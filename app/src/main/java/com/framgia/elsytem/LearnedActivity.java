@@ -32,6 +32,7 @@ import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -93,7 +94,6 @@ public class LearnedActivity extends AppCompatActivity {
     Spinner spinnerOption;
     private ProgressDialog mDialog;
     private int mWidth;
-
     static int m=0;
     static int n=0;
     protected void onCreate(Bundle savedInstanceState) {
@@ -252,11 +252,11 @@ public class LearnedActivity extends AppCompatActivity {
             Font black = new Font(Font.FontFamily.HELVETICA, 12, Font.NORMAL, BaseColor.BLACK);
             String text = "";
             for (int i = 0; i < item.size(); i++) {
-                text = text + item.get(i).getSingleWord() + "\n-------------------------------------------------------------------------\n";
+                text = text + item.get(i).getSingleWord()+"   |   "+getString(R.string.language)+"\n------------------------------------------------\n";
             }
             Chunk greenText = new Chunk(text, black);
             Paragraph paragraph = new Paragraph(greenText);
-            paragraph.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+            paragraph.setAlignment(Element.ALIGN_CENTER);
             document.add(paragraph);
             document.close();
         }
