@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
@@ -308,7 +309,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             // Respond to the action bar's Up/Home button
             case android.R.id.home:
-                onBackPressed();
+                NavUtils.navigateUpFromSameTask(this);
                 return true;
             // Respond to the action bar's 'Done' button
             case R.id.action_update:
@@ -344,15 +345,6 @@ public class UpdateProfileActivity extends AppCompatActivity {
                 && params[4].equals(user.get(Constants.KEY_AVATAR)))
             return false;
         return true;
-    }
-
-    @Override
-    public void onBackPressed() {
-        Intent i = new Intent(getApplicationContext(), ProfileActivity.class);
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(i);
-        finish();
     }
 
     private class HttpAsyncTaskUpdateProfile extends AsyncTask<String, Void, String> {
