@@ -51,4 +51,11 @@ public class Constants {
     public static final int AVATAR_WIDTH_HEIGHT_AND_RADIUS = 100;
     public static final int ROUNDED_AVATAR_MARGIN = 0;
     public static final String Learned_words = "You're learned ";
+
+     public static final String OPTION_ALL="ALL";
+     public static final String OPTION_LEARN="LEARNED";
+     public static final String OPTION_NOT_LEARN="NOT learn";
+
+
+
 }

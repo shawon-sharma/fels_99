@@ -54,7 +54,7 @@ public class LearnedActivity extends AppCompatActivity {
     ListView list;
     String url = "";
     String cattegory_id = "1";
-    String option = Constants.not_learned;
+    String option = Constants.all;
     String page = "1";
     Request request;
     Response response = null;
@@ -83,7 +83,7 @@ public class LearnedActivity extends AppCompatActivity {
     ArrayAdapter<String> dataAdapter;
     LinkedHashMap<String, String> catclick;
     WordAdapter cad;
-    Boolean mIsSpinnerFirstCall;
+    Boolean mIsSpinnerFirstCall,mIsSpinnerOption;
     ArrayList<WordResponse.WordsEntity.AnswersEntity> wordAns;
     Url ur;
     File pdfFolder;
@@ -94,6 +94,8 @@ public class LearnedActivity extends AppCompatActivity {
     private ProgressDialog mDialog;
     private int mWidth;
 
+    static int m=0;
+    static int n=0;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_learned);
@@ -111,6 +113,7 @@ public class LearnedActivity extends AppCompatActivity {
         list = (ListView) findViewById(R.id.learned);
         okHttpClient = new OkHttpClient();
         url = Url.wordFetchURL;
+        String newURL = null;
         curl = Url.categoryFetchURL;
         try {
             String catnewURL = catURLBody(catpage);
@@ -118,19 +121,37 @@ public class LearnedActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        mIsSpinnerOption=true;
         spinnerOption.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                option = spinnerOption.getSelectedItem().toString();
-                if (option.equalsIgnoreCase("all")) {
+
+                if (!mIsSpinnerOption){
+                    item.clear();
+                    option = spinnerOption.getSelectedItem().toString();
+                if (option.equalsIgnoreCase(Constants.all)) {
                     option = Constants.all;
-                } else if (option.equalsIgnoreCase("learned")) {
+                } else if (option.equalsIgnoreCase(Constants.learned)) {
                     option = Constants.learned;
-                } else if (option.equalsIgnoreCase("not learned")) {
+                } else if (option.equalsIgnoreCase(Constants.not_learned)) {
                     option = Constants.not_learned;
                 }
+                    String text = spinnerCategory.getSelectedItem().toString();
+                    String value = catclick.get(text);
+                    cattegory_id = value;
+                    url = Url.wordFetchURL;
+                    try {
+                        cad.notifyDataSetChanged();
+                        String newURL = wordURLBody(page, cattegory_id, option);
+                        new HttpAsyncWord().execute(newURL);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
             }
-
+               else {
+                    mIsSpinnerOption = false;
+                }
+            }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
@@ -146,7 +167,6 @@ public class LearnedActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (!mIsSpinnerFirstCall) {
                     item.clear();
-                    // cad.notifyDataSetChanged();
                     String text = spinnerCategory.getSelectedItem().toString();
                     String value = catclick.get(text);
                     cattegory_id = value;
@@ -158,8 +178,12 @@ public class LearnedActivity extends AppCompatActivity {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                    n++;
                 }
-                mIsSpinnerFirstCall = false;
+                else {
+                    mIsSpinnerFirstCall = false;
+                    n++;
+                }
             }
 
             @Override
@@ -402,7 +426,6 @@ public class LearnedActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Integer i) {
-
             while (i >= 1) {
                 String newURL = null;
                 try {
@@ -464,7 +487,6 @@ public class LearnedActivity extends AppCompatActivity {
             cad = new WordAdapter(getApplication(), item, mWidth);
             list.setAdapter(cad);
             cad.notifyDataSetChanged();
-
         }
     }
 }
