@@ -16,13 +16,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.framgia.elsytem.adapters.ProfileActivityListAdapter;
 import com.framgia.elsytem.jsonResponse.ShowUserResponse;
-import com.framgia.elsytem.utils.RoundedCornersTransformation;
 import com.framgia.elsytem.utils.Constants;
+import com.framgia.elsytem.utils.RoundedCornersTransformation;
 import com.framgia.elsytem.utils.SessionManager;
 import com.framgia.elsytem.utils.Url;
 import com.framgia.elsytem.utils.UserFunctions;
@@ -51,6 +52,7 @@ public class ProfileActivity extends AppCompatActivity {
     Constants constant;
     Button lesson, words;
     HashMap<String, String> user;
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,13 +64,13 @@ public class ProfileActivity extends AppCompatActivity {
         SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
         formattedDate[0] = df.format(c.getTime());
         mInitializeListeners();
-        mGetSessionData();
-        mLoadAvatar(user.get(Constants.KEY_AVATAR));
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        mGetSessionData();
+        mLoadAvatar(user.get(Constants.KEY_AVATAR));
         mGetUserDetailsFromJson();
     }
 
@@ -77,17 +79,11 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private class HttpAsyncTaskShowUser extends AsyncTask<String, Void, String> {
-        private ProgressDialog mDialog;
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            mDialog = new ProgressDialog(ProfileActivity.this);
-            mDialog.setTitle(getString(R.string.contacting_servers));
-            mDialog.setMessage(getString(R.string.please_wait));
-            mDialog.setIndeterminate(false);
-            mDialog.setCancelable(true);
-            mDialog.show();
+            progressBar.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -98,7 +94,7 @@ public class ProfileActivity extends AppCompatActivity {
         // onPostExecute displays the results of the AsyncTask.
         @Override
         protected void onPostExecute(String result) {
-            mDialog.dismiss();
+            progressBar.setVisibility(View.GONE);
             List<ShowUserResponse.UserEntity.ActivitiesEntity> activityList;
             ShowUserResponse response;
             Gson gson = new Gson();
@@ -202,7 +198,6 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getApplicationContext(), UpdateProfileActivity.class));
-                finish();
             }
         });
     }
@@ -237,6 +232,7 @@ public class ProfileActivity extends AppCompatActivity {
         email = (TextView) findViewById(R.id.email_textview);
         learnedWords = (TextView) findViewById(R.id.desc_textview);
         avatar = (ImageView) findViewById(R.id.avatar);
+        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
     }
 
     private void setUpToolbar() {
