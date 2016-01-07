@@ -1,11 +1,16 @@
 package com.framgia.elsytem;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -65,12 +70,58 @@ public class ProfileActivity extends AppCompatActivity {
         mInitializeListeners();
     }
 
+    public boolean isConnected() {
+        NetworkInfo networkInfo = ((ConnectivityManager) getSystemService(Activity
+                .CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
+        return networkInfo != null && networkInfo.isConnected();
+    }
+
+    private void mShowDialog(Context context, String title, String message,
+                             Boolean status) {
+        AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+        // Setting Dialog Title
+        alertDialog.setTitle(title);
+        // Setting Dialog Message
+        alertDialog.setMessage(message);
+        if (status != null)
+            // Setting alert dialog icon
+            alertDialog.setIcon((status) ? R.drawable.ico_success : R.drawable.ico_fail);
+        alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL, getString(R.string.action_cancel), new
+                DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+        alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.action_turn_on_wifi), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+            }
+        });
+        alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string
+                .action_turn_on_cellular_data), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                startActivity(new Intent(Settings.ACTION_SETTINGS));
+            }
+        });
+        // Showing Alert Message
+        alertDialog.show();
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
-        mGetSessionData();
-        mLoadAvatar(user.get(Constants.KEY_AVATAR));
-        mGetUserDetailsFromJson();
+        if (!isConnected()) {
+            mShowDialog(ProfileActivity.this, getString(R.string
+                            .connection_error_title_activity_login),
+                    getString(R.string.connection_error_message_activity_login),
+                    false);
+        } else {
+            mGetSessionData();
+            mLoadAvatar(user.get(Constants.KEY_AVATAR));
+            mGetUserDetailsFromJson();
+        }
     }
 
     private void mGetUserDetailsFromJson() {
@@ -96,8 +147,7 @@ public class ProfileActivity extends AppCompatActivity {
             progressBar.setVisibility(View.GONE);
             List<ShowUserResponse.UserEntity.ActivitiesEntity> activityList;
             ShowUserResponse response;
-            Gson gson = new Gson();
-            response = gson.fromJson(result, ShowUserResponse.class);
+            response = new Gson().fromJson(result, ShowUserResponse.class);
             int id = 0;
             try {
                 id = response.getUser().getId();

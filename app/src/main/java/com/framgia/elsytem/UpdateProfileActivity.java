@@ -48,8 +48,8 @@ public class UpdateProfileActivity extends AppCompatActivity {
     // Session Manager Class
     SessionManager session;
     HashMap<String, String> user;
-    private String mId, mEmail, mOldPassword, mNewPassword, mPasswordConfirmation, mFullName,
-            mAvatar, mAuthToken;
+    private String mId, mOldPassword, mNewPassword, mPasswordConfirmation, mFullName,
+            mAuthToken;
     private EditText mEtemail, mEtOldPassword, mEtNewPassword, mEtPasswordConfirmation,
             mEtFullName;
     private ImageView mIvAvatar;
@@ -131,7 +131,6 @@ public class UpdateProfileActivity extends AppCompatActivity {
 
     private void mUpdateProfile() {
         mId = session.getUserDetails().get(Constants.KEY_ID);
-        mEmail = mEtemail.getText().toString();
         mOldPassword = mEtOldPassword.getText().toString();
         mNewPassword = mEtNewPassword.getText().toString();
         mPasswordConfirmation = mEtPasswordConfirmation.getText().toString();
@@ -358,7 +357,6 @@ public class UpdateProfileActivity extends AppCompatActivity {
         protected String doInBackground(String... urls) {
             Profile profile = new Profile();
             profile.setName(mFullName);
-            profile.setEmail(mEmail);
             profile.setNew_password(mNewPassword);
             profile.setPassword_confirmation(mPasswordConfirmation);
             profile.setAvatar(imageDataBase64String);
@@ -371,21 +369,18 @@ public class UpdateProfileActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             mDialog.dismiss();
-            UserResponse userResponse;
-            Gson gson = new Gson();
-            userResponse = gson.fromJson(result, UserResponse.class);
             int id = 0;
             try {
-                id = userResponse.getUser().getId();
+                id = new Gson().fromJson(result, UserResponse.class).getUser().getId();
             } catch (Exception e) {
             }
             if (id == Integer.parseInt(user.get(Constants.KEY_ID))) {
                 // deleting current session
                 session.deleteSessionData();
                 // creating new session with updated data
-                session.createLoginSession(Integer.parseInt(mId), mFullName, mEmail,
-                        imageDataBase64String, user.get(Constants.KEY_AUTH_TOKEN), Integer.parseInt
-                                (user.get(Constants.KEY_REMEMBER_ME)));
+                session.createLoginSession(Integer.parseInt(mId), mFullName, mEtemail.getText()
+                                .toString(), imageDataBase64String, user.get(Constants.KEY_AUTH_TOKEN),
+                        Integer.parseInt(user.get(Constants.KEY_REMEMBER_ME)));
                 Toast.makeText(getBaseContext(), getString(R.string.toast_message_update_successful), Toast.LENGTH_LONG).show();
                 onBackPressed();
             } else Toast.makeText(getBaseContext(), result, Toast.LENGTH_LONG).show();

@@ -65,9 +65,7 @@ public class LoginActivity extends AppCompatActivity {
             register.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent i = new Intent(getApplicationContext(), RegisterActivity.class);
-                    startActivity(i);
-
+                    startActivity(new Intent(getApplicationContext(), RegisterActivity.class));
                 }
             });
             password.setOnKeyListener(new View.OnKeyListener() {
@@ -96,8 +94,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void mStartProfileActivity() {
-        Intent i = new Intent(getApplicationContext(), ProfileActivity.class);
-        startActivity(i);
+        startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
         finish();
     }
 
@@ -106,12 +103,12 @@ public class LoginActivity extends AppCompatActivity {
         mPassword = password.getText().toString();
         if (checkBoxRememberMe.isChecked()) mRememberMe = 1;
         else mRememberMe = 0;
-        if (!isConnected())
+        if (!isConnected()) {
             mShowDialog(LoginActivity.this, getString(R.string
                             .connection_error_title_activity_login),
                     getString(R.string.connection_error_message_activity_login),
                     false);
-        else if (!mEmail.isEmpty() && !mPassword.isEmpty()) {
+        } else if (!mEmail.isEmpty() && !mPassword.isEmpty()) {
             new HttpAsyncTaskSignIn().execute(Url.url_sign_in);
         } else if (mEmail.isEmpty()) {
             Toast.makeText(getApplicationContext(), getString(R.string
@@ -170,9 +167,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public boolean isConnected() {
-        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Activity
-                .CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        NetworkInfo networkInfo = ((ConnectivityManager) getSystemService(Activity
+                .CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isConnected();
     }
 
@@ -216,17 +212,14 @@ public class LoginActivity extends AppCompatActivity {
                 } else {
                     //getting gson data
                     UserResponse userResponse;
-                    Gson gson = new Gson();
-                    userResponse = gson.fromJson(result, UserResponse.class);
-                    int id = userResponse.getUser().getId();
+                    userResponse = new Gson().fromJson(result, UserResponse.class);
                     String name = userResponse.getUser().getName();
                     String email = userResponse.getUser().getEmail();
-                    String avatar = userResponse.getUser().getAvatar();
-                    String authToken = userResponse.getUser().getAuth_token();
                     //creating session
                     if (!name.isEmpty() && !email.isEmpty())
-                        session.createLoginSession(id, name, email, avatar, authToken,
-                                mRememberMe);
+                        session.createLoginSession(userResponse.getUser().getId(), name, email,
+                                userResponse.getUser().getAvatar(), userResponse.getUser()
+                                        .getAuth_token(), mRememberMe);
                     //now finish this activity and go to ProfileActivity
                     mStartProfileActivity();
                 }

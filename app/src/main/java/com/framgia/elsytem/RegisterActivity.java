@@ -98,7 +98,7 @@ public class RegisterActivity extends AppCompatActivity {
         if (!isConnected())
             mAlert.showAlertDialog(RegisterActivity.this, getString(R.string.connection_error_title_activity_login),
                     getString(R.string.connection_error_message_activity_login), false);
-        if (!validate(mFullName, mEmail, mPassword, mPasswordConfirmation))
+        else if (!validate(mFullName, mEmail, mPassword, mPasswordConfirmation))
             Toast.makeText(getBaseContext(), "Provide the required information!", Toast
                     .LENGTH_LONG).show();
             // call AsyncTask to perform network operation on separate thread
