@@ -65,9 +65,10 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
     int category_id = 1;
     TextView questions;
     String category_name;
-    int x=1;
+    int x = 1;
     ArrayList<Lesson.LessonEntity.WordsEntity> wordsEntityArrayList;
     ArrayList<Lesson.LessonEntity.WordsEntity.AnswersEntity> answersEntityArrayList = new ArrayList<Lesson.LessonEntity.WordsEntity.AnswersEntity>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -144,55 +145,68 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
     }
 
     public void createalert() {
-        final AlertDialog.Builder aBuilder = new AlertDialog.Builder(QuestionActivity.this);
-        aBuilder.setMessage(R.string.question_alert_message);
-        aBuilder.setIcon(R.drawable.ic_check);
-        aBuilder.setPositiveButton(R.string.question_alert_positive,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                        if(x==1)
-                            mdDatabaseHelper.deleteResult(category_name);
-                        long insert = mdDatabaseHelper.createresult(wordsEntityArrayList.get(word_number).getContent(), language, answersEntityArrayList.get(chosen_answer).isIs_correct(), category_name);
-                        Log.e("insert", " " + insert);
-                        int result_id = wordsEntityArrayList.get(word_number).getResult_id();
-                        int answer_id = answersEntityArrayList.get(chosen_answer).getId();
-                        boolean state = answersEntityArrayList.get(chosen_answer).isIs_correct();
-                        x++;
-                        try {
-                            update = updatelesson(result_id, answer_id, state);
-                            String url_update = Url.update_first.concat(Integer.toString(lesson_id)).concat(Url.update_last);
-                            new HttpAsyncUpdate().execute(url_update);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        word_number++;
-                        if (word_number < wordsEntityArrayList.size()) {
-                            txttword.setText(wordsEntityArrayList.get(word_number).getContent());
-                            questions.setText((word_number + 1) + "/" + wordsEntityArrayList.size());
-                            answersEntityArrayList = null;
-                            answersEntityArrayList = (ArrayList<Lesson.LessonEntity.WordsEntity.AnswersEntity>) wordsEntityArrayList.get(word_number).getAnswers();
-                            if (answersEntityArrayList.size() > 0) {
-                                for (int j = 0; j < answersEntityArrayList.size(); j++) {
-                                    buttons[j].setText(answersEntityArrayList.get(j).getContent());
-                                }
+        if (checkWordsNumber()) {
+            final AlertDialog.Builder aBuilder = new AlertDialog.Builder(QuestionActivity.this);
+            aBuilder.setMessage(R.string.question_alert_message);
+            aBuilder.setIcon(R.drawable.ic_check);
+            aBuilder.setPositiveButton(R.string.question_alert_positive,
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                            if (x == 1)
+                                mdDatabaseHelper.deleteResult(category_name);
+                            long insert = mdDatabaseHelper.createresult(wordsEntityArrayList.get(word_number).getContent(), language, answersEntityArrayList.get(chosen_answer).isIs_correct(), category_name);
+                            int result_id = wordsEntityArrayList.get(word_number).getResult_id();
+                            int answer_id = answersEntityArrayList.get(chosen_answer).getId();
+                            boolean state = answersEntityArrayList.get(chosen_answer).isIs_correct();
+                            x++;
+                            try {
+                                update = updatelesson(result_id, answer_id, state);
+                                String url_update = Url.update_first.concat(Integer.toString(lesson_id)).concat(Url.update_last);
+                                new HttpAsyncUpdate().execute(url_update);
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
-                        } else {
-                            Toast.makeText(getApplication(), R.string.question_done, Toast.LENGTH_LONG).show();
+                            ++word_number;
+                            Log.e("word before ", " " + word_number);
+                            if (word_number < wordsEntityArrayList.size()) {
+                                txttword.setText(wordsEntityArrayList.get(word_number).getContent());
+                                questions.setText((word_number + 1) + "/" + wordsEntityArrayList.size());
+                                answersEntityArrayList = null;
+                                answersEntityArrayList = (ArrayList<Lesson.LessonEntity.WordsEntity.AnswersEntity>) wordsEntityArrayList.get(word_number).getAnswers();
+                                if (answersEntityArrayList.size() > 0) {
+                                    for (int j = 0; j < answersEntityArrayList.size(); j++) {
+                                        buttons[j].setText(answersEntityArrayList.get(j).getContent());
+                                    }
+                                }
+                            } else {
+                                Intent intent = new Intent(getApplication(), ResultActivity.class);
+                                intent.putExtra(Constants.CATEGORY_NAME, category_name);
+                                startActivity(intent);
+                                finish();
+                                dialog.cancel();
+                            }
                         }
-                    }
-                });
-        aBuilder.setNegativeButton(R.string.question_alert_negative, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-                if(x==1)
-                    mdDatabaseHelper.deleteResult(category_name);
-            }
-        });
-        aBuilder.create();
-        aBuilder.show();
+                    });
+            aBuilder.setNegativeButton(R.string.question_alert_negative, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                    if (x == 1)
+                        mdDatabaseHelper.deleteResult(category_name);
+                }
+            });
+            aBuilder.create();
+            aBuilder.show();
+        }
+    }
+
+    public boolean checkWordsNumber() {
+        if (word_number < wordsEntityArrayList.size()) {
+            return true;
+        } else
+            return false;
     }
 
     @Override
@@ -228,10 +242,33 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
                 onBackPressed();
                 return true;
             case R.id.action_done:
-                long count=mdDatabaseHelper.getAnswerCounts(category_name);
-                if(count==0)
-                    Toast.makeText(getApplication(),R.string.question_no_answer,Toast.LENGTH_LONG).show();
-                else {
+                long count = mdDatabaseHelper.getAnswerCounts(category_name);
+                if (count == 0)
+                    Toast.makeText(getApplication(), R.string.question_no_answer, Toast.LENGTH_LONG).show();
+                else if (count < 20) {
+                    final AlertDialog.Builder aBuilder = new AlertDialog.Builder(QuestionActivity.this);
+                    aBuilder.setMessage(R.string.question_exit);
+                    aBuilder.setPositiveButton(R.string.question_alert_positive, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                            Constants.ACTIVITY_SWITCH = 2;
+                            CategoriesActivity.switch_activity.add(new Done(category_id, Constants.ACTIVITY_SWITCH));
+                            Intent intent = new Intent(getApplication(), ResultActivity.class);
+                            intent.putExtra(Constants.CATEGORY_NAME, category_name);
+                            startActivity(intent);
+                            finish();
+                        }
+                    });
+                    aBuilder.setNegativeButton(R.string.question_alert_negative, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+                    aBuilder.create();
+                    aBuilder.show();
+                } else {
                     Constants.ACTIVITY_SWITCH = 2;
                     CategoriesActivity.switch_activity.add(new Done(category_id, Constants.ACTIVITY_SWITCH));
                     Intent intent = new Intent(getApplication(), ResultActivity.class);
@@ -367,6 +404,7 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
             }
         }
     }
+
     @Override
     public void onBackPressed() {
         final AlertDialog.Builder aBuilder = new AlertDialog.Builder(QuestionActivity.this);
