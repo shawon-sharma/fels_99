@@ -32,7 +32,7 @@
     </LinearLayout>
     <View
         android:layout_width="fill_parent"
-        android:layout_marginTop="@dimen/desc_textview_layout_marginright"
+        android:layout_marginTop="@dimen/text_title_activity_login_margin_top"
         android:layout_height="@dimen/content_question_view_height"
         android:background="@android:color/black"
         />

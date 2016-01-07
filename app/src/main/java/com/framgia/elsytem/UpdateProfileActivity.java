@@ -136,7 +136,17 @@ public class UpdateProfileActivity extends AppCompatActivity {
         mNewPassword = mEtNewPassword.getText().toString();
         mPasswordConfirmation = mEtPasswordConfirmation.getText().toString();
         mFullName = mEtFullName.getText().toString();
-        new HttpAsyncTaskUpdateProfile().execute(Url.url_update_profile + mId + ".json");
+        if (!mNewPassword.equals(mPasswordConfirmation)) Toast.makeText
+                (getApplicationContext(), R.string.toast_message_password_mismatch, Toast
+                        .LENGTH_LONG).show();
+        else if (mValidate(mOldPassword, mNewPassword, mPasswordConfirmation, mFullName,
+                imageDataBase64String)) {
+            new HttpAsyncTaskUpdateProfile().execute(Url.url_update_profile + mId + ".json");
+        } else {
+            Toast.makeText(getApplicationContext(), R.string
+                    .toast_message_nothing_updated, Toast.LENGTH_LONG).show();
+            onBackPressed();
+        }
     }
 
     /**
@@ -313,24 +323,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
                 return true;
             // Respond to the action bar's 'Done' button
             case R.id.action_update:
-                mId = session.getUserDetails().get(Constants.KEY_ID);
-                mEmail = mEtemail.getText().toString();
-                mOldPassword = mEtOldPassword.getText().toString();
-                mNewPassword = mEtNewPassword.getText().toString();
-                mPasswordConfirmation = mEtPasswordConfirmation.getText().toString();
-                mFullName = mEtFullName.getText().toString();
-                if (!mNewPassword.equals(mPasswordConfirmation)) Toast.makeText
-                        (getApplicationContext(), R.string.toast_message_password_mismatch, Toast
-                                .LENGTH_LONG).show();
-                else if (mValidate(mOldPassword, mNewPassword, mPasswordConfirmation, mFullName,
-                        imageDataBase64String)) {
-                    new HttpAsyncTaskUpdateProfile().execute(getString(R.string.url_update_profile)
-                            + mId + ".json");
-                } else {
-                    Toast.makeText(getApplicationContext(), R.string
-                            .toast_message_nothing_updated, Toast.LENGTH_LONG).show();
-                    onBackPressed();
-                }
+                mUpdateProfile();
                 return true;
         }
         return super.onOptionsItemSelected(item);
