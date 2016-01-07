@@ -8,8 +8,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,64 +36,22 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 public class LearnedActivity extends AppCompatActivity {
-    ListView list;
-    String url = "";
-    String cattegory_id = "1";
-    String option = Constants.all;
-    String page = "1";
-    Request request;
-    Response response = null;
-    String responseData = null;
-    WordResponse wa;
-    String newURL = "";
-    int totalpage = 0;
-    Gson gson;
-    private com.framgia.elsytem.utils.Constants mConstant;
-    OkHttpClient okHttpClient;
-    String token;
-    SessionManager sessionManager;
-    HashMap<String, String> user;
-    ArrayList<WordResponse.WordsEntity> wordName = new ArrayList<>();
-    ArrayList<WordReturnByCategory> item = new ArrayList<>();
-    Spinner spinnerCategory;
-    ArrayList<CategoryResponse.CategoriesEntity> categoriesName = new ArrayList<CategoryResponse.CategoriesEntity>();
-    ArrayList<CategoriesReturnFromPages> catitem = new ArrayList<>();
-    int cattotalpage = 0;
-    Response catresponse = null;
-    String catresponseData = null;
-    ArrayList<String> catal = new ArrayList<>();
-    String catpage = "1";
-    String catnewURL = "";
-    String curl = "";
-    ArrayAdapter<String> dataAdapter;
-    LinkedHashMap<String, String> catclick;
-    WordAdapter cad;
-    Boolean mIsSpinnerFirstCall,mIsSpinnerOption;
-    ArrayList<WordResponse.WordsEntity.AnswersEntity> wordAns;
-    Url ur;
-    File pdfFolder;
-    File myFile;
-    private String filepath = "MyInvoices";
-    public String word_list = "all word";
-    Spinner spinnerOption;
-    private ProgressDialog mDialog;
-    private int mWidth;
-    static int m=0;
-    static int n=0;
+    private ArrayList<String> categoryAll = new ArrayList<>();
+    private ArrayList<WordReturnByCategory> item = new ArrayList<>();
+    private ArrayList<WordResponse.WordsEntity.AnswersEntity> wordAns;
+    private ArrayList<WordResponse.WordsEntity> wordName = new ArrayList<>();
+    private ArrayList<CategoriesReturnFromPages> catitem = new ArrayList<>();
+    private ArrayList<CategoryResponse.CategoriesEntity> categoriesName = new ArrayList<>();
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_learned);
@@ -104,85 +60,85 @@ public class LearnedActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        catclick = new LinkedHashMap<>();
-        spinnerCategory = (Spinner) findViewById(R.id.spinnerCategory);
-        spinnerOption = (Spinner) findViewById(R.id.spinnerOption);
-        sessionManager = new SessionManager(this);
-        user = sessionManager.getUserDetails();
-        token = user.get(mConstant.KEY_AUTH_TOKEN);
-        list = (ListView) findViewById(R.id.learned);
-        okHttpClient = new OkHttpClient();
-        url = Url.wordFetchURL;
-        String newURL = null;
-        curl = Url.categoryFetchURL;
+        Constants.categoryClick = new LinkedHashMap<>();
+        Constants.spinnerCategory = (Spinner) findViewById(R.id.spinnerCategory);
+        Constants.spinnerOption = (Spinner) findViewById(R.id.spinnerOption);
+        Constants.sessionManager = new SessionManager(this);
+        Constants.user = Constants.sessionManager.getUserDetails();
+        Constants.token = Constants.user.get(Constants.KEY_AUTH_TOKEN);
+        Constants.list = (ListView) findViewById(R.id.learned);
+        Constants.okHttpClient = new OkHttpClient();
+        Constants.url = Url.wordFetchURL;
+        Constants.curl = Url.categoryFetchURL;
         try {
-            String catnewURL = catURLBody(catpage);
+            String catnewURL = catURLBody(Constants.categoryPageNumber);
             new HttpAsyncCategory().execute(catnewURL);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        mIsSpinnerOption=true;
-        spinnerOption.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        Constants.mIsSpinnerOption = true;
+        Constants.spinnerOption.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-                if (!mIsSpinnerOption){
+                if (!Constants.mIsSpinnerOption) {
                     item.clear();
-                    option = spinnerOption.getSelectedItem().toString();
-                if (option.equalsIgnoreCase(Constants.OPTION_ALL)) {
-                    option = Constants.all;
-                } else if (option.equalsIgnoreCase(Constants.OPTION_LEARN)) {
-                    option = Constants.learned;
-                } else if (option.equalsIgnoreCase(Constants.OPTION_NOT_LEARN)) {
-                    option = Constants.not_learned;
-                }
-                    String text = spinnerCategory.getSelectedItem().toString();
-                    String value = catclick.get(text);
-                    cattegory_id = value;
-                    url = Url.wordFetchURL;
+                    Constants.option = Constants.spinnerOption.getSelectedItem().toString();
+                    if (Constants.option.equalsIgnoreCase(Constants.OPTION_ALL)) {
+                        Constants.option = Constants.all;
+                    } else if (Constants.option.equalsIgnoreCase(Constants.OPTION_LEARN)) {
+                        Constants.option = Constants.learned;
+                    } else if (Constants.option.equalsIgnoreCase(Constants.OPTION_NOT_LEARN)) {
+                        Constants.option = Constants.NOT_LEARNED;
+                    }
+                    String text = Constants.spinnerCategory.getSelectedItem().toString();
+                    String value = Constants.categoryClick.get(text);
+                    Constants.category_id = value;
+                    Constants.url = Url.wordFetchURL;
                     try {
-                        cad.notifyDataSetChanged();
-                        String newURL = wordURLBody(page, cattegory_id, option);
+                        Constants.categoryAdapter.notifyDataSetChanged();
+                        String newURL = wordURLBody(Constants.page, Constants.category_id,
+                                Constants.option);
                         new HttpAsyncWord().execute(newURL);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-            }
-               else {
-                    mIsSpinnerOption = false;
+                } else {
+                    Constants.mIsSpinnerOption = false;
                 }
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
             }
         });
-        mIsSpinnerFirstCall = true;
-        dataAdapter = new ArrayAdapter<>(this, android.R.layout
-                .simple_spinner_item, catal);
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerCategory.setAdapter(dataAdapter);
-        spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        Constants.mIsSpinnerFirstCall = true;
+        Constants.dataAdapter = new ArrayAdapter<>(this, android.R.layout
+                .simple_spinner_item, categoryAll);
+        Constants.dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        Constants.spinnerCategory.setAdapter(Constants.dataAdapter);
+        Constants.spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (!mIsSpinnerFirstCall) {
+                if (!Constants.mIsSpinnerFirstCall) {
                     item.clear();
-                    String text = spinnerCategory.getSelectedItem().toString();
-                    String value = catclick.get(text);
-                    cattegory_id = value;
+                    String text = Constants.spinnerCategory.getSelectedItem().toString();
+                    String value = Constants.categoryClick.get(text);
+                    Constants.category_id = value;
 
-                    url = Url.wordFetchURL;
+                    Constants.url = Url.wordFetchURL;
                     try {
-                        String newURL = wordURLBody(page, cattegory_id, option);
+                        String newURL = wordURLBody(Constants.page, Constants.category_id,
+                                Constants.option);
                         new HttpAsyncWord().execute(newURL);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    n++;
-                }
-                else {
-                    mIsSpinnerFirstCall = false;
-                    n++;
+                    Constants.n++;
+                } else {
+                    Constants.mIsSpinnerFirstCall = false;
+                    Constants.n++;
                 }
             }
 
@@ -191,23 +147,21 @@ public class LearnedActivity extends AppCompatActivity {
             }
         });
         Display mDisplay = getWindowManager().getDefaultDisplay();
-        mWidth = mDisplay.getWidth();
-        mWidth /= 2;
+        Constants.mWidth = mDisplay.getWidth();
+        Constants.mWidth /= 2;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            // Respond to the action bar's Up/Home button
             case android.R.id.home:
                 onBackPressed();
                 return true;
-            // Respond to the action bar's 'Done' button
             case R.id.action_pdf:
                 try {
                     createpdf();
                     Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setDataAndType(Uri.fromFile(myFile), getString(R.string.pdf_type));
+                    intent.setDataAndType(Uri.fromFile(Constants.myFile), getString(R.string.pdf_type));
                     intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                     Intent intent1 = Intent.createChooser(intent, getString(R.string.pdf_open));
                     startActivity(intent1);
@@ -229,30 +183,32 @@ public class LearnedActivity extends AppCompatActivity {
 
     public void createpdf() throws IOException, DocumentException {
         if (!Libs.isExternalStorageAvailable() || Libs.isExternalStorageReadOnly()) {
-            Log.e("no access", "External Storage not available or you don't have permission to write");
         } else {
+            File pdfFolder;
             File sdCard = Environment.getExternalStorageDirectory();
-            pdfFolder = new File(sdCard.getAbsolutePath() + "/" + filepath + "/");
-            File newFolder = new File(Environment.getExternalStorageDirectory(), "TestFolder");
+            pdfFolder = new File(sdCard.getAbsolutePath() + "/" + Constants.filepath + "/");
+            File newFolder = new File(Environment.getExternalStorageDirectory(), Constants.TEST_FOLDER);
             if (!newFolder.exists()) {
                 boolean t = newFolder.mkdir();
-                Log.e("file create ", " " + t);
             }
             if (!pdfFolder.exists()) {
                 pdfFolder.mkdir();
-                Log.e("check", "Pdf Directory created" + sdCard.getAbsolutePath() + filepath);
             }
-            myFile = new File(newFolder, word_list + "_" + System.currentTimeMillis() + ".pdf");
-            if (!myFile.exists())
-                myFile.createNewFile();
-            OutputStream output = new FileOutputStream(myFile);
+            Constants.myFile = new File(newFolder, Constants.word_list + "_" + System
+                    .currentTimeMillis
+                            () +
+                    Constants.DOT_PDF);
+            if (!Constants.myFile.exists())
+                Constants.myFile.createNewFile();
+            OutputStream output = new FileOutputStream(Constants.myFile);
             Document document = new Document();
             PdfWriter pdfWriter = PdfWriter.getInstance(document, output);
             document.open();
             Font black = new Font(Font.FontFamily.HELVETICA, 12, Font.NORMAL, BaseColor.BLACK);
             String text = "";
             for (int i = 0; i < item.size(); i++) {
-                text = text + item.get(i).getSingleWord()+"   |   "+getString(R.string.language)+"\n------------------------------------------------\n";
+                text = text + item.get(i).getSingleWord() + "   |   " + getString(R.string.language) + "\n---------" +
+                        "---------------------------------------\n";
             }
             Chunk greenText = new Chunk(text, black);
             Paragraph paragraph = new Paragraph(greenText);
@@ -264,10 +220,20 @@ public class LearnedActivity extends AppCompatActivity {
 
     public String catURLBody(String page) throws Exception {
         LinkedHashMap<String, String> catpara = new LinkedHashMap<>();
-        catpara.put(Constants.AUTH_TOKEN, token);
+        catpara.put(Constants.AUTH_TOKEN, Constants.token);
         catpara.put(Constants.PAGE, page);
-        catnewURL = makeUrlWithParams(curl, catpara);
-        return catnewURL;
+        Constants.categoryNewUrl = Libs.makeUrlWithParams(Constants.curl, catpara);
+        return Constants.categoryNewUrl;
+    }
+
+    public String wordURLBody(String page, String category_id, String option) throws Exception {
+        LinkedHashMap<String, String> para = new LinkedHashMap<>();
+        para.put(Constants.CCATEGORY_ID, category_id);
+        para.put(Constants.OPTION, option);
+        para.put(Constants.PAGE, page);
+        para.put(Constants.AUTH_TOKEN, Constants.token);
+        Constants.newURL = Libs.makeUrlWithParams(Constants.url, para);
+        return Constants.newURL;
     }
 
     private class HttpAsyncCategory extends AsyncTask<String, Void, Integer> {
@@ -276,18 +242,16 @@ public class LearnedActivity extends AppCompatActivity {
         protected Integer doInBackground(String... urls) {
             try {
                 Request request = new Request.Builder().url(urls[0]).get().build();
-                Log.e("token ", token);
-                catresponse = okHttpClient.newCall(request).execute();
-                catresponseData = catresponse.body().string();
-                Log.e("response ", catresponseData);
-                gson = new Gson();
-                CategoryResponse ca = gson.fromJson(catresponseData, CategoryResponse.class);
-                cattotalpage = ca.getTotal_pages();
-                Log.e("totalpage", "" + cattotalpage);
+                Constants.categoryResponse = Constants.okHttpClient.newCall(request).execute();
+                Constants.categoryResponseData = Constants.categoryResponse.body().string();
+                Constants.gson = new Gson();
+                CategoryResponse ca = Constants.gson.fromJson(Constants.categoryResponseData,
+                        CategoryResponse.class);
+                Constants.cat_total_page = ca.getTotal_pages();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return cattotalpage;
+            return Constants.cat_total_page;
         }
 
         @Override
@@ -304,29 +268,25 @@ public class LearnedActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                new HttpAsyncCategoryshow().execute(catrl);
+                new HttpAsyncCategoryShow().execute(catrl);
                 i--;
             }
         }
     }
 
-    private class HttpAsyncCategoryshow extends AsyncTask<String, Void, ArrayList<CategoryResponse
+    private class HttpAsyncCategoryShow extends AsyncTask<String, Void, ArrayList<CategoryResponse
             .CategoriesEntity>> {
-
-
         @Override
         protected ArrayList<CategoryResponse.CategoriesEntity> doInBackground(String... urls) {
             try {
                 Request request = new Request.Builder().url(urls[0]).get().build();
-                catresponse = okHttpClient.newCall(request).execute();
-                catresponseData = catresponse.body().string();
-                gson = new Gson();
-                CategoryResponse ca = gson.fromJson(catresponseData, CategoryResponse.class);
+                Constants.categoryResponse = Constants.okHttpClient.newCall(request).execute();
+                Constants.categoryResponseData = Constants.categoryResponse.body().string();
+                Constants.gson = new Gson();
+                CategoryResponse ca = Constants.gson.fromJson(Constants.categoryResponseData, CategoryResponse.class);
                 categoriesName = (ArrayList<CategoryResponse.CategoriesEntity>) ca
                         .getCategories();
-                for (int j = 0; j < categoriesName.size(); j++)
-                    Log.e("value", "" + categoriesName.get(j).getName());
-                cattotalpage = ca.getTotal_pages();
+                Constants.cat_total_page = ca.getTotal_pages();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -342,57 +302,15 @@ public class LearnedActivity extends AppCompatActivity {
         protected void onPostExecute(ArrayList<CategoryResponse.CategoriesEntity> categoriesName) {
             for (int i = 0; i < categoriesName.size(); i++) {
                 String key = categoriesName.get(i).getName();
-                Log.e("key", key);
-                Integer tmpvalue = categoriesName.get(i).getId();
-                String value = String.valueOf(tmpvalue);
-                catitem.add(new CategoriesReturnFromPages(key, tmpvalue));
-                catal.add(key);
-                catclick.put(key, value);
+                Integer temporaryValue = categoriesName.get(i).getId();
+                String value = String.valueOf(temporaryValue);
+                catitem.add(new CategoriesReturnFromPages(key, temporaryValue));
+                categoryAll.add(key);
+                Constants.categoryClick.put(key, value);
             }
-            spinnerCategory.setAdapter(dataAdapter);
-            dataAdapter.notifyDataSetChanged();
+            Constants.spinnerCategory.setAdapter(Constants.dataAdapter);
+            Constants.dataAdapter.notifyDataSetChanged();
         }
-    }
-
-    public String wordURLBody(String page, String category_id, String option) throws Exception {
-        LinkedHashMap<String, String> para = new LinkedHashMap<>();
-        para.put(Constants.CCATEGORY_ID, category_id);
-        para.put(Constants.OPTION, option);
-        para.put(Constants.PAGE, page);
-        para.put(Constants.AUTH_TOKEN, token);
-        newURL = makeUrlWithParams(url, para);
-        return newURL;
-    }
-
-    public static String makeUrlWithParams(String url, LinkedHashMap<String, String> params)
-            throws Exception {
-        if (TextUtils.isEmpty(url) || params == null || params.isEmpty())
-            return url;
-        String newUrl = new String(url);
-        for (Map.Entry entry : params.entrySet()) {
-            if (TextUtils.isEmpty(entry.getValue().toString()))
-                continue;
-            newUrl = concat_url(newUrl, entry.getKey().toString(), entry.getValue().toString());
-        }
-        return newUrl;
-    }
-
-    private static String concat_url(String url, String k, String p)
-            throws UnsupportedEncodingException {
-        String new_url = new String(url);
-        if (url.indexOf("?") == -1) {
-            new_url =
-                    new_url.concat("?").concat(k).concat("=").concat(URLEncoder.encode(p,
-                            "UTF-8"));
-        } else if (url.endsWith("?") || url.endsWith("&")) {
-            new_url = new_url.concat(k).concat("=").concat(URLEncoder.encode(p,
-                    "UTF-8"));
-        } else {
-            new_url =
-                    new_url.concat("&").concat(k).concat("=").concat(URLEncoder.encode(p,
-                            "UTF-8"));
-        }
-        return new_url;
     }
 
     private class HttpAsyncWord extends AsyncTask<String, Void, Integer> {
@@ -400,28 +318,26 @@ public class LearnedActivity extends AppCompatActivity {
         @Override
         protected Integer doInBackground(String... urls) {
             try {
-                request = new Request.Builder().url(urls[0]).get().build();
-                Log.e("token ", token);
-                response = okHttpClient.newCall(request).execute();
-                responseData = response.body().string();
-                Log.e("response ", responseData);
-                gson = new Gson();
-                wa = gson.fromJson(responseData, WordResponse.class);
-                totalpage = wa.getTotal_pages();
+                Constants.request = new Request.Builder().url(urls[0]).get().build();
+                Constants.response = Constants.okHttpClient.newCall(Constants.request).execute();
+                Constants.responseData = Constants.response.body().string();
+                Constants.gson = new Gson();
+                Constants.wordResponse = Constants.gson.fromJson(Constants.responseData, WordResponse.class);
+                Constants.totalPage = Constants.wordResponse.getTotal_pages();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return totalpage;
+            return Constants.totalPage;
         }
 
         @Override
         protected void onPreExecute() {
-            mDialog = new ProgressDialog(LearnedActivity.this);
-            mDialog.setTitle("Learned word loading");
-            mDialog.setMessage("please wait");
-            mDialog.setIndeterminate(false);
-            mDialog.setCancelable(true);
-            mDialog.show();
+            Constants.mDialog = new ProgressDialog(LearnedActivity.this);
+            Constants.mDialog.setTitle(getString(R.string.contacting_servers));
+            Constants.mDialog.setMessage(getString(R.string.please_wait));
+            Constants.mDialog.setIndeterminate(false);
+            Constants.mDialog.setCancelable(true);
+            Constants.mDialog.show();
         }
 
         @Override
@@ -429,32 +345,32 @@ public class LearnedActivity extends AppCompatActivity {
             while (i >= 1) {
                 String newURL = null;
                 try {
-                    newURL = wordURLBody(String.valueOf(i), cattegory_id, option);
+                    newURL = wordURLBody(String.valueOf(i), Constants.category_id, Constants
+                            .option);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
                 new HttpAsyncWordShow().execute(newURL);
                 i--;
             }
-            mDialog.dismiss();
+            Constants.mDialog.dismiss();
         }
     }
 
     private class HttpAsyncWordShow extends AsyncTask<String, Void, ArrayList<WordResponse
             .WordsEntity>> {
-
         @Override
         protected ArrayList<WordResponse
                 .WordsEntity> doInBackground(String... urls) {
             try {
-                request = new Request.Builder().url(urls[0]).get().build();
-                response = okHttpClient.newCall(request).execute();
-                responseData = response.body().string();
-                gson = new Gson();
-                wa = gson.fromJson(responseData, WordResponse.class);
-                wordName = (ArrayList<WordResponse.WordsEntity>) wa.getWords();
-                for (int i = 0; i < wordName.size(); i++) {
-                }
+                Constants.request = new Request.Builder().url(urls[0]).get().build();
+                Constants.response = Constants.okHttpClient.newCall(Constants.request).execute();
+                Constants.responseData = Constants.response.body().string();
+                Constants.gson = new Gson();
+                Constants.wordResponse = Constants.gson.fromJson(Constants.responseData,
+                        WordResponse
+                                .class);
+                wordName = (ArrayList<WordResponse.WordsEntity>) Constants.wordResponse.getWords();
             } catch (IOException e1) {
                 e1.printStackTrace();
             } catch (Exception e) {
@@ -471,22 +387,13 @@ public class LearnedActivity extends AppCompatActivity {
         protected void onPostExecute(ArrayList<WordResponse.WordsEntity> newWordName) {
             for (int i = 0; i < newWordName.size(); i++) {
                 String key = newWordName.get(i).getContent();
-                Log.e("content ", key);
-                String value = null;
                 wordAns = (ArrayList<WordResponse
                         .WordsEntity.AnswersEntity>) wordName.get(i).getAnswers();
-                for (int j = 0; j < wordAns.size(); j++) {
-                    boolean b = wordAns.get(j).isIs_correct();
-                    if (b) {
-                        value = wordAns.get(j).getContent();
-                        break;
-                    }
-                }
                 item.add(new WordReturnByCategory(key, getString(R.string.language)));
             }
-            cad = new WordAdapter(getApplication(), item, mWidth);
-            list.setAdapter(cad);
-            cad.notifyDataSetChanged();
+            Constants.categoryAdapter = new WordAdapter(getApplication(), item, Constants.mWidth);
+            Constants.list.setAdapter(Constants.categoryAdapter);
+            Constants.categoryAdapter.notifyDataSetChanged();
         }
     }
 }

@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <stroke android:width="@dimen/categoryrowborder_stroke_width" android:color="#3b5998" />
-    <padding android:left="@dimen/categoryrowborder_padding" android:top="@dimen/categoryrowborder_padding" android:right="5dp" android:bottom="5dp" />
-    <corners android:radius="@dimen/categoryrowborder_corner_radius" />
+    <stroke
+        android:width="@dimen/categoryrowborder_stroke_width"
+        android:color="#3b5998"/>
+    <padding
+        android:bottom="5dp"
+        android:left="@dimen/categoryrowborder_padding"
+        android:right="5dp"
+        android:top="@dimen/categoryrowborder_padding"/>
+    <corners android:radius="@dimen/categoryrowborder_corner_radius"/>
 </shape>

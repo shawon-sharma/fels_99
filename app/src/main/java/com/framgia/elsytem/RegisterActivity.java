@@ -19,15 +19,16 @@ import android.widget.Toast;
 
 import com.framgia.elsytem.model.User;
 import com.framgia.elsytem.utils.AlertDialogManager;
+import com.framgia.elsytem.utils.Constants;
 import com.framgia.elsytem.utils.Url;
 import com.framgia.elsytem.utils.UserFunctions;
 
 public class RegisterActivity extends AppCompatActivity {
-    private static final String TAG = "RegisterActivity";
+    private static final String TAG = Constants.REGISTER_ACTIVITY;
     private static String mEmail, mPassword, mPasswordConfirmation, mFullName;
     private static EditText mEtEmail, mEtPassword, mEtPasswordConfirmation, mEtFullName;
-    private AlertDialogManager mAlert;
     User user;
+    private AlertDialogManager mAlert;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,7 +100,7 @@ public class RegisterActivity extends AppCompatActivity {
             mAlert.showAlertDialog(RegisterActivity.this, getString(R.string.connection_error_title_activity_login),
                     getString(R.string.connection_error_message_activity_login), false);
         else if (!validate(mFullName, mEmail, mPassword, mPasswordConfirmation))
-            Toast.makeText(getBaseContext(), "Provide the required information!", Toast
+            Toast.makeText(getBaseContext(), Constants.INFO, Toast
                     .LENGTH_LONG).show();
             // call AsyncTask to perform network operation on separate thread
         else new HttpAsyncTask().execute(Url.url_sign_up);
@@ -126,8 +127,8 @@ public class RegisterActivity extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             mDialog = new ProgressDialog(RegisterActivity.this);
-            mDialog.setTitle("Contacting Servers");
-            mDialog.setMessage("Signing up ...");
+            mDialog.setTitle(getString(R.string.contacting_servers));
+            mDialog.setMessage(getString(R.string.signing_up));
             mDialog.setIndeterminate(false);
             mDialog.setCancelable(true);
             mDialog.show();
@@ -141,7 +142,7 @@ public class RegisterActivity extends AppCompatActivity {
             user.setPassword(mPassword);
             user.setPassword_confirmation(mPasswordConfirmation);
             UserFunctions userFunction = new UserFunctions();
-            return userFunction.signUp(urls[0], user);
+            return userFunction.signUp(urls[Constants.ZERO], user);
         }
 
         // onPostExecute displays the results of the AsyncTask.

@@ -12,6 +12,12 @@ import java.util.HashMap;
  * Created by avishek on 12/11/15.
  */
 public class SessionManager {// Shared Preferences
+    // SharedPref file name
+    private static final String PREF_NAME = "FELS99";
+    // All Shared Preferences Keys
+    private static final String IS_LOGIN = "IsLoggedIn";
+    // if Logged in, then 1
+    private static final String LOGIN_TRUE = "1";
     SharedPreferences pref;
     // Editor for Shared preferences
     SharedPreferences.Editor editor;
@@ -19,12 +25,6 @@ public class SessionManager {// Shared Preferences
     Context _context;
     // Shared pref mode
     int PRIVATE_MODE = 0;
-    // SharedPref file name
-    private static final String PREF_NAME = "FELS99";
-    // All Shared Preferences Keys
-    private static final String IS_LOGIN = "IsLoggedIn";
-    // if Logged in, then 1
-    private static final String LOGIN_TRUE = "1";
 
     // Constructor
     public SessionManager(Context context) {

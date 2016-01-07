@@ -23,7 +23,7 @@ import android.widget.Toast;
 
 import com.framgia.elsytem.jsonResponse.UserResponse;
 import com.framgia.elsytem.model.User;
-import com.framgia.elsytem.utils.AlertDialogManager;
+import com.framgia.elsytem.utils.Constants;
 import com.framgia.elsytem.utils.SessionManager;
 import com.framgia.elsytem.utils.Url;
 import com.framgia.elsytem.utils.UserFunctions;
@@ -33,17 +33,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class LoginActivity extends AppCompatActivity {
-    private static final String TAG = "LoginActivity";
-    EditText email, password;
-    TextView validation;
-    Button buttonLogin;
-    CheckBox checkBoxRememberMe;
+    private static final String TAG = Constants.LOGIN_ACTIVITY;
+    private EditText mEtEmail, mEtPassword;
+    private TextView mValidation;
+    private Button mButtonLogin;
+    private CheckBox mCheckBoxRememberMe;
     private String mEmail, mPassword;
     private int mRememberMe;
-    AlertDialogManager alert;
-    SessionManager session;
-    User user;
-    TextView register;
+    private SessionManager mSession;
+    private User mUser;
+    private TextView mRegister;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,23 +51,19 @@ public class LoginActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setLogo(R.mipmap.ic_launcher);
-        session = new SessionManager(getApplicationContext());
-        // check in session if user is logged in. If so, go to profile activity
-        if (session.isLoggedInAndRemember()) {
-            //go to ProfileActivity
+        mSession = new SessionManager(getApplicationContext());
+        if (mSession.isLoggedInAndRemember()) {
             mStartProfileActivity();
-
         } else {
             initializeViews();
-            session.deleteSessionData();
-            alert = new AlertDialogManager();
-            register.setOnClickListener(new View.OnClickListener() {
+            mSession.deleteSessionData();
+            mRegister.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     startActivity(new Intent(getApplicationContext(), RegisterActivity.class));
                 }
             });
-            password.setOnKeyListener(new View.OnKeyListener() {
+            mEtPassword.setOnKeyListener(new View.OnKeyListener() {
                 @Override
                 public boolean onKey(View v, int keyCode, KeyEvent event) {
                     if (event.getAction() == KeyEvent.ACTION_DOWN) {
@@ -84,7 +79,7 @@ public class LoginActivity extends AppCompatActivity {
                     return false;
                 }
             });
-            buttonLogin.setOnClickListener(new View.OnClickListener() {
+            mButtonLogin.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mSignIn();
@@ -99,10 +94,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void mSignIn() {
-        mEmail = email.getText().toString();
-        mPassword = password.getText().toString();
-        if (checkBoxRememberMe.isChecked()) mRememberMe = 1;
-        else mRememberMe = 0;
+        mEmail = mEtEmail.getText().toString();
+        mPassword = mEtPassword.getText().toString();
+        if (mCheckBoxRememberMe.isChecked()) mRememberMe = 1;
+        else mRememberMe = Constants.ZERO;
         if (!isConnected()) {
             mShowDialog(LoginActivity.this, getString(R.string
                             .connection_error_title_activity_login),
@@ -158,12 +153,12 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void initializeViews() {
-        register = (TextView) findViewById(R.id.text_create_account);
-        email = (EditText) findViewById(R.id.edit_text_email);
-        password = (EditText) findViewById(R.id.edit_text_password);
-        validation = (TextView) findViewById(R.id.text_validation);
-        buttonLogin = (Button) findViewById(R.id.button_login);
-        checkBoxRememberMe = (CheckBox) findViewById(R.id.check_remember);
+        mRegister = (TextView) findViewById(R.id.text_create_account);
+        mEtEmail = (EditText) findViewById(R.id.edit_text_email);
+        mEtPassword = (EditText) findViewById(R.id.edit_text_password);
+        mValidation = (TextView) findViewById(R.id.text_validation);
+        mButtonLogin = (Button) findViewById(R.id.button_login);
+        mCheckBoxRememberMe = (CheckBox) findViewById(R.id.check_remember);
     }
 
     public boolean isConnected() {
@@ -188,11 +183,11 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... urls) {
-            user = new User();
-            user.setEmail(mEmail);
-            user.setPassword(mPassword);
+            mUser = new User();
+            mUser.setEmail(mEmail);
+            mUser.setPassword(mPassword);
             UserFunctions userFunction = new UserFunctions();
-            return userFunction.signIn(urls[0], user, mRememberMe);
+            return userFunction.signIn(urls[Constants.ZERO], mUser, mRememberMe);
         }
 
         // onPostExecute displays the results of the AsyncTask.
@@ -201,23 +196,22 @@ public class LoginActivity extends AppCompatActivity {
             mDialog.dismiss();
             String msg = "";
             try {
-                msg = new JSONObject(result).getString("message");
+                msg = new JSONObject(result).getString(Constants.MESSAGE);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
             try {
                 // showing the validation message got from json response
                 if (msg.equals(getString(R.string.invalid_username_password_message))) {
-                    validation.setVisibility(View.VISIBLE);
+                    mValidation.setVisibility(View.VISIBLE);
                 } else {
-                    //getting gson data
                     UserResponse userResponse;
                     userResponse = new Gson().fromJson(result, UserResponse.class);
                     String name = userResponse.getUser().getName();
                     String email = userResponse.getUser().getEmail();
                     //creating session
                     if (!name.isEmpty() && !email.isEmpty())
-                        session.createLoginSession(userResponse.getUser().getId(), name, email,
+                        mSession.createLoginSession(userResponse.getUser().getId(), name, email,
                                 userResponse.getUser().getAvatar(), userResponse.getUser()
                                         .getAuth_token(), mRememberMe);
                     //now finish this activity and go to ProfileActivity

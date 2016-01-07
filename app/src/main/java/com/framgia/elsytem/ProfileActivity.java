@@ -42,21 +42,28 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
 public class ProfileActivity extends AppCompatActivity {
-    private static final String TAG = "ProfileActivity";
-    ListView listViewProfile;
-    String[] formattedDate = new String[1];
-    ImageView editProfile, avatar;
-    TextView name, email, learnedWords;
-    SessionManager session;
-    Button lesson, words;
-    HashMap<String, String> user;
-    ProgressBar progressBar;
+    private static final String TAG = Constants.PROFILE_ACTIVITY;
+    private ListView mListViewProfile;
+    private ImageView mEditProfile, avatar;
+    private TextView mName, mEmail, mLearnedWords;
+    private SessionManager mSession;
+    private Button mLesson, mWords;
+    private HashMap<String, String> mUser;
+    private ProgressBar mProgressBar;
+
+    /**
+     * Decodes the base64 string into byte array
+     *
+     * @param imageDataString - a {@link java.lang.String}
+     * @return byte array
+     */
+    public static byte[] decodeImage(String imageDataString) {
+        return Base64.decode(imageDataString, Base64.DEFAULT);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,9 +71,6 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
         setUpToolbar();
         initializeViews();
-        Calendar c = Calendar.getInstance();
-        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
-        formattedDate[0] = df.format(c.getTime());
         mInitializeListeners();
     }
 
@@ -119,51 +123,14 @@ public class ProfileActivity extends AppCompatActivity {
                     false);
         } else {
             mGetSessionData();
-            mLoadAvatar(user.get(Constants.KEY_AVATAR));
+            mLoadAvatar(mUser.get(Constants.KEY_AVATAR));
             mGetUserDetailsFromJson();
         }
     }
 
     private void mGetUserDetailsFromJson() {
-        new HttpAsyncTaskShowUser().execute(Url.url_show_user + user.get(Constants.ID) + ".json");
-    }
-
-    private class HttpAsyncTaskShowUser extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            progressBar.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected String doInBackground(String... urls) {
-            return new UserFunctions().showUser(urls[0], user.get(Constants.KEY_AUTH_TOKEN));
-        }
-
-        // onPostExecute displays the results of the AsyncTask.
-        @Override
-        protected void onPostExecute(String result) {
-            progressBar.setVisibility(View.GONE);
-            List<ShowUserResponse.UserEntity.ActivitiesEntity> activityList;
-            ShowUserResponse response;
-            response = new Gson().fromJson(result, ShowUserResponse.class);
-            int id = 0;
-            try {
-                id = response.getUser().getId();
-            } catch (Exception e) {
-            }
-            if (id == Integer.parseInt(user.get(Constants.KEY_ID))) {
-                name.setText(response.getUser().getName());
-                email.setText(response.getUser().getEmail());
-                learnedWords.setText(getString(R.string.text_learned) + " " + response.getUser()
-                        .getLearned_words() + " " + getString(R.string.text_words));
-                activityList = response.getUser().getActivities();
-                ProfileActivityListAdapter adapter = new ProfileActivityListAdapter
-                        (getApplicationContext(), activityList);
-                listViewProfile.setAdapter(adapter);
-            } else Toast.makeText(getBaseContext(), result, Toast.LENGTH_LONG).show();
-        }
+        new HttpAsyncTaskShowUser().execute(Url.url_show_user + mUser.get(Constants.ID) +
+                Constants.DOT_JSON);
     }
 
     private void mLoadAvatar(String avatarString) {
@@ -228,27 +195,27 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void mGetSessionData() {
-        session = new SessionManager(getApplicationContext());
-        user = session.getUserDetails();
+        mSession = new SessionManager(getApplicationContext());
+        mUser = mSession.getUserDetails();
     }
 
     private void mInitializeListeners() {
-        lesson = (Button) findViewById(R.id.lesson_btn);
-        lesson.setOnClickListener(new View.OnClickListener() {
+        mLesson = (Button) findViewById(R.id.lesson_btn);
+        mLesson.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getApplication(), CategoriesActivity.class));
             }
         });
-        words = (Button) findViewById(R.id.words_btn);
-        words.setOnClickListener(new View.OnClickListener() {
+        mWords = (Button) findViewById(R.id.words_btn);
+        mWords.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // startActivity(new Intent(getApplication(), WordlistActivity.class));
                 startActivity(new Intent(getApplication(), LearnedActivity.class));
             }
         });
-        editProfile.setOnClickListener(new View.OnClickListener() {
+        mEditProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getApplicationContext(), UpdateProfileActivity.class));
@@ -269,24 +236,14 @@ public class ProfileActivity extends AppCompatActivity {
         return url != null;
     }
 
-    /**
-     * Decodes the base64 string into byte array
-     *
-     * @param imageDataString - a {@link java.lang.String}
-     * @return byte array
-     */
-    public static byte[] decodeImage(String imageDataString) {
-        return Base64.decode(imageDataString, Base64.DEFAULT);
-    }
-
     private void initializeViews() {
-        listViewProfile = (ListView) findViewById(R.id.list_view);
-        editProfile = (ImageView) findViewById(R.id.edit_profile);
-        name = (TextView) findViewById(R.id.person);
-        email = (TextView) findViewById(R.id.email_textview);
-        learnedWords = (TextView) findViewById(R.id.desc_textview);
+        mListViewProfile = (ListView) findViewById(R.id.list_view);
+        mEditProfile = (ImageView) findViewById(R.id.edit_profile);
+        mName = (TextView) findViewById(R.id.person);
+        mEmail = (TextView) findViewById(R.id.email_textview);
+        mLearnedWords = (TextView) findViewById(R.id.desc_textview);
         avatar = (ImageView) findViewById(R.id.avatar);
-        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
     }
 
     private void setUpToolbar() {
@@ -330,6 +287,43 @@ public class ProfileActivity extends AppCompatActivity {
                 .show();
     }
 
+    private class HttpAsyncTaskShowUser extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mProgressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected String doInBackground(String... urls) {
+            return new UserFunctions().showUser(urls[0], mUser.get(Constants.KEY_AUTH_TOKEN));
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            mProgressBar.setVisibility(View.GONE);
+            List<ShowUserResponse.UserEntity.ActivitiesEntity> activityList;
+            ShowUserResponse response;
+            response = new Gson().fromJson(result, ShowUserResponse.class);
+            int id = 0;
+            try {
+                id = response.getUser().getId();
+            } catch (Exception e) {
+            }
+            if (id == Integer.parseInt(mUser.get(Constants.KEY_ID))) {
+                mName.setText(response.getUser().getName());
+                mEmail.setText(response.getUser().getEmail());
+                mLearnedWords.setText(getString(R.string.text_learned) + " " + response.getUser()
+                        .getLearned_words() + " " + getString(R.string.text_words));
+                activityList = response.getUser().getActivities();
+                ProfileActivityListAdapter adapter = new ProfileActivityListAdapter
+                        (getApplicationContext(), activityList);
+                mListViewProfile.setAdapter(adapter);
+            } else Toast.makeText(getBaseContext(), result, Toast.LENGTH_LONG).show();
+        }
+    }
+
     private class HttpAsyncTaskSignOut extends AsyncTask<String, Void, String> {
         private ProgressDialog mDialog;
 
@@ -355,7 +349,7 @@ public class ProfileActivity extends AppCompatActivity {
         protected void onPostExecute(String result) {
             mDialog.dismiss();
             if (result.equals(getString(R.string.logout_response))) {
-                session.logoutUser();
+                mSession.logoutUser();
                 finish();
             }
             Toast.makeText(getBaseContext(), result, Toast.LENGTH_LONG).show();

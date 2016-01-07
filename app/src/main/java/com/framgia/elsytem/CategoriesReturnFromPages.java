@@ -7,11 +7,6 @@ public class CategoriesReturnFromPages {
     private String CategoriesName;
     private Integer categoriesId;
     private String mCategoryImage;
-
-    public int getmLearnedWords() {
-        return mLearnedWords;
-    }
-
     private int mLearnedWords;
 
     public CategoriesReturnFromPages(String categoriesName, Integer categoriesId, String
@@ -25,6 +20,10 @@ public class CategoriesReturnFromPages {
     public CategoriesReturnFromPages(String categoriesName, Integer categoriesId) {
         this.CategoriesName = categoriesName;
         this.categoriesId = categoriesId;
+    }
+
+    public int getmLearnedWords() {
+        return mLearnedWords;
     }
 
     public String getCategoriesName() {

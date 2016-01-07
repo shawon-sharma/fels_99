@@ -19,8 +19,8 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.framgia.elsytem.jsonResponse.LessonResponse;
 import com.framgia.elsytem.model.Done;
-import com.framgia.elsytem.model.Lesson;
 import com.framgia.elsytem.utils.Constants;
 import com.framgia.elsytem.utils.DatabaseHelper;
 import com.framgia.elsytem.utils.SessionManager;
@@ -42,32 +42,33 @@ import java.util.HashMap;
 import java.util.Locale;
 
 public class QuestionActivity extends AppCompatActivity implements TextToSpeech.OnInitListener, View.OnClickListener {
-    TextToSpeech mTextToSpeech;
-    TextView word;
-    ImageButton play;
-    OkHttpClient okHttpClient;
-    Lesson lesson;
-    DatabaseHelper mdDatabaseHelper;
     public static final MediaType JSON
-            = MediaType.parse("application/json; charset=utf-8");
-    Button option_1, option_2, option_3, option_4;
-    TextView txttword;
-    Gson gson;
-    String language = "Vietnam";
-    int word_number = 0;
-    Button[] buttons = new Button[4];
-    int chosen_answer = 0;
-    String update = null;
-    SessionManager sessionManager;
-    HashMap<String, String> user;
-    String token;
-    int lesson_id = 1;
-    int category_id = 1;
-    TextView questions;
-    String category_name;
-    int x = 1;
-    ArrayList<Lesson.LessonEntity.WordsEntity> wordsEntityArrayList;
-    ArrayList<Lesson.LessonEntity.WordsEntity.AnswersEntity> answersEntityArrayList = new ArrayList<Lesson.LessonEntity.WordsEntity.AnswersEntity>();
+            = MediaType.parse(Constants.CHARSET);
+    private TextToSpeech mTextToSpeech;
+    private TextView word;
+    private ImageButton play;
+    private OkHttpClient okHttpClient;
+    private LessonResponse lesson;
+    private DatabaseHelper mdDatabaseHelper;
+    private Button option_1, option_2, option_3, option_4;
+    private TextView textWord;
+    private Gson gson;
+    private String language = Constants.VIETNAM;
+    private int word_number = Constants.ZERO;
+    private Button[] buttons = new Button[Constants.FOUR];
+    private int chosen_answer = Constants.ZERO;
+    private String update = null;
+    private SessionManager sessionManager;
+    private HashMap<String, String> user;
+    private String token;
+    private int lesson_id = Constants.INT_ONE;
+    private int category_id = Constants.INT_ONE;
+    private TextView questions;
+    private String category_name;
+    private int x = Constants.INT_ONE;
+    private ArrayList<LessonResponse.LessonEntity.WordsEntity> wordsEntityArrayList;
+    private ArrayList<LessonResponse.LessonEntity.WordsEntity.AnswersEntity> answersEntityArrayList = new
+            ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,17 +85,17 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
         token = user.get(Constants.KEY_AUTH_TOKEN);
         option_1 = (Button) findViewById(R.id.choice_1);
         option_1.setOnClickListener(this);
-        buttons[0] = option_1;
+        buttons[Constants.ZERO] = option_1;
         option_2 = (Button) findViewById(R.id.choice_2);
         option_2.setOnClickListener(this);
-        buttons[1] = option_2;
+        buttons[Constants.INT_ONE] = option_2;
         option_3 = (Button) findViewById(R.id.choice_3);
         option_3.setOnClickListener(this);
-        buttons[2] = option_3;
+        buttons[Constants.TWO] = option_3;
         option_4 = (Button) findViewById(R.id.choice_4);
         option_4.setOnClickListener(this);
-        buttons[3] = option_4;
-        txttword = (TextView) findViewById(R.id.word);
+        buttons[Constants.THREE] = option_4;
+        textWord = (TextView) findViewById(R.id.word);
         okHttpClient = new OkHttpClient();
         play = (ImageButton) findViewById(R.id.play);
         play.setOnClickListener(new View.OnClickListener() {
@@ -107,10 +108,10 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
         category_name = intent.getStringExtra(Constants.CATEGORY_NAME);
         mdDatabaseHelper.deleteResult(category_name);
         getSupportActionBar().setTitle(category_name);
-        category_id = intent.getIntExtra(String.valueOf(Constants.CATEGORY_ID), 1);
+        category_id = intent.getIntExtra(String.valueOf(Constants.CATEGORY_ID), Constants.INT_ONE);
         String c_id = Integer.toString(category_id);
-        String urlasync = Url.url.concat(c_id).concat(Url.url_last);
-        new HttpAsyncLesson().execute(urlasync);
+        String urlAsync = Url.url.concat(c_id).concat(Url.url_last);
+        new HttpAsyncLesson().execute(urlAsync);
     }
 
     @Override
@@ -141,10 +142,10 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
                 chosen_answer = Constants.ANSWER_4;
                 break;
         }
-        createalert();
+        createAlert();
     }
 
-    public void createalert() {
+    public void createAlert() {
         if (checkWordsNumber()) {
             final AlertDialog.Builder aBuilder = new AlertDialog.Builder(QuestionActivity.this);
             aBuilder.setMessage(R.string.question_alert_message);
@@ -154,7 +155,7 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.cancel();
-                            if (x == 1)
+                            if (x == Constants.INT_ONE)
                                 mdDatabaseHelper.deleteResult(category_name);
                             long insert = mdDatabaseHelper.createresult(wordsEntityArrayList.get(word_number).getContent(), language, answersEntityArrayList.get(chosen_answer).isIs_correct(), category_name);
                             int result_id = wordsEntityArrayList.get(word_number).getResult_id();
@@ -162,21 +163,25 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
                             boolean state = answersEntityArrayList.get(chosen_answer).isIs_correct();
                             x++;
                             try {
-                                update = updatelesson(result_id, answer_id, state);
+                                update = updateLesson(result_id, answer_id, state);
                                 String url_update = Url.update_first.concat(Integer.toString(lesson_id)).concat(Url.update_last);
                                 new HttpAsyncUpdate().execute(url_update);
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
                             ++word_number;
-                            Log.e("word before ", " " + word_number);
+                            Log.e(getString(R.string.word_before), " " + word_number);
                             if (word_number < wordsEntityArrayList.size()) {
-                                txttword.setText(wordsEntityArrayList.get(word_number).getContent());
-                                questions.setText((word_number + 1) + "/" + wordsEntityArrayList.size());
+                                textWord.setText(wordsEntityArrayList.get(word_number).getContent());
+                                questions.setText((word_number + Constants.INT_ONE) + "/" +
+                                        wordsEntityArrayList
+                                                .size());
                                 answersEntityArrayList = null;
-                                answersEntityArrayList = (ArrayList<Lesson.LessonEntity.WordsEntity.AnswersEntity>) wordsEntityArrayList.get(word_number).getAnswers();
-                                if (answersEntityArrayList.size() > 0) {
-                                    for (int j = 0; j < answersEntityArrayList.size(); j++) {
+                                answersEntityArrayList = (ArrayList<LessonResponse.LessonEntity
+                                        .WordsEntity.AnswersEntity>) wordsEntityArrayList.get(word_number).getAnswers();
+                                if (answersEntityArrayList.size() > Constants.ZERO) {
+                                    for (int j = Constants.ZERO; j < answersEntityArrayList.size();
+                                         j++) {
                                         buttons[j].setText(answersEntityArrayList.get(j).getContent());
                                     }
                                 }
@@ -193,7 +198,7 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.cancel();
-                    if (x == 1)
+                    if (x == Constants.INT_ONE)
                         mdDatabaseHelper.deleteResult(category_name);
                 }
             });
@@ -218,7 +223,7 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
     }
 
     public void speak() {
-        String text = txttword.getText().toString();
+        String text = textWord.getText().toString();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mTextToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, null);
         } else
@@ -227,32 +232,28 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_question, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
                 return true;
             case R.id.action_done:
                 long count = mdDatabaseHelper.getAnswerCounts(category_name);
-                if (count == 0)
+                if (count == Constants.ZERO)
                     Toast.makeText(getApplication(), R.string.question_no_answer, Toast.LENGTH_LONG).show();
-                else if (count < 20) {
+                else if (count < Constants.TWENTY) {
                     final AlertDialog.Builder aBuilder = new AlertDialog.Builder(QuestionActivity.this);
                     aBuilder.setMessage(R.string.question_exit);
                     aBuilder.setPositiveButton(R.string.question_alert_positive, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.cancel();
-                            Constants.ACTIVITY_SWITCH = 2;
+                            Constants.ACTIVITY_SWITCH = Constants.TWO;
                             CategoriesActivity.switch_activity.add(new Done(category_id, Constants.ACTIVITY_SWITCH));
                             Intent intent = new Intent(getApplication(), ResultActivity.class);
                             intent.putExtra(Constants.CATEGORY_NAME, category_name);
@@ -269,7 +270,7 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
                     aBuilder.create();
                     aBuilder.show();
                 } else {
-                    Constants.ACTIVITY_SWITCH = 2;
+                    Constants.ACTIVITY_SWITCH = Constants.TWO;
                     CategoriesActivity.switch_activity.add(new Done(category_id, Constants.ACTIVITY_SWITCH));
                     Intent intent = new Intent(getApplication(), ResultActivity.class);
                     intent.putExtra(Constants.CATEGORY_NAME, category_name);
@@ -288,121 +289,31 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
             int result = mTextToSpeech.setLanguage(Locale.US);
             if (result == TextToSpeech.LANG_MISSING_DATA
                     || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                Log.e("TTS", "This Language is not supported");
-            }/* else {
-                play.setEnabled(true);
-                speak();
-            }*/
+            }
         } else {
-            Log.e("TTS", "Initilization Failed!");
+
         }
     }
 
-    public String updatelesson(int word_id, int answer_id, boolean state) throws JSONException {
+    public String updateLesson(int word_id, int answer_id, boolean state) throws JSONException {
         JSONObject parent = new JSONObject();
-        parent.put("auth_token", token);
+        parent.put(Constants.AUTH_TOKEN, token);
         JSONObject lesson = new JSONObject();
-        lesson.put("learned", state);
+        lesson.put(Constants.learned, state);
         JSONArray jsonArray = new JSONArray();
         JSONObject results = new JSONObject();
-        results.put("id", word_id);
-        results.put("answer_id", answer_id);
+        results.put(Constants.ID, word_id);
+        results.put(Constants.ANSWER_ID, answer_id);
         jsonArray.put(results);
-        lesson.put("results_attributes", jsonArray);
-        parent.put("lesson", lesson);
+        lesson.put(Constants.RESULT_ATTRIBUTE, jsonArray);
+        parent.put(Constants.LESSON, lesson);
         return parent.toString();
     }
 
-    private class HttpAsyncUpdate extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... urls) {
-            String json = update;
-            RequestBody requestBody = RequestBody.create(JSON, json);
-            Request request = new Request.Builder().url(urls[0]).patch(requestBody).build();
-            Response response = null;
-            try {
-                response = okHttpClient.newCall(request).execute();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            String responseData = null;
-            try {
-                responseData = response.body().string();
-                Log.e("response ", responseData);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return responseData;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-        }
-    }
-
-    public String createjson(String token) throws JSONException {
+    public String createJson(String token) throws JSONException {
         JSONObject object = new JSONObject();
-        object.put("auth_token", token);
-        Log.e("token ", token);
+        object.put(Constants.AUTH_TOKEN, token);
         return object.toString();
-    }
-
-    private class HttpAsyncLesson extends AsyncTask<String, Void, WordReturn> {
-        private ProgressDialog mDialog;
-
-        @Override
-        protected void onPreExecute() {
-            mDialog = new ProgressDialog(QuestionActivity.this);
-            mDialog.setTitle("Lesson");
-            mDialog.setMessage("Questions ");
-            mDialog.setIndeterminate(false);
-            mDialog.setCancelable(true);
-            mDialog.show();
-        }
-
-        @Override
-        protected WordReturn doInBackground(String... urls) {
-            String json = null;
-            try {
-                json = createjson(token);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            RequestBody requestBody = RequestBody.create(JSON, json);
-            Request request = new Request.Builder().url(urls[0]).post(requestBody).build();
-            Response response = null;
-            String responseData = null;
-            WordReturn wordReturn = null;
-            try {
-                response = okHttpClient.newCall(request).execute();
-                responseData = response.body().string();
-                Log.e("response ", responseData);
-                gson = new Gson();
-                Lesson.LessonEntity lessonEntity;
-                lesson = gson.fromJson(responseData, Lesson.class);
-                lessonEntity = lesson.getLesson();
-                lesson_id = lessonEntity.getId();
-                wordsEntityArrayList = (ArrayList<Lesson.LessonEntity.WordsEntity>) lessonEntity.getWords();
-                answersEntityArrayList = (ArrayList<Lesson.LessonEntity.WordsEntity.AnswersEntity>) wordsEntityArrayList.get(word_number).getAnswers();
-                String contain = wordsEntityArrayList.get(word_number).getContent();
-                wordReturn = new WordReturn(contain, answersEntityArrayList);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return wordReturn;
-        }
-
-        @Override
-        protected void onPostExecute(WordReturn wordReturn) {
-            mDialog.dismiss();
-            txttword.setText(wordReturn.contain);
-            questions.setText((word_number + 1) + "/" + wordsEntityArrayList.size());
-            ArrayList<Lesson.LessonEntity.WordsEntity.AnswersEntity> answers = wordReturn.answersEntities;
-            for (int j = 0; j < answers.size(); j++) {
-                buttons[j].setText(answers.get(j).getContent());
-            }
-        }
     }
 
     @Override
@@ -424,5 +335,92 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
         });
         aBuilder.create();
         aBuilder.show();
+    }
+
+    private class HttpAsyncUpdate extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... urls) {
+            String json = update;
+            RequestBody requestBody = RequestBody.create(JSON, json);
+            Request request = new Request.Builder().url(urls[Constants.ZERO]).patch(requestBody)
+                    .build();
+            Response response = null;
+            try {
+                response = okHttpClient.newCall(request).execute();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            String responseData = null;
+            try {
+                responseData = response.body().string();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return responseData;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+        }
+    }
+
+    private class HttpAsyncLesson extends AsyncTask<String, Void, WordReturn> {
+        private ProgressDialog mDialog;
+
+        @Override
+        protected void onPreExecute() {
+            mDialog = new ProgressDialog(QuestionActivity.this);
+            mDialog.setTitle(Constants.LESSON);
+            mDialog.setMessage(Constants.QUESTION);
+            mDialog.setIndeterminate(false);
+            mDialog.setCancelable(true);
+            mDialog.show();
+        }
+
+        @Override
+        protected WordReturn doInBackground(String... urls) {
+            String json = null;
+            try {
+                json = createJson(token);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            RequestBody requestBody = RequestBody.create(JSON, json);
+            Request request = new Request.Builder().url(urls[0]).post(requestBody).build();
+            Response response = null;
+            String responseData = null;
+            WordReturn wordReturn = null;
+            try {
+                response = okHttpClient.newCall(request).execute();
+                responseData = response.body().string();
+                gson = new Gson();
+                LessonResponse.LessonEntity lessonEntity;
+                lesson = gson.fromJson(responseData, LessonResponse.class);
+                lessonEntity = lesson.getLesson();
+                lesson_id = lessonEntity.getId();
+                wordsEntityArrayList = (ArrayList<LessonResponse.LessonEntity.WordsEntity>) lessonEntity
+                        .getWords();
+                answersEntityArrayList = (ArrayList<LessonResponse.LessonEntity.WordsEntity
+                        .AnswersEntity>) wordsEntityArrayList.get(word_number).getAnswers();
+                String contain = wordsEntityArrayList.get(word_number).getContent();
+                wordReturn = new WordReturn(contain, answersEntityArrayList);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return wordReturn;
+        }
+
+        @Override
+        protected void onPostExecute(WordReturn wordReturn) {
+            mDialog.dismiss();
+            textWord.setText(wordReturn.contain);
+            questions.setText((word_number + 1) + "/" + wordsEntityArrayList.size());
+            ArrayList<LessonResponse.LessonEntity.WordsEntity.AnswersEntity> answers = wordReturn
+                    .answersEntities;
+            for (int j = 0; j < answers.size(); j++) {
+                buttons[j].setText(answers.get(j).getContent());
+            }
+        }
     }
 }

@@ -1,4 +1,5 @@
 <resources>
+    <string name="choice1">choose 1</string>
     <string name="app_name">Framgia E-learning System</string>
     <string name="action_settings">Settings</string>
     <string name="action_done">Done</string>
@@ -25,7 +26,7 @@
     <string name="content_main_question_number_text">20/500</string>
     <string name="content_main_word_text">Pronunciation</string>
     <string name="content_result_lesson_text">Basic Lesson</string>
-    <string name="content_result_correctnumber_text">67/300</string>
+    <string name="content_result_correct_number_text">67/300</string>
     <string name="result_word_name_text">Pronunciation</string>
     <string name="result_language_text">English</string>
     <string name="title_activity_update_profile">Update profile</string>
@@ -45,13 +46,16 @@
     <string name="title_activity_wordlist">Words List</string>
     <string name="text_learned">Learned</string>
     <string name="text_words">words</string>
+    <string name="word_before">word before</string>
     <string name="contacting_servers">Contacting Servers</string>
     <string name="signing_out">Signing out ...</string>
     <string name="signing_in">Signing in ...</string>
+    <string name="signing_up">Signing up ...</string>
     <string name="updating_profile">Updating profile ...</string>
     <string name="please_wait">Loading ...</string>
     <string name="sign_up_response">Sign up success</string>
     <string name="logout_response">Logout success</string>
+    <string name="url_relationship">"https://manh-nt.herokuapp.com/relationships.json"</string>
     <string name="url_sign_up">https://manh-nt.herokuapp.com/users.json</string>
     <string name="url_logout">https://manh-nt.herokuapp.com/logout.json</string>
     <string name="url_login">https://manh-nt.herokuapp.com/login.json</string>
@@ -92,13 +96,13 @@
     <string name="question_language">English</string>
     <string name="title_activity_categories">Categories</string>
     <string name="action_back">Back</string>
-    <string name="categoriesactivity_settitle">Loading Categories</string>
+    <string name="categories_activity_set_title">Loading Categories</string>
     <string name="title_activity_learned">Words list</string>
     <string name="question_done">You are done with all the question,click done to see result</string>
     <string name="question_exit">Do you want to quit your lesson??</string>
     <string name="question_no_answer">Please answer at least one question</string>
     <string name="pdf">PDF</string>
-    <string name="wordlist">WORD LIST</string>
+    <string name="word_list">WORD LIST</string>
     <string name="back">BACK</string>
     <string name="pdf_type">application/pdf</string>
     <string name="pdf_open">Open With</string>

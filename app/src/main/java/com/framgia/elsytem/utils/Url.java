@@ -4,10 +4,6 @@ package com.framgia.elsytem.utils;
  * Created by ahsan on 12/29/15.
  */
 public class Url {
-    public static String url = "https://manh-nt.herokuapp.com/categories/";
-    public static String url_last = "/lessons.json";
-    public static String update_first = "https://manh-nt.herokuapp.com/lessons/";
-    public static String update_last = ".json";
     /**
      * Created by avishek on 12/29/15.
      */
@@ -21,10 +17,14 @@ public class Url {
     public static final String url_update_profile = "https://manh-nt.herokuapp.com/users/";
     // url for showing user
     public static final String url_show_user = "https://manh-nt.herokuapp.com/users/";
+    public static String url = "https://manh-nt.herokuapp.com/categories/";
+    public static String url_last = "/lessons.json";
+    public static String update_first = "https://manh-nt.herokuapp.com/lessons/";
+    public static String update_last = ".json";
     /**
      * Created by sharma on 12/29/15.
      */
-   public static  String wordFetchURL="https://manh-nt.herokuapp.com/words.json?";
-    public static  String categoryFetchURL="https://manh-nt.herokuapp.com/categories.json?";
+    public static String wordFetchURL = "https://manh-nt.herokuapp.com/words.json?";
+    public static String categoryFetchURL = "https://manh-nt.herokuapp.com/categories.json?";
 
 }

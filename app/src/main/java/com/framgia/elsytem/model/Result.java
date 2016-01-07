@@ -8,8 +8,9 @@ public class Result {
     public String language;
     public int state;
     int id;
-    public Result(int id,String word, String language, int state) {
-        this.id=id;
+
+    public Result(int id, String word, String language, int state) {
+        this.id = id;
         this.word = word;
         this.language = language;
         this.state = state;

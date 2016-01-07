@@ -17,7 +17,6 @@ import java.util.ArrayList;
  */
 public class WordAdapter extends BaseAdapter {
     private Context mContext;
-    private LayoutInflater inflater;
     private ArrayList<WordReturnByCategory> al;
     private int mWidth;
 

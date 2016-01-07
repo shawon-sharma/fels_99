@@ -18,38 +18,41 @@ import com.framgia.elsytem.utils.DatabaseHelper;
 import java.util.ArrayList;
 
 public class ResultActivity extends AppCompatActivity {
-    DatabaseHelper databaseHelper;
-    ListView resultlist;
-    ArrayList<Result> arrayList;
-    ArrayAdapter<Result> resAdapter;
-    TextView number;
-    TextView lesson;
+    private DatabaseHelper databaseHelper;
+    private ListView resultList;
+    private ArrayList<Result> arrayList;
+    private ArrayAdapter<Result> resAdapter;
+    private TextView number;
+    private TextView lesson;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        resultlist = (ListView) findViewById(R.id.result_list);
-        lesson=(TextView)findViewById(R.id.lesson);
-        Intent intent=getIntent();
-        String category_name=intent.getStringExtra(Constants.CATEGORY_NAME);
-        number=(TextView)findViewById(R.id.correctnumber);
+        resultList = (ListView) findViewById(R.id.result_list);
+        lesson = (TextView) findViewById(R.id.lesson);
+        Intent intent = getIntent();
+        String category_name = intent.getStringExtra(Constants.CATEGORY_NAME);
+        number = (TextView) findViewById(R.id.correctnumber);
         databaseHelper = new DatabaseHelper(this);
-        long correct=databaseHelper.getCorrectAnswers(category_name);
-        int count=databaseHelper.getAnswerCounts(category_name);
-        number.setText(correct+"/"+count);
+        long correct = databaseHelper.getCorrectAnswers(category_name);
+        int count = databaseHelper.getAnswerCounts(category_name);
+        number.setText(correct + "/" + count);
         lesson.setText(category_name);
         arrayList = databaseHelper.getCategoryResults(category_name);
-        resAdapter = new ResultAdapter(getApplication(),arrayList);
-        resultlist.setAdapter(resAdapter);
+        resAdapter = new ResultAdapter(getApplication(), arrayList);
+        resultList.setAdapter(resAdapter);
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_result, menu);
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -58,7 +61,7 @@ public class ResultActivity extends AppCompatActivity {
         int id = item.getItemId();
         switch (item.getItemId()) {
             case R.id.action_ok:
-               onBackPressed();
+                onBackPressed();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

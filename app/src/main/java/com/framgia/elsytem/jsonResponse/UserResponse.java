@@ -21,12 +21,12 @@ public class UserResponse {
 
     private UserEntity user;
 
-    public void setUser(UserEntity user) {
-        this.user = user;
-    }
-
     public UserEntity getUser() {
         return user;
+    }
+
+    public void setUser(UserEntity user) {
+        this.user = user;
     }
 
     public static class UserEntity {
@@ -46,76 +46,36 @@ public class UserResponse {
 
         private List<ActivitiesEntity> activities;
 
-        public void setId(int id) {
-            this.id = id;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public void setEmail(String email) {
-            this.email = email;
-        }
-
-        public void setAvatar(String avatar) {
-            this.avatar = avatar;
-        }
-
-        public void setAdmin(boolean admin) {
-            this.admin = admin;
-        }
-
-        public void setAuth_token(String auth_token) {
-            this.auth_token = auth_token;
-        }
-
-        public void setCreated_at(String created_at) {
-            this.created_at = created_at;
-        }
-
-        public void setUpdated_at(String updated_at) {
-            this.updated_at = updated_at;
-        }
-
-        public void setActivities(List<ActivitiesEntity> activities) {
-            this.activities = activities;
-        }
-
         public int getId() {
             return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
         }
 
         public String getName() {
             return name;
         }
 
+        public void setName(String name) {
+            this.name = name;
+        }
+
         public String getEmail() {
             return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
         }
 
         public String getAvatar() {
             return avatar;
         }
 
-        public boolean isAdmin() {
-            return admin;
-        }
-
         public String getAuth_token() {
             return auth_token;
-        }
-
-        public String getCreated_at() {
-            return created_at;
-        }
-
-        public String getUpdated_at() {
-            return updated_at;
-        }
-
-        public List<ActivitiesEntity> getActivities() {
-            return activities;
         }
 
         public static class ActivitiesEntity {
@@ -123,29 +83,22 @@ public class UserResponse {
             private String content;
             private String created_at;
 
-            public void setId(int id) {
-                this.id = id;
-            }
-
-            public void setContent(String content) {
-                this.content = content;
-            }
-
-            public void setCreated_at(String created_at) {
-                this.created_at = created_at;
-            }
-
             public int getId() {
                 return id;
+            }
+
+            public void setId(int id) {
+                this.id = id;
             }
 
             public String getContent() {
                 return content;
             }
 
-            public String getCreated_at() {
-                return created_at;
+            public void setContent(String content) {
+                this.content = content;
             }
+
         }
     }
 }

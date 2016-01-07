@@ -11,19 +11,10 @@ import com.squareup.picasso.Transformation;
 
 public class RoundedCornersTransformation implements Transformation {
 
-    public enum CornerType {
-        ALL,
-        TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT,
-        TOP, BOTTOM, LEFT, RIGHT,
-        OTHER_TOP_LEFT, OTHER_TOP_RIGHT, OTHER_BOTTOM_LEFT, OTHER_BOTTOM_RIGHT,
-        DIAGONAL_FROM_TOP_LEFT, DIAGONAL_FROM_TOP_RIGHT
-    }
-
     private int mRadius;
     private int mDiameter;
     private int mMargin;
     private CornerType mCornerType;
-
     public RoundedCornersTransformation(int radius, int margin) {
         this(radius, margin, CornerType.ALL);
     }
@@ -40,9 +31,7 @@ public class RoundedCornersTransformation implements Transformation {
 
         int width = source.getWidth();
         int height = source.getHeight();
-
         Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-
         Canvas canvas = new Canvas(bitmap);
         Paint paint = new Paint();
         paint.setAntiAlias(true);
@@ -216,7 +205,16 @@ public class RoundedCornersTransformation implements Transformation {
 
     @Override
     public String key() {
-        return "RoundedTransformation(radius=" + mRadius + ", margin=" + mMargin + ", diameter="
-                + mDiameter + ", cornerType=" + mCornerType.name() + ")";
+        return "" + Constants.ROUNDED_TRANSFORMATION + mRadius + Constants.MARGIN + mMargin
+                + Constants.DIAMETER
+                + mDiameter + Constants.CORNER_TYPE + mCornerType.name() + ")";
+    }
+
+    public enum CornerType {
+        ALL,
+        TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT,
+        TOP, BOTTOM, LEFT, RIGHT,
+        OTHER_TOP_LEFT, OTHER_TOP_RIGHT, OTHER_BOTTOM_LEFT, OTHER_BOTTOM_RIGHT,
+        DIAGONAL_FROM_TOP_LEFT, DIAGONAL_FROM_TOP_RIGHT
     }
 }

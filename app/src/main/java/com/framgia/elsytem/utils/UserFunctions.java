@@ -15,9 +15,9 @@ import org.json.JSONObject;
  * Created by avishek on 12/11/15.
  */
 public class UserFunctions {
-    static OkHttpClient okHttpClient;
     public static final MediaType JSON
-            = MediaType.parse("application/json; charset=utf-8");
+            = MediaType.parse(Constants.CHARSET);
+    static OkHttpClient okHttpClient;
 
     public UserFunctions() {
         okHttpClient = new OkHttpClient();

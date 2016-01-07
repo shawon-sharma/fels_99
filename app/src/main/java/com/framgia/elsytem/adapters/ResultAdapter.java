@@ -3,7 +3,6 @@ package com.framgia.elsytem.adapters;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +12,7 @@ import android.widget.TextView;
 
 import com.framgia.elsytem.R;
 import com.framgia.elsytem.model.Result;
+import com.framgia.elsytem.utils.Constants;
 
 import java.util.ArrayList;
 
@@ -37,17 +37,17 @@ public class ResultAdapter extends ArrayAdapter<Result> {
             LayoutInflater layoutInflater = LayoutInflater.from(getContext());
             view = layoutInflater.inflate(R.layout.result, null);
             viewHolder.txtWord = (TextView) view.findViewById(R.id.word_name);
-            viewHolder.txtlanguage = (TextView) view.findViewById(R.id.language);
+            viewHolder.textLanguage = (TextView) view.findViewById(R.id.language);
             viewHolder.sign = (ImageView) view.findViewById(R.id.sign);
             view.setTag(viewHolder);
         } else
             viewHolder = (ViewHolder) view.getTag();
         Result result = results.get(position);
         viewHolder.txtWord.setText(result.word);
-        viewHolder.txtlanguage.setText(result.language);
+        viewHolder.textLanguage.setText(result.language);
         int answer = result.state;
         Drawable res_status;
-        if (answer == 0)
+        if (answer == Constants.ZERO)
             res_status = ContextCompat.getDrawable(context, R.drawable.ic_clear_black_24dp);
         else
             res_status = ContextCompat.getDrawable(context, R.drawable.ic_check);
@@ -57,7 +57,7 @@ public class ResultAdapter extends ArrayAdapter<Result> {
 
     class ViewHolder {
         TextView txtWord;
-        TextView txtlanguage;
+        TextView textLanguage;
         ImageView sign;
     }
 }

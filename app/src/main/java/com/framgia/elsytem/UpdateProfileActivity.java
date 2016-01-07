@@ -23,8 +23,8 @@ import android.widget.Toast;
 
 import com.framgia.elsytem.jsonResponse.UserResponse;
 import com.framgia.elsytem.model.Profile;
-import com.framgia.elsytem.utils.RoundedCornersTransformation;
 import com.framgia.elsytem.utils.Constants;
+import com.framgia.elsytem.utils.RoundedCornersTransformation;
 import com.framgia.elsytem.utils.SessionManager;
 import com.framgia.elsytem.utils.Url;
 import com.framgia.elsytem.utils.UserFunctions;
@@ -42,8 +42,8 @@ import java.net.URL;
 import java.util.HashMap;
 
 public class UpdateProfileActivity extends AppCompatActivity {
-    private static final String TAG = "UpdateProfileActivity";
-    private static int RESULT_LOAD_IMG = 1;
+    private static final String TAG = Constants.UPDATE_PROFILE_ACTIVITY;
+    private static int RESULT_LOAD_IMG = Constants.INT_ONE;
     String filePath;
     // Session Manager Class
     SessionManager session;
@@ -54,8 +54,28 @@ public class UpdateProfileActivity extends AppCompatActivity {
             mEtFullName;
     private ImageView mIvAvatar;
     private Button mButton_avatar;
-    File file;
-    String imageDataBase64String;
+    private File mFile;
+    private String mImageDataBase64String;
+
+    /**
+     * Encodes the byte array into base64 string
+     *
+     * @param imageByteArray - byte array
+     * @return String a {@link java.lang.String}
+     */
+    public static String encodeImage(byte[] imageByteArray) {
+        return Base64.encodeToString(imageByteArray, Base64.DEFAULT);
+    }
+
+    /**
+     * Decodes the base64 string into byte array
+     *
+     * @param imageDataString - a {@link java.lang.String}
+     * @return byte array
+     */
+    public static byte[] decodeImage(String imageDataString) {
+        return Base64.decode(imageDataString, Base64.DEFAULT);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,9 +86,9 @@ public class UpdateProfileActivity extends AppCompatActivity {
         mGetSessionData();
         mEtemail.setText(user.get(Constants.KEY_EMAIL));
         mEtFullName.setText(user.get(Constants.KEY_NAME));
-        imageDataBase64String = user.get(Constants.KEY_AVATAR);
-        if (!imageDataBase64String.isEmpty())
-            mLoadAvatar(imageDataBase64String);
+        mImageDataBase64String = user.get(Constants.KEY_AVATAR);
+        if (!mImageDataBase64String.isEmpty())
+            mLoadAvatar(mImageDataBase64String);
         mAuthToken = user.get(Constants.KEY_AUTH_TOKEN);
         mInitializeListeners();
     }
@@ -76,7 +96,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (!imageDataBase64String.isEmpty())
+        if (!mImageDataBase64String.isEmpty())
             mButton_avatar.setVisibility(View.VISIBLE);
         else mButton_avatar.setVisibility(View.INVISIBLE);
     }
@@ -113,7 +133,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
     }
 
     private void mRemoveAvatar() {
-        imageDataBase64String = "";
+        mImageDataBase64String = "";
         Picasso.with(this)
                 .load(R.drawable.ic_add_a_photo_black_36dp)
                 .memoryPolicy(MemoryPolicy.NO_CACHE)
@@ -139,8 +159,8 @@ public class UpdateProfileActivity extends AppCompatActivity {
                 (getApplicationContext(), R.string.toast_message_password_mismatch, Toast
                         .LENGTH_LONG).show();
         else if (mValidate(mOldPassword, mNewPassword, mPasswordConfirmation, mFullName,
-                imageDataBase64String)) {
-            new HttpAsyncTaskUpdateProfile().execute(Url.url_update_profile + mId + ".json");
+                mImageDataBase64String)) {
+            new HttpAsyncTaskUpdateProfile().execute(Url.url_update_profile + mId + Constants.DOT_JSON);
         } else {
             Toast.makeText(getApplicationContext(), R.string
                     .toast_message_nothing_updated, Toast.LENGTH_LONG).show();
@@ -156,7 +176,6 @@ public class UpdateProfileActivity extends AppCompatActivity {
         try {
             url = new URL(avatar);
         } catch (MalformedURLException e) {
-            Log.v(TAG, e.toString());
         }
         return url != null;
     }
@@ -200,21 +219,21 @@ public class UpdateProfileActivity extends AppCompatActivity {
                         filePathColumn, null, null, null);
                 // Move to first row
                 cursor.moveToFirst();
-                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                int columnIndex = cursor.getColumnIndex(filePathColumn[Constants.ZERO]);
                 filePath = cursor.getString(columnIndex);
                 cursor.close();
                 // creating file from the file path
-                file = new File(filePath);
+                mFile = new File(filePath);
                 try {
                     // Reading a Image file from file system
-                    FileInputStream imageInFile = new FileInputStream(file);
-                    byte imageData[] = new byte[(int) file.length()];
+                    FileInputStream imageInFile = new FileInputStream(mFile);
+                    byte imageData[] = new byte[(int) mFile.length()];
                     imageInFile.read(imageData);
                     // Converting Image byte array into Base64 String
-                    imageDataBase64String = encodeImage(imageData);
+                    mImageDataBase64String = encodeImage(imageData);
                     imageInFile.close();
                     // load avatar in imageView
-                    mLoadAvatar(imageDataBase64String);
+                    mLoadAvatar(mImageDataBase64String);
                 } catch (FileNotFoundException e) {
                     Log.e(TAG, e.toString());
                 } catch (IOException ioe) {
@@ -287,26 +306,6 @@ public class UpdateProfileActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Encodes the byte array into base64 string
-     *
-     * @param imageByteArray - byte array
-     * @return String a {@link java.lang.String}
-     */
-    public static String encodeImage(byte[] imageByteArray) {
-        return Base64.encodeToString(imageByteArray, Base64.DEFAULT);
-    }
-
-    /**
-     * Decodes the base64 string into byte array
-     *
-     * @param imageDataString - a {@link java.lang.String}
-     * @return byte array
-     */
-    public static byte[] decodeImage(String imageDataString) {
-        return Base64.decode(imageDataString, Base64.DEFAULT);
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_update_profile, menu);
@@ -330,11 +329,11 @@ public class UpdateProfileActivity extends AppCompatActivity {
 
     private boolean mValidate(String... params) {
         if (params == null) return false;
-        if (params[0].isEmpty()
-                && params[1].isEmpty()
-                && params[2].isEmpty()
-                && params[3].equals(user.get(Constants.KEY_NAME))
-                && params[4].equals(user.get(Constants.KEY_AVATAR)))
+        if (params[Constants.ZERO].isEmpty()
+                && params[Constants.INT_ONE].isEmpty()
+                && params[Constants.TWO].isEmpty()
+                && params[Constants.THREE].equals(user.get(Constants.KEY_NAME))
+                && params[Constants.FOUR].equals(user.get(Constants.KEY_AVATAR)))
             return false;
         return true;
     }
@@ -359,17 +358,17 @@ public class UpdateProfileActivity extends AppCompatActivity {
             profile.setName(mFullName);
             profile.setNew_password(mNewPassword);
             profile.setPassword_confirmation(mPasswordConfirmation);
-            profile.setAvatar(imageDataBase64String);
+            profile.setAvatar(mImageDataBase64String);
             profile.setAuthToken(mAuthToken);
             UserFunctions userFunction = new UserFunctions();
-            return userFunction.updateProfile(urls[0], profile);
+            return userFunction.updateProfile(urls[Constants.ZERO], profile);
         }
 
         // onPostExecute displays the results of the AsyncTask.
         @Override
         protected void onPostExecute(String result) {
             mDialog.dismiss();
-            int id = 0;
+            int id = Constants.ZERO;
             try {
                 id = new Gson().fromJson(result, UserResponse.class).getUser().getId();
             } catch (Exception e) {
@@ -379,7 +378,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
                 session.deleteSessionData();
                 // creating new session with updated data
                 session.createLoginSession(Integer.parseInt(mId), mFullName, mEtemail.getText()
-                                .toString(), imageDataBase64String, user.get(Constants.KEY_AUTH_TOKEN),
+                                .toString(), mImageDataBase64String, user.get(Constants.KEY_AUTH_TOKEN),
                         Integer.parseInt(user.get(Constants.KEY_REMEMBER_ME)));
                 Toast.makeText(getBaseContext(), getString(R.string.toast_message_update_successful), Toast.LENGTH_LONG).show();
                 onBackPressed();

@@ -21,14 +21,6 @@ public class CategoryResponse {
 
     private List<CategoriesEntity> categories;
 
-    public void setTotal_pages(int total_pages) {
-        this.total_pages = total_pages;
-    }
-
-    public void setCategories(List<CategoriesEntity> categories) {
-        this.categories = categories;
-    }
-
     public int getTotal_pages() {
         return total_pages;
     }
@@ -43,28 +35,20 @@ public class CategoryResponse {
         private String photo;
         private int learned_words;
 
-        public void setId(int id) {
-            this.id = id;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public void setPhoto(String photo) {
-            this.photo = photo;
-        }
-
-        public void setLearned_words(int learned_words) {
-            this.learned_words = learned_words;
-        }
-
         public int getId() {
             return id;
         }
 
+        public void setId(int id) {
+            this.id = id;
+        }
+
         public String getName() {
             return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
         }
 
         public String getPhoto() {

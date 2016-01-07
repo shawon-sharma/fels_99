@@ -64,15 +64,6 @@
             android:label="@string/title_activity_profile"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".WordlistActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/title_activity_wordlist"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ProfileActivity"/>
-        </activity>
-        <activity
             android:name=".CategoriesActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_categories"

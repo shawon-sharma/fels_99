@@ -1,11 +1,11 @@
-package com.framgia.elsytem.model;
+package com.framgia.elsytem.jsonResponse;
 
 import java.util.List;
 
 /**
  * Created by ahsan on 12/15/15.
  */
-public class Lesson {
+public class LessonResponse {
 
     /**
      * id : 3
@@ -15,12 +15,12 @@ public class Lesson {
 
     private LessonEntity lesson;
 
-    public void setLesson(LessonEntity lesson) {
-        this.lesson = lesson;
-    }
-
     public LessonEntity getLesson() {
         return lesson;
+    }
+
+    public void setLesson(LessonEntity lesson) {
+        this.lesson = lesson;
     }
 
     public static class LessonEntity {
@@ -35,28 +35,28 @@ public class Lesson {
 
         private List<WordsEntity> words;
 
-        public void setId(int id) {
-            this.id = id;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public void setWords(List<WordsEntity> words) {
-            this.words = words;
-        }
-
         public int getId() {
             return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
         }
 
         public String getName() {
             return name;
         }
 
+        public void setName(String name) {
+            this.name = name;
+        }
+
         public List<WordsEntity> getWords() {
             return words;
+        }
+
+        public void setWords(List<WordsEntity> words) {
+            this.words = words;
         }
 
         public static class WordsEntity {
@@ -71,24 +71,12 @@ public class Lesson {
 
             private List<AnswersEntity> answers;
 
-            public void setId(int id) {
-                this.id = id;
-            }
-
-            public void setResult_id(int result_id) {
-                this.result_id = result_id;
-            }
-
-            public void setContent(String content) {
-                this.content = content;
-            }
-
-            public void setAnswers(List<AnswersEntity> answers) {
-                this.answers = answers;
-            }
-
             public int getId() {
                 return id;
+            }
+
+            public void setId(int id) {
+                this.id = id;
             }
 
             public int getResult_id() {
@@ -97,6 +85,10 @@ public class Lesson {
 
             public String getContent() {
                 return content;
+            }
+
+            public void setContent(String content) {
+                this.content = content;
             }
 
             public List<AnswersEntity> getAnswers() {
@@ -108,24 +100,20 @@ public class Lesson {
                 private String content;
                 private boolean is_correct;
 
-                public void setId(int id) {
-                    this.id = id;
-                }
-
-                public void setContent(String content) {
-                    this.content = content;
-                }
-
-                public void setIs_correct(boolean is_correct) {
-                    this.is_correct = is_correct;
-                }
-
                 public int getId() {
                     return id;
                 }
 
+                public void setId(int id) {
+                    this.id = id;
+                }
+
                 public String getContent() {
                     return content;
+                }
+
+                public void setContent(String content) {
+                    this.content = content;
                 }
 
                 public boolean isIs_correct() {
