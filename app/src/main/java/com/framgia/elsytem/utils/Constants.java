@@ -5,9 +5,9 @@ package com.framgia.elsytem.utils;
  */
 public class Constants {
     /**
-     * SessionManager's keys
+     * UserFunctions' and SessionManager's common keys
      */
-    //User id
+    // User id
     public static final String KEY_ID = "id";
     // User name (make variable public to access from outside)
     public static final String KEY_NAME = "name";
@@ -16,12 +16,18 @@ public class Constants {
     // Avatar's image decodable string
     public static final String KEY_AVATAR = "avatar";
     // remember token
-    public static final String KEY_AUTH_TOKEN = "authToken";
+    public static final String KEY_AUTH_TOKEN = "auth_token";
     // remember me
-    public static final String KEY_REMEMBER_ME = "rememberMe";
+    public static final String KEY_REMEMBER_ME = "remember_Me";
     // UserFunctions TAG
+    // User key
+    public static final String KEY_USER = "user";
+    public static final String KEY_SESSION = "session";
+    public static final String KEY_PASSWORD = "password";
+    public static final String KEY_PASSWORD_CONFIRMATION = "password_confirmation";
+    public static final String KEY_MESSAGE = "message";
     public static final String TAG_USER_FUNCTIONS = "UserFunctions";
-    public static final String AUTH_TOKEN = "auth_token";
+    public static final String AUTH_TOKEN = KEY_AUTH_TOKEN;
     public static final String PAGE = "page";
     public static final String CCATEGORY_ID = "category_id";
     public static final String OPTION = "option";

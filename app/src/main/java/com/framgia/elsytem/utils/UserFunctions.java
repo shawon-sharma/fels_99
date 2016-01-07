@@ -8,7 +8,6 @@ import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
 
 import org.json.JSONObject;
 
@@ -16,8 +15,6 @@ import org.json.JSONObject;
  * Created by avishek on 12/11/15.
  */
 public class UserFunctions {
-    User user;
-    Constants constant;
     static OkHttpClient okHttpClient;
     public static final MediaType JSON
             = MediaType.parse("application/json; charset=utf-8");
@@ -31,18 +28,14 @@ public class UserFunctions {
      */
     public String showUser(String url, String auth_token) {
         String result = "";
-        String json = "";
         try {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("auth_token", auth_token);
-            String jsonData = okHttpClient.
+            result = okHttpClient.
                     newCall(new Request.Builder()
-                            .url(url+"?auth_token="+auth_token)
+                            .url(url + "?" + Constants.KEY_AUTH_TOKEN + "=" + auth_token)
                             .get()
                             .build()).execute().body().string();
-            result = jsonData;
         } catch (Exception e) {
-            Log.e(constant.TAG_USER_FUNCTIONS + " I/OStream", e.getLocalizedMessage());
+            Log.e(Constants.TAG_USER_FUNCTIONS, e.getLocalizedMessage());
         }
         return result;
     }
@@ -52,27 +45,21 @@ public class UserFunctions {
      **/
     public String signIn(String url, User user, int isRememberMeChecked) {
         String result = "";
-        String json = "";
         try {
             /**
              * OkHttp
              */
             // 1. build jsonObject
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("email", user.getEmail());
-            jsonObject.put("password", user.getPassword());
-            jsonObject.put("remember_me", isRememberMeChecked);
-            // 2. build parentJsonObject and put the previous object into this one
-            JSONObject parentJsonObject = new JSONObject();
-            parentJsonObject.put("session", jsonObject);
-            // 3. convert JSONObject to JSON to String
-            json = parentJsonObject.toString();
-            RequestBody requestBody = RequestBody.create(JSON, json);
-            Request request = new Request.Builder().url(url).post(requestBody).build();
-            Response response = okHttpClient.newCall(request).execute();
-            result = response.body().string();
+            jsonObject.put(Constants.KEY_EMAIL, user.getEmail());
+            jsonObject.put(Constants.KEY_PASSWORD, user.getPassword());
+            jsonObject.put(Constants.KEY_REMEMBER_ME, isRememberMeChecked);
+            // 2. sending request and converting JSON response to String
+            result = okHttpClient.newCall(new Request.Builder().url(url).post(RequestBody.create
+                    (JSON, new JSONObject().put(Constants.KEY_SESSION, jsonObject).toString())).build())
+                    .execute().body().string();
         } catch (Exception e) {
-            Log.e(constant.TAG_USER_FUNCTIONS + " I/OStream", e.getLocalizedMessage());
+            Log.e(Constants.TAG_USER_FUNCTIONS, e.getLocalizedMessage());
         }
         // 4. return result
         return result;
@@ -83,30 +70,23 @@ public class UserFunctions {
      */
     public String signUp(String url, User user) {
         String result = "";
-        String json = "";
         try {
             /**
              * OkHttp
              */
             // 1. build jsonObject
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("name", user.getName());
-            jsonObject.put("email", user.getEmail());
-            jsonObject.put("password", user.getPassword());
-            jsonObject.put("password_confirmation", user.getPassword_confirmation());
-            // 2. build parentJsonObject and put the previous object into this one
-            JSONObject parentJsonObject = new JSONObject();
-            parentJsonObject.put("user", jsonObject);
-            // 3. convert JSONObject to JSON to String
-            json = parentJsonObject.toString();
-            RequestBody requestBody = RequestBody.create(JSON, json);
-            Request request = new Request.Builder().url(url).post(requestBody).build();
-            Response response = okHttpClient.newCall(request).execute();
-            String jsonData = response.body().string();
-            // 4. get the message from response
-            result = new JSONObject(jsonData).getString("message");
+            jsonObject.put(Constants.KEY_NAME, user.getName());
+            jsonObject.put(Constants.KEY_EMAIL, user.getEmail());
+            jsonObject.put(Constants.KEY_PASSWORD, user.getPassword());
+            jsonObject.put(Constants.KEY_PASSWORD_CONFIRMATION, user.getPassword_confirmation());
+            // 2. sending request and converting JSON response to String
+            result = new JSONObject(okHttpClient.newCall(new Request.Builder().url(url).post
+                    (RequestBody.create(JSON, new JSONObject().put(Constants.KEY_USER, jsonObject)
+                                    .toString()
+                    )).build()).execute().body().string()).getString(Constants.KEY_MESSAGE);
         } catch (Exception e) {
-            Log.e(constant.TAG_USER_FUNCTIONS + " I/OStream", e.getLocalizedMessage());
+            Log.e(Constants.TAG_USER_FUNCTIONS, e.getLocalizedMessage());
         }
         return result;
     }
@@ -116,41 +96,30 @@ public class UserFunctions {
      */
     public String signOut(String url) {
         String result = "";
-        String json = "";
         try {
-            JSONObject jsonObject = new JSONObject();
-            json = jsonObject.toString();
-            RequestBody requestBody = RequestBody.create(JSON, json);
-            Request request = new Request.Builder().url(url).delete(requestBody).build();
-            Response response = okHttpClient.newCall(request).execute();
-            String jsonData = response.body().string();
-            result = new JSONObject(jsonData).getString("message");
+            result = new JSONObject(okHttpClient.newCall(new Request.Builder().url(url).delete()
+                    .build()).execute().body().string()).getString(Constants.KEY_MESSAGE);
         } catch (Exception e) {
-            Log.e(constant.TAG_USER_FUNCTIONS + " I/OStream", e.getLocalizedMessage());
+            Log.e(Constants.TAG_USER_FUNCTIONS, e.getLocalizedMessage());
         }
         return result;
     }
 
     public String updateProfile(String url, Profile profile) {
         String result = "";
-        String json = "";
         try {
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("name", profile.getName());
-            jsonObject.put("password", profile.getNew_password());
-            jsonObject.put("password_confirmation", profile.getPassword_confirmation());
-            jsonObject.put("avatar", profile.getAvatar());
+            jsonObject.put(Constants.KEY_NAME, profile.getName());
+            jsonObject.put(Constants.KEY_PASSWORD, profile.getNew_password());
+            jsonObject.put(Constants.KEY_PASSWORD_CONFIRMATION, profile.getPassword_confirmation());
+            jsonObject.put(Constants.KEY_AVATAR, profile.getAvatar());
             JSONObject jsonObjectUser = new JSONObject();
-            jsonObjectUser.put("auth_token", profile.getAuthToken());
-            jsonObjectUser.put("user", jsonObject);
-            json = jsonObjectUser.toString();
-            RequestBody requestBody = RequestBody.create(JSON, json);
-            Request request = new Request.Builder().url(url).patch(requestBody).build();
-            Response response = okHttpClient.newCall(request).execute();
-            String jsonData = response.body().string();
-            result = jsonData;
+            jsonObjectUser.put(Constants.KEY_AUTH_TOKEN, profile.getAuthToken());
+            jsonObjectUser.put(Constants.KEY_USER, jsonObject);
+            result = okHttpClient.newCall(new Request.Builder().url(url).patch(RequestBody.create
+                    (JSON, jsonObjectUser.toString())).build()).execute().body().string();
         } catch (Exception e) {
-            Log.e(constant.TAG_USER_FUNCTIONS + " I/OStream", e.getLocalizedMessage());
+            Log.e(Constants.TAG_USER_FUNCTIONS, e.getLocalizedMessage());
         }
         return result;
     }

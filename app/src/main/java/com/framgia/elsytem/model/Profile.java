@@ -5,8 +5,6 @@ package com.framgia.elsytem.model;
  */
 public class Profile {
     String name;
-    String email;
-    String old_password;
     String new_password;
     String password_confirmation;
     String avatar;
@@ -26,22 +24,6 @@ public class Profile {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getOld_password() {
-        return old_password;
-    }
-
-    public void setOld_password(String old_password) {
-        this.old_password = old_password;
     }
 
     public String getNew_password() {
